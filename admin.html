@@ -218,13 +218,13 @@
 
     <script>
         // แทนที่ด้วย Web App URL ที่คุณได้จาก Google Apps Script
-        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwqAAni7-2cwPjFreWIlKBvqm5_Vuoi1lQYAd44hKGoBjJ6HWU2h243CA31yyKuMRzM/exec'; 
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwqAAni7-2cwPjFreWIlKBqvm5_Vuoi1lQYAd44hKGoBjJ6HWU2h243CA31yyKuMRzM/exec'; 
         // หากต้องการ Export ตรงจาก Google Sheet โดยระบุ GID
         // คุณสามารถหา GID ได้จาก URL ของ Sheet นั้นๆ (gid=XXXXXXXXX)
         // หากไม่มีการเปลี่ยนแปลงลำดับ Sheet, GID มักจะเป็น: Votes (0), Designs (1), Settings (2)
-        const SPREADSHEET_ID = '1-TcTibhvvr8TZAS9QPTsUmSpH2dvJoKxkQJKgoCYa8U'; // <<-- ใส่ ID Google Sheet เดียวกับใน Apps Script
+        const SPREADSHEET_ID = '1-TcTibhvvr8TZAS9QPTsUmSpH2dvJoKxkQJKgoCYa8U'; 
         const VOTES_GID = '0'; // สมมติว่า Votes sheet คือ sheet แรก
-        const DESIGNS_GID = '2'; // สมมติว่า Designs sheet คือ sheet ที่สอง
+        const DESIGNS_GID = '1'; // สมมติว่า Designs sheet คือ sheet ที่สอง
 
 
         const adminUsernameInput = document.getElementById('adminUsername');
@@ -590,8 +590,6 @@
                 alert('โปรดระบุ SPREADSHEET_ID และ VOTES_GID ในโค้ด admin.html');
                 return;
             }
-            // This will export the 'Votes' sheet which contains the chosen design.
-            // You might want a more sophisticated export that summarizes results if needed.
             window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${VOTES_GID}`, '_blank');
         }
 

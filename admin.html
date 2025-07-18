@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - โหวตเลือกแบบเสื้อ</title>
+    <title>Admin Panel - ระบบโหวตเสื้อกีฬาสี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -23,12 +23,12 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+            max-width: 960px; /* Increased max-width */
             width: 100%;
             text-align: center;
             box-sizing: border-box;
         }
-        h1, h2 {
+        h1, h2, h3 {
             color: #4a90e2; /* Blue */
             margin-bottom: 20px;
         }
@@ -43,7 +43,8 @@
         }
         .form-group input[type="text"],
         .form-group input[type="password"],
-        .form-group input[type="datetime-local"] {
+        .form-group input[type="datetime-local"],
+        .form-group input[type="url"] {
             width: calc(100% - 20px);
             padding: 10px;
             border: 1px solid #ccc;
@@ -76,6 +77,7 @@
         }
         .message.success { background-color: #d4edda; color: #155724; }
         .message.error { background-color: #f8d7da; color: #721c24; }
+        .message.info { background-color: #e2e3e5; color: #383d41; }
 
         #adminContent {
             margin-top: 30px;
@@ -87,6 +89,7 @@
             color: #4a90e2;
             margin-top: 30px;
             margin-bottom: 15px;
+            text-align: center;
         }
         table {
             width: 100%;
@@ -97,6 +100,7 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            word-wrap: break-word; /* Wrap long text */
         }
         th {
             background-color: #e3f2fd; /* Lighter Blue */
@@ -107,12 +111,24 @@
             font-size: 16px;
             margin-right: 10px;
         }
+        .design-action-buttons button {
+            background-color: #2196F3; /* Blue for Add/Edit */
+            margin-right: 5px;
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+        .design-action-buttons button.delete-btn {
+            background-color: #f44336; /* Red for Delete */
+        }
+        .design-action-buttons button:hover {
+            opacity: 0.9;
+        }
         .export-buttons {
             margin-top: 20px;
             text-align: center;
         }
         .export-buttons button {
-            background-color: #4CAF50;
+            background-color: #4CAF50; /* Green */
             margin: 0 10px;
         }
         .export-buttons button:hover {
@@ -154,8 +170,34 @@
             <div id="setTimeMessage" class="message"></div>
 
             <h3 class="section-title">จัดการแบบเสื้อ</h3>
-            <button>เพิ่มแบบเสื้อใหม่</button>
-            <p>(ต้องพัฒนาฟังก์ชันนี้ใน Apps Script และในหน้านี้)</p>
+            <div class="form-group">
+                <label for="designId">Design ID (รหัสที่ไม่ซ้ำ):</label>
+                <input type="text" id="designId" placeholder="เช่น A, B, C1" required>
+            </div>
+            <div class="form-group">
+                <label for="designName">ชื่อแบบเสื้อ:</label>
+                <input type="text" id="designName" required>
+            </div>
+            <div class="form-group">
+                <label for="imageURL">URL รูปภาพแบบเสื้อ:</label>
+                <input type="url" id="imageURL" placeholder="http://example.com/image.png" required>
+            </div>
+            <div class="form-group">
+                <label for="logoPosition">ตำแหน่งโลโก้ (เช่น Front Center):</label>
+                <input type="text" id="logoPosition" required>
+            </div>
+            <div class="design-action-buttons">
+                <button id="addDesignBtn">เพิ่มแบบเสื้อใหม่</button>
+                <button id="updateDesignBtn">อัปเดตแบบเสื้อ</button>
+                <button id="deleteDesignBtn" class="delete-btn">ลบแบบเสื้อ</button>
+            </div>
+            <div id="designMessage" class="message"></div>
+
+            <h3 class="section-title">รายการแบบเสื้อทั้งหมด</h3>
+            <div id="designList">
+                <p>กำลังโหลดรายการแบบเสื้อ...</p>
+            </div>
+
             <h3 class="section-title">สรุปผลโหวต</h3>
             <div id="adminResultsDisplay">
                 <p>กำลังโหลดผลโหวต...</p>
@@ -176,7 +218,14 @@
 
     <script>
         // แทนที่ด้วย Web App URL ที่คุณได้จาก Google Apps Script
-        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZP1UpF43mz-20uLT9nQO_bJ1kyj1dFxwSwKMghPGEYro9dmKDwp2Xak2w4rktTd0/exec';
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwqAAni7-2cwPjFreWIlKBvqm5_Vuoi1lQYAd44hKGoBjJ6HWU2h243CA31yyKuMRzM/exec'; 
+        // หากต้องการ Export ตรงจาก Google Sheet โดยระบุ GID
+        // คุณสามารถหา GID ได้จาก URL ของ Sheet นั้นๆ (gid=XXXXXXXXX)
+        // หากไม่มีการเปลี่ยนแปลงลำดับ Sheet, GID มักจะเป็น: Votes (0), Designs (1), Settings (2)
+        const SPREADSHEET_ID = '1-TcTibhvvr8TZAS9QPTsUmSpH2dvJoKxkQJKgoCYa8U'; // <<-- ใส่ ID Google Sheet เดียวกับใน Apps Script
+        const VOTES_GID = '0'; // สมมติว่า Votes sheet คือ sheet แรก
+        const DESIGNS_GID = '1'; // สมมติว่า Designs sheet คือ sheet ที่สอง
+
 
         const adminUsernameInput = document.getElementById('adminUsername');
         const adminPasswordInput = document.getElementById('adminPassword');
@@ -187,12 +236,26 @@
         const openTimeInput = document.getElementById('openTime');
         const closeTimeInput = document.getElementById('closeTime');
         const setTimeMessageDiv = document.getElementById('setTimeMessage');
+
+        const designIdInput = document.getElementById('designId');
+        const designNameInput = document.getElementById('designName');
+        const imageURLInput = document.getElementById('imageURL');
+        const logoPositionInput = document.getElementById('logoPosition');
+        const addDesignBtn = document.getElementById('addDesignBtn');
+        const updateDesignBtn = document.getElementById('updateDesignBtn');
+        const deleteDesignBtn = document.getElementById('deleteDesignBtn');
+        const designMessageDiv = document.getElementById('designMessage');
+        const designListDiv = document.getElementById('designList');
+
         const adminResultsDisplay = document.getElementById('adminResultsDisplay');
         const votersDataDisplay = document.getElementById('votersData');
 
         // --- Event Listeners ---
         loginBtn.addEventListener('click', adminLogin);
         setVotingTimeBtn.addEventListener('click', setVotingTime);
+        addDesignBtn.addEventListener('click', addDesign);
+        updateDesignBtn.addEventListener('click', updateDesign);
+        deleteDesignBtn.addEventListener('click', deleteDesign);
 
         // --- Functions ---
 
@@ -210,44 +273,47 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    loginMessageDiv.classList.add('success');
-                    loginMessageDiv.classList.remove('error');
-                    loginMessageDiv.textContent = data.message;
+                    displayMessage(loginMessageDiv, data.message, 'success');
                     adminContentDiv.style.display = 'block';
                     document.getElementById('loginForm').style.display = 'none';
                     loadAdminData(); // Load all admin data after login
                 } else {
-                    loginMessageDiv.classList.add('error');
-                    loginMessageDiv.classList.remove('success');
-                    loginMessageDiv.textContent = data.message;
+                    displayMessage(loginMessageDiv, data.message, 'error');
                 }
             } catch (error) {
                 console.error('Error during admin login:', error);
-                loginMessageDiv.classList.add('error');
-                loginMessageDiv.classList.remove('success');
-                loginMessageDiv.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message;
+                displayMessage(loginMessageDiv, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, 'error');
             }
         }
 
         async function loadAdminData() {
-            // Load current voting times
+            await loadVotingStatus(); // โหลดเวลาโหวตปัจจุบัน
+            await loadDesignList(); // โหลดรายการแบบเสื้อ
+            await loadAdminResults(); // โหลดผลโหวต
+            await loadVotersData(); // โหลดข้อมูลผู้โหวต
+        }
+
+        async function loadVotingStatus() {
             try {
                 const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getVotingStatus`);
                 const data = await response.json();
                 if (data.status === 'success' && data.votingStatus) {
+                    // Convert ISO string to local datetime format for input
                     if (data.votingStatus.openTime) {
-                        openTimeInput.value = data.votingStatus.openTime.substring(0, 16); // Format for datetime-local
+                        openTimeInput.value = new Date(data.votingStatus.openTime).toISOString().substring(0, 16);
+                    } else {
+                        openTimeInput.value = '';
                     }
                     if (data.votingStatus.closeTime) {
-                        closeTimeInput.value = data.votingStatus.closeTime.substring(0, 16); // Format for datetime-local
+                        closeTimeInput.value = new Date(data.votingStatus.closeTime).toISOString().substring(0, 16);
+                    } else {
+                        closeTimeInput.value = '';
                     }
                 }
             } catch (error) {
                 console.error('Error loading voting times:', error);
+                displayMessage(setTimeMessageDiv, 'ไม่สามารถโหลดเวลาโหวตได้: ' + error.message, 'error');
             }
-
-            loadAdminResults();
-            loadVotersData(); // Placeholder for loading voter data
         }
 
         async function setVotingTime() {
@@ -256,56 +322,203 @@
             const closeTime = closeTimeInput.value;
 
             if (!openTime || !closeTime) {
-                setTimeMessageDiv.classList.add('error');
-                setTimeMessageDiv.textContent = 'กรุณากรอกเวลาเปิดและปิดโหวตให้ครบถ้วน';
+                displayMessage(setTimeMessageDiv, 'กรุณากรอกเวลาเปิดและปิดโหวตให้ครบถ้วน', 'error');
                 return;
             }
 
             try {
+                // Convert local datetime string to ISO string for Apps Script
+                const payloadOpenTime = new Date(openTime).toISOString();
+                const payloadCloseTime = new Date(closeTime).toISOString();
+
                 const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=setVotingTime`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ openTime: new Date(openTime).toISOString(), closeTime: new Date(closeTime).toISOString() })
+                    body: JSON.stringify({ openTime: payloadOpenTime, closeTime: payloadCloseTime })
                 });
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    setTimeMessageDiv.classList.add('success');
-                    setTimeMessageDiv.classList.remove('error');
-                    setTimeMessageDiv.textContent = data.message;
-                    // Optionally, re-check voting status on the main page after setting
+                    displayMessage(setTimeMessageDiv, data.message, 'success');
                 } else {
-                    setTimeMessageDiv.classList.add('error');
-                    setTimeMessageDiv.classList.remove('success');
-                    setTimeMessageDiv.textContent = data.message;
+                    displayMessage(setTimeMessageDiv, data.message, 'error');
                 }
             } catch (error) {
                 console.error('Error setting voting time:', error);
-                setTimeMessageDiv.classList.add('error');
-                setTimeMessageDiv.classList.remove('success');
-                setTimeMessageDiv.textContent = 'เกิดข้อผิดพลาดในการตั้งเวลาโหวต: ' + error.message;
+                displayMessage(setTimeMessageDiv, 'เกิดข้อผิดพลาดในการตั้งเวลาโหวต: ' + error.message, 'error');
             }
         }
 
+        // --- Design Management Functions ---
+        async function loadDesignList() {
+            designListDiv.innerHTML = '<p class="message info">กำลังโหลดรายการแบบเสื้อ...</p>';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getDesigns`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderDesignList(data.designs);
+                } else {
+                    displayMessage(designListDiv, `ไม่สามารถโหลดแบบเสื้อได้: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading designs:', error);
+                displayMessage(designListDiv, `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, 'error');
+            }
+        }
+
+        function renderDesignList(designs) {
+            if (designs.length === 0) {
+                designListDiv.innerHTML = '<p class="message info">ยังไม่มีแบบเสื้อ</p>';
+                return;
+            }
+
+            let tableHTML = '<table><thead><tr><th>Design ID</th><th>ชื่อแบบเสื้อ</th><th>รูปภาพ (URL)</th><th>ตำแหน่งโลโก้</th><th>จัดการ</th></tr></thead><tbody>';
+            designs.forEach(design => {
+                tableHTML += `
+                    <tr>
+                        <td>${design.DesignID}</td>
+                        <td>${design.DesignName}</td>
+                        <td><a href="${design.ImageURL}" target="_blank">${design.ImageURL.substring(0, 30)}...</a></td>
+                        <td>${design.LogoPosition}</td>
+                        <td>
+                            <button onclick="editDesign('${design.DesignID}', '${design.DesignName}', '${design.ImageURL}', '${design.LogoPosition}')">แก้ไข</button>
+                            <button class="delete-btn" onclick="confirmDeleteDesign('${design.DesignID}')">ลบ</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tableHTML += '</tbody></table>';
+            designListDiv.innerHTML = tableHTML;
+        }
+
+        function editDesign(id, name, imageUrl, logoPos) {
+            designIdInput.value = id;
+            designNameInput.value = name;
+            imageURLInput.value = imageUrl;
+            logoPositionInput.value = logoPos;
+            designIdInput.disabled = true; // Prevent changing ID when editing
+            displayMessage(designMessageDiv, 'แก้ไขข้อมูลแล้ว กรุณากด "อัปเดตแบบเสื้อ" เมื่อเสร็จสิ้น', 'info');
+        }
+
+        async function addDesign() {
+            designMessageDiv.innerHTML = '';
+            const designData = getDesignFormData();
+            if (!designData) return;
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=addDesign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(designData)
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    displayMessage(designMessageDiv, data.message, 'success');
+                    clearDesignForm();
+                    loadDesignList(); // Refresh list
+                } else {
+                    displayMessage(designMessageDiv, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error adding design:', error);
+                displayMessage(designMessageDiv, 'เกิดข้อผิดพลาดในการเพิ่มแบบเสื้อ: ' + error.message, 'error');
+            }
+        }
+
+        async function updateDesign() {
+            designMessageDiv.innerHTML = '';
+            const designData = getDesignFormData();
+            if (!designData) return;
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=updateDesign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(designData)
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    displayMessage(designMessageDiv, data.message, 'success');
+                    clearDesignForm();
+                    loadDesignList(); // Refresh list
+                } else {
+                    displayMessage(designMessageDiv, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating design:', error);
+                displayMessage(designMessageDiv, 'เกิดข้อผิดพลาดในการอัปเดตแบบเสื้อ: ' + error.message, 'error');
+            }
+        }
+
+        function confirmDeleteDesign(designId) {
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบแบบเสื้อ ID: ${designId} ? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+                deleteDesign(designId);
+            }
+        }
+
+        async function deleteDesign(designId) {
+            designMessageDiv.innerHTML = '';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=deleteDesign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ designId: designId })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    displayMessage(designMessageDiv, data.message, 'success');
+                    loadDesignList(); // Refresh list
+                    loadAdminResults(); // Refresh results as well
+                } else {
+                    displayMessage(designMessageDiv, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting design:', error);
+                displayMessage(designMessageDiv, 'เกิดข้อผิดพลาดในการลบแบบเสื้อ: ' + error.message, 'error');
+            }
+        }
+
+        function getDesignFormData() {
+            const designId = designIdInput.value.trim();
+            const designName = designNameInput.value.trim();
+            const imageURL = imageURLInput.value.trim();
+            const logoPosition = logoPositionInput.value.trim();
+
+            if (!designId || !designName || !imageURL || !logoPosition) {
+                displayMessage(designMessageDiv, 'กรุณากรอกข้อมูลแบบเสื้อให้ครบถ้วน', 'error');
+                return null;
+            }
+            return { designId, designName, imageURL, logoPosition };
+        }
+
+        function clearDesignForm() {
+            designIdInput.value = '';
+            designNameInput.value = '';
+            imageURLInput.value = '';
+            logoPositionInput.value = '';
+            designIdInput.disabled = false; // Enable ID input after clearing
+        }
+
+        // --- Admin Results Display ---
         async function loadAdminResults() {
-            adminResultsDisplay.innerHTML = '<p>กำลังโหลดผลโหวต...</p>';
+            adminResultsDisplay.innerHTML = '<p class="message info">กำลังโหลดผลโหวต...</p>';
             try {
                 const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getResults`);
                 const data = await response.json();
                 if (data.status === 'success') {
                     renderAdminResults(data.results);
                 } else {
-                    adminResultsDisplay.innerHTML = `<p class="message error">ไม่สามารถโหลดผลโหวตได้: ${data.message}</p>`;
+                    displayMessage(adminResultsDisplay, `ไม่สามารถโหลดผลโหวตได้: ${data.message}`, 'error');
                 }
             } catch (error) {
                 console.error('Error loading admin results:', error);
-                adminResultsDisplay.innerHTML = `<p class="message error">เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}</p>`;
+                displayMessage(adminResultsDisplay, `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, 'error');
             }
         }
 
         function renderAdminResults(results) {
             if (results.length === 0) {
-                adminResultsDisplay.innerHTML = '<p>ยังไม่มีผลโหวต</p>';
+                adminResultsDisplay.innerHTML = '<p class="message info">ยังไม่มีผลโหวต</p>';
                 return;
             }
 
@@ -326,33 +539,78 @@
             adminResultsDisplay.innerHTML = tableHTML;
         }
 
-        // --- Placeholder functions for voter data and export ---
+        // --- Voters Data Display ---
         async function loadVotersData() {
-            votersDataDisplay.innerHTML = '<p>ฟังก์ชันนี้ยังต้องพัฒนาใน Google Apps Script เพื่อดึงข้อมูลผู้โหวตทั้งหมด...</p>';
-            // Example: You'd add a new action in Apps Script like 'getVoters'
-            // and fetch data from the 'Votes' sheet, then render it in a table here.
+            votersDataDisplay.innerHTML = '<p class="message info">กำลังโหลดข้อมูลผู้โหวต...</p>';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getVotersData`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderVotersData(data.voters, data.headers);
+                } else {
+                    displayMessage(votersDataDisplay, `ไม่สามารถโหลดข้อมูลผู้โหวตได้: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading voters data:', error);
+                displayMessage(votersDataDisplay, `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, 'error');
+            }
         }
 
+        function renderVotersData(voters, headers) {
+            if (voters.length === 0) {
+                votersDataDisplay.innerHTML = '<p class="message info">ยังไม่มีข้อมูลผู้โหวต</p>';
+                return;
+            }
+
+            let tableHTML = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            voters.forEach(voter => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    let cellValue = voter[header];
+                    if (header === 'Timestamp') {
+                        // Format timestamp for readability
+                        cellValue = new Date(cellValue).toLocaleString();
+                    }
+                    tableHTML += `<td>${cellValue}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            votersDataDisplay.innerHTML = tableHTML;
+        }
+
+        // --- Export Functions ---
         function exportResults() {
-            // Logic to trigger export from Google Sheet or generate CSV from loaded data
-            // For a simple solution, you could just redirect to the Google Sheet directly
-            // or implement more complex CSV generation here.
-            alert('ฟังก์ชัน Export ผลโหวตจะนำคุณไปยัง Google Sheet หรือสร้างไฟล์ CSV.');
-            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${getGid(VOTES_SHEET_NAME)}`, '_blank');
+            if (!SPREADSHEET_ID || !VOTES_GID) {
+                alert('โปรดระบุ SPREADSHEET_ID และ VOTES_GID ในโค้ด admin.html');
+                return;
+            }
+            // This will export the 'Votes' sheet which contains the chosen design.
+            // You might want a more sophisticated export that summarizes results if needed.
+            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${VOTES_GID}`, '_blank');
         }
 
         function exportVoters() {
-            alert('ฟังก์ชัน Export ข้อมูลผู้โหวตจะนำคุณไปยัง Google Sheet หรือสร้างไฟล์ CSV.');
-            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${getGid(VOTES_SHEET_NAME)}`, '_blank');
+            if (!SPREADSHEET_ID || !VOTES_GID) {
+                alert('โปรดระบุ SPREADSHEET_ID และ VOTES_GID ในโค้ด admin.html');
+                return;
+            }
+            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${VOTES_GID}`, '_blank');
         }
 
-        // Helper to get GID of a sheet (not directly available in Apps Script client-side)
-        // This is a simplification. A robust solution would fetch GIDs from Apps Script.
-        function getGid(sheetName) {
-            // This is a placeholder. You'd need to modify your Apps Script
-            // to return the GID mapping, or hardcode it if it doesn't change.
-            // For now, it exports the 'Votes' sheet as it contains voter data.
-            return '0'; // Default GID for the first sheet (usually 0), assuming 'Votes' is first
+        // --- Helper for displaying messages ---
+        function displayMessage(element, msg, type) {
+            element.textContent = msg;
+            element.className = `message ${type}`;
+            setTimeout(() => {
+                element.textContent = '';
+                element.className = 'message';
+            }, 5000); // Clear message after 5 seconds
         }
     </script>
 </body>

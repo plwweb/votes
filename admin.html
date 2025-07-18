@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - โหวตเลือกแบบเสื้อ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #fce4ec; /* Light Pink */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1, h2 {
+            color: #4a90e2; /* Blue */
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="datetime-local"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ff69b4; /* Hot Pink */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e05c9e;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .message.success { background-color: #d4edda; color: #155724; }
+        .message.error { background-color: #f8d7da; color: #721c24; }
+
+        #adminContent {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: left;
+        }
+        .section-title {
+            color: #4a90e2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #e3f2fd; /* Lighter Blue */
+            color: #4a90e2;
+        }
+        .action-buttons button {
+            padding: 8px 15px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .export-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .export-buttons button {
+            background-color: #4CAF50;
+            margin: 0 10px;
+        }
+        .export-buttons button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
+
+        <div id="loginForm">
+            <h2>เข้าสู่ระบบ</h2>
+            <div class="form-group">
+                <label for="adminUsername">Username:</label>
+                <input type="text" id="adminUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" required>
+            </div>
+            <button id="loginBtn">เข้าสู่ระบบ</button>
+            <div id="loginMessage" class="message"></div>
+        </div>
+
+        <div id="adminContent" style="display: none;">
+            <h2>ยินดีต้อนรับ, Admin!</h2>
+
+            <h3 class="section-title">ตั้งเวลาเปิด-ปิดการโหวต</h3>
+            <div class="form-group">
+                <label for="openTime">เวลาเปิดโหวต:</label>
+                <input type="datetime-local" id="openTime">
+            </div>
+            <div class="form-group">
+                <label for="closeTime">เวลาปิดโหวต:</label>
+                <input type="datetime-local" id="closeTime">
+            </div>
+            <button id="setVotingTimeBtn">ตั้งเวลาโหวต</button>
+            <div id="setTimeMessage" class="message"></div>
+
+            <h3 class="section-title">จัดการแบบเสื้อ</h3>
+            <button>เพิ่มแบบเสื้อใหม่</button>
+            <p>(ต้องพัฒนาฟังก์ชันนี้ใน Apps Script และในหน้านี้)</p>
+            <h3 class="section-title">สรุปผลโหวต</h3>
+            <div id="adminResultsDisplay">
+                <p>กำลังโหลดผลโหวต...</p>
+            </div>
+            <div class="export-buttons">
+                <button onclick="exportResults()">Export ผลโหวต (CSV)</button>
+            </div>
+
+            <h3 class="section-title">ข้อมูลผู้โหวตทั้งหมด</h3>
+            <div id="votersData">
+                <p>กำลังโหลดข้อมูลผู้โหวต...</p>
+            </div>
+            <div class="export-buttons">
+                <button onclick="exportVoters()">Export ข้อมูลผู้โหวต (CSV)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // แทนที่ด้วย Web App URL ที่คุณได้จาก Google Apps Script
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZP1UpF43mz-20uLT9nQO_bJ1kyj1dFxwSwKMghPGEYro9dmKDwp2Xak2w4rktTd0/exec';
+
+        const adminUsernameInput = document.getElementById('adminUsername');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginMessageDiv = document.getElementById('loginMessage');
+        const adminContentDiv = document.getElementById('adminContent');
+        const setVotingTimeBtn = document.getElementById('setVotingTimeBtn');
+        const openTimeInput = document.getElementById('openTime');
+        const closeTimeInput = document.getElementById('closeTime');
+        const setTimeMessageDiv = document.getElementById('setTimeMessage');
+        const adminResultsDisplay = document.getElementById('adminResultsDisplay');
+        const votersDataDisplay = document.getElementById('votersData');
+
+        // --- Event Listeners ---
+        loginBtn.addEventListener('click', adminLogin);
+        setVotingTimeBtn.addEventListener('click', setVotingTime);
+
+        // --- Functions ---
+
+        async function adminLogin() {
+            loginMessageDiv.innerHTML = '';
+            const username = adminUsernameInput.value;
+            const password = adminPasswordInput.value;
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=adminLogin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    loginMessageDiv.classList.add('success');
+                    loginMessageDiv.classList.remove('error');
+                    loginMessageDiv.textContent = data.message;
+                    adminContentDiv.style.display = 'block';
+                    document.getElementById('loginForm').style.display = 'none';
+                    loadAdminData(); // Load all admin data after login
+                } else {
+                    loginMessageDiv.classList.add('error');
+                    loginMessageDiv.classList.remove('success');
+                    loginMessageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                console.error('Error during admin login:', error);
+                loginMessageDiv.classList.add('error');
+                loginMessageDiv.classList.remove('success');
+                loginMessageDiv.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message;
+            }
+        }
+
+        async function loadAdminData() {
+            // Load current voting times
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getVotingStatus`);
+                const data = await response.json();
+                if (data.status === 'success' && data.votingStatus) {
+                    if (data.votingStatus.openTime) {
+                        openTimeInput.value = data.votingStatus.openTime.substring(0, 16); // Format for datetime-local
+                    }
+                    if (data.votingStatus.closeTime) {
+                        closeTimeInput.value = data.votingStatus.closeTime.substring(0, 16); // Format for datetime-local
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading voting times:', error);
+            }
+
+            loadAdminResults();
+            loadVotersData(); // Placeholder for loading voter data
+        }
+
+        async function setVotingTime() {
+            setTimeMessageDiv.innerHTML = '';
+            const openTime = openTimeInput.value;
+            const closeTime = closeTimeInput.value;
+
+            if (!openTime || !closeTime) {
+                setTimeMessageDiv.classList.add('error');
+                setTimeMessageDiv.textContent = 'กรุณากรอกเวลาเปิดและปิดโหวตให้ครบถ้วน';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=setVotingTime`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ openTime: new Date(openTime).toISOString(), closeTime: new Date(closeTime).toISOString() })
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    setTimeMessageDiv.classList.add('success');
+                    setTimeMessageDiv.classList.remove('error');
+                    setTimeMessageDiv.textContent = data.message;
+                    // Optionally, re-check voting status on the main page after setting
+                } else {
+                    setTimeMessageDiv.classList.add('error');
+                    setTimeMessageDiv.classList.remove('success');
+                    setTimeMessageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                console.error('Error setting voting time:', error);
+                setTimeMessageDiv.classList.add('error');
+                setTimeMessageDiv.classList.remove('success');
+                setTimeMessageDiv.textContent = 'เกิดข้อผิดพลาดในการตั้งเวลาโหวต: ' + error.message;
+            }
+        }
+
+        async function loadAdminResults() {
+            adminResultsDisplay.innerHTML = '<p>กำลังโหลดผลโหวต...</p>';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getResults`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderAdminResults(data.results);
+                } else {
+                    adminResultsDisplay.innerHTML = `<p class="message error">ไม่สามารถโหลดผลโหวตได้: ${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error loading admin results:', error);
+                adminResultsDisplay.innerHTML = `<p class="message error">เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}</p>`;
+            }
+        }
+
+        function renderAdminResults(results) {
+            if (results.length === 0) {
+                adminResultsDisplay.innerHTML = '<p>ยังไม่มีผลโหวต</p>';
+                return;
+            }
+
+            let tableHTML = '<table><thead><tr><th>แบบเสื้อ</th><th>คะแนนโหวต</th><th>เปอร์เซ็นต์</th></tr></thead><tbody>';
+            const totalVotes = results.reduce((sum, item) => sum + item.votes, 0);
+
+            results.forEach(item => {
+                const percentage = totalVotes === 0 ? 0 : ((item.votes / totalVotes) * 100).toFixed(2);
+                tableHTML += `
+                    <tr>
+                        <td>${item.designName}</td>
+                        <td>${item.votes}</td>
+                        <td>${percentage}%</td>
+                    </tr>
+                `;
+            });
+            tableHTML += '</tbody></table>';
+            adminResultsDisplay.innerHTML = tableHTML;
+        }
+
+        // --- Placeholder functions for voter data and export ---
+        async function loadVotersData() {
+            votersDataDisplay.innerHTML = '<p>ฟังก์ชันนี้ยังต้องพัฒนาใน Google Apps Script เพื่อดึงข้อมูลผู้โหวตทั้งหมด...</p>';
+            // Example: You'd add a new action in Apps Script like 'getVoters'
+            // and fetch data from the 'Votes' sheet, then render it in a table here.
+        }
+
+        function exportResults() {
+            // Logic to trigger export from Google Sheet or generate CSV from loaded data
+            // For a simple solution, you could just redirect to the Google Sheet directly
+            // or implement more complex CSV generation here.
+            alert('ฟังก์ชัน Export ผลโหวตจะนำคุณไปยัง Google Sheet หรือสร้างไฟล์ CSV.');
+            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${getGid(VOTES_SHEET_NAME)}`, '_blank');
+        }
+
+        function exportVoters() {
+            alert('ฟังก์ชัน Export ข้อมูลผู้โหวตจะนำคุณไปยัง Google Sheet หรือสร้างไฟล์ CSV.');
+            window.open(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${getGid(VOTES_SHEET_NAME)}`, '_blank');
+        }
+
+        // Helper to get GID of a sheet (not directly available in Apps Script client-side)
+        // This is a simplification. A robust solution would fetch GIDs from Apps Script.
+        function getGid(sheetName) {
+            // This is a placeholder. You'd need to modify your Apps Script
+            // to return the GID mapping, or hardcode it if it doesn't change.
+            // For now, it exports the 'Votes' sheet as it contains voter data.
+            return '0'; // Default GID for the first sheet (usually 0), assuming 'Votes' is first
+        }
+    </script>
+</body>
+</html>

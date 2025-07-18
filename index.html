@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โหวตเลือกแบบเสื้อกีฬาสี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #fce4ec; /* Light Pink */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1, h2 {
+            color: #4a90e2; /* Blue */
+            margin-bottom: 20px;
+        }
+        .voting-status {
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .voting-status.open { background-color: #28a745; } /* Green for open */
+        .voting-status.closed { background-color: #dc3545; } /* Red for closed */
+
+        .form-section {
+            background-color: #e3f2fd; /* Lighter Blue */
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .design-card {
+            background-color: #f0f8ff; /* Even Lighter Blue */
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .design-card:hover {
+            border-color: #4a90e2;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .design-card.selected {
+            border-color: #ff69b4; /* Hot Pink */
+            box-shadow: 0 0 0 3px #ff69b4, 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .design-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .design-card h3 {
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+        .design-card .logo-placeholder {
+            width: 80px; /* Example size */
+            height: 80px; /* Example size */
+            border: 2px dashed #bbb;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 10px;
+            color: #888;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        button {
+            background-color: #ff69b4; /* Hot Pink */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e05c9e;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .message.success { background-color: #d4edda; color: #155724; }
+        .message.error { background-color: #f8d7da; color: #721c24; }
+
+        .results-section {
+            margin-top: 40px;
+            border-top: 2px solid #eee;
+            padding-top: 30px;
+        }
+        .result-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: left;
+            padding: 10px;
+            background-color: #e3f2fd; /* Lighter Blue */
+            border-radius: 8px;
+        }
+        .result-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        .result-info {
+            flex-grow: 1;
+        }
+        .result-info h3 {
+            margin: 0 0 5px 0;
+            color: #4a90e2;
+        }
+        .progress-bar-container {
+            background-color: #ccc;
+            border-radius: 5px;
+            height: 20px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #ff69b4; /* Hot Pink */
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            text-align: right;
+            color: white;
+            font-size: 0.8em;
+            line-height: 20px;
+            padding-right: 5px;
+            box-sizing: border-box;
+        }
+        .progress-bar span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .design-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ระบบโหวตเลือกแบบเสื้อกีฬาสี</h1>
+
+        <div id="votingStatus" class="voting-status"></div>
+
+        <div id="voteSection">
+            <div class="form-section">
+                <h2>ข้อมูลผู้โหวต</h2>
+                <div class="form-group">
+                    <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
+                    <input type="text" id="studentId" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">ชื่อ-นามสกุล:</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="grade">ระดับชั้น:</label>
+                    <select id="grade" required>
+                        <option value="">เลือกระดับชั้น</option>
+                        <option value="ม.1">ม.1</option>
+                        <option value="ม.2">ม.2</option>
+                        <option value="ม.3">ม.3</option>
+                        <option value="ม.4">ม.4</option>
+                        <option value="ม.5">ม.5</option>
+                        <option value="ม.6">ม.6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="room">ห้อง:</label>
+                    <select id="room" required disabled>
+                        <option value="">เลือกห้อง</option>
+                    </select>
+                </div>
+            </div>
+
+            <h2>เลือกแบบเสื้อที่คุณชื่นชอบ</h2>
+            <div id="designGrid" class="design-grid">
+                <p>กำลังโหลดแบบเสื้อ...</p>
+            </div>
+
+            <button id="submitVoteBtn" disabled>ส่งผลโหวต</button>
+            <div id="message" class="message"></div>
+        </div>
+
+        <div class="results-section">
+            <h2>ผลโหวตเรียลไทม์</h2>
+            <div id="resultsDisplay">
+                <p>กำลังโหลดผลโหวต...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // แทนที่ด้วย Web App URL ที่คุณได้จาก Google Apps Script
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyZP1UpF43mz-20uLT9nQO_bJ1kyj1dFxwSwKMghPGEYro9dmKDwp2Xak2w4rktTd0/exec'; 
+
+        let selectedDesign = null;
+        let designsData = []; // เก็บข้อมูลแบบเสื้อที่โหลดมา
+
+        const studentIdInput = document.getElementById('studentId');
+        const fullNameInput = document.getElementById('fullName');
+        const gradeSelect = document.getElementById('grade');
+        const roomSelect = document.getElementById('room');
+        const designGrid = document.getElementById('designGrid');
+        const submitVoteBtn = document.getElementById('submitVoteBtn');
+        const messageDiv = document.getElementById('message');
+        const resultsDisplay = document.getElementById('resultsDisplay');
+        const votingStatusDiv = document.getElementById('votingStatus');
+        const voteSection = document.getElementById('voteSection');
+
+        const rooms = {
+            'ม.1': ['1/1', '1/2', '1/3'],
+            'ม.2': ['2/1', '2/2', '2/3', '2/4'],
+            'ม.3': ['3/1', '3/2', '3/3'],
+            'ม.4': ['4/1', '4/2', '4/3'],
+            'ม.5': ['5/1', '5/2', '5/3'],
+            'ม.6': ['6/1', '6/2', '6/3']
+        };
+
+        // --- Event Listeners ---
+        gradeSelect.addEventListener('change', populateRooms);
+        studentIdInput.addEventListener('input', validateForm);
+        fullNameInput.addEventListener('input', validateForm);
+        gradeSelect.addEventListener('change', validateForm);
+        roomSelect.addEventListener('change', validateForm);
+        submitVoteBtn.addEventListener('click', submitVote);
+
+        // --- Functions ---
+
+        async function init() {
+            await checkVotingStatus();
+            await loadDesigns();
+            await loadResults();
+            setInterval(loadResults, 5000); // อัปเดตผลโหวตทุก 5 วินาที
+        }
+
+        async function checkVotingStatus() {
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getVotingStatus`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const status = data.votingStatus;
+                    votingStatusDiv.textContent = status.message;
+                    if (status.isOpen) {
+                        votingStatusDiv.classList.add('open');
+                        votingStatusDiv.classList.remove('closed');
+                        voteSection.style.display = 'block'; // แสดงส่วนโหวต
+                    } else {
+                        votingStatusDiv.classList.add('closed');
+                        votingStatusDiv.classList.remove('open');
+                        voteSection.style.display = 'none'; // ซ่อนส่วนโหวต
+                    }
+                } else {
+                    displayMessage('ไม่สามารถตรวจสอบสถานะการโหวตได้: ' + data.message, 'error');
+                    voteSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error checking voting status:', error);
+                displayMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, 'error');
+                voteSection.style.display = 'none';
+            }
+        }
+
+        function populateRooms() {
+            const selectedGrade = gradeSelect.value;
+            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>';
+            roomSelect.disabled = true;
+
+            if (selectedGrade && rooms[selectedGrade]) {
+                rooms[selectedGrade].forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room;
+                    option.textContent = room;
+                    roomSelect.appendChild(option);
+                });
+                roomSelect.disabled = false;
+            }
+            validateForm();
+        }
+
+        async function loadDesigns() {
+            designGrid.innerHTML = '<p>กำลังโหลดแบบเสื้อ...</p>';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getDesigns`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    designsData = data.designs;
+                    renderDesigns(designsData);
+                } else {
+                    designGrid.innerHTML = `<p class="message error">ไม่สามารถโหลดแบบเสื้อได้: ${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error loading designs:', error);
+                designGrid.innerHTML = `<p class="message error">เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}</p>`;
+            }
+        }
+
+        function renderDesigns(designs) {
+            designGrid.innerHTML = ''; // Clear existing content
+            if (designs.length === 0) {
+                designGrid.innerHTML = '<p>ยังไม่มีแบบเสื้อให้เลือก</p>';
+                return;
+            }
+
+            designs.forEach(design => {
+                const card = document.createElement('div');
+                card.classList.add('design-card');
+                card.dataset.designId = design.DesignID;
+                card.innerHTML = `
+                    <img src="${design.ImageURL || 'https://via.placeholder.com/250x150?text=No+Image'}" alt="${design.DesignName}">
+                    <h3>${design.DesignName}</h3>
+                    <div class="logo-placeholder">โลโก้ (ตำแหน่ง: ${design.LogoPosition || 'ไม่ระบุ'})</div>
+                `;
+                card.addEventListener('click', () => selectDesign(design.DesignID));
+                designGrid.appendChild(card);
+            });
+            validateForm();
+        }
+
+        function selectDesign(designId) {
+            // Remove 'selected' class from previously selected card
+            if (selectedDesign) {
+                const prevSelectedCard = document.querySelector(`.design-card[data-design-id="${selectedDesign}"]`);
+                if (prevSelectedCard) {
+                    prevSelectedCard.classList.remove('selected');
+                }
+            }
+            // Add 'selected' class to the new card
+            const newSelectedCard = document.querySelector(`.design-card[data-design-id="${designId}"]`);
+            if (newSelectedCard) {
+                newSelectedCard.classList.add('selected');
+            }
+            selectedDesign = designId;
+            validateForm();
+        }
+
+        function validateForm() {
+            const isStudentIdValid = studentIdInput.value.length === 5 && /^\d+$/.test(studentIdInput.value);
+            const isFullNameValid = fullNameInput.value.trim() !== '';
+            const isGradeValid = gradeSelect.value !== '';
+            const isRoomValid = roomSelect.value !== '';
+            const isDesignSelected = selectedDesign !== null;
+
+            if (isStudentIdValid && isFullNameValid && isGradeValid && isRoomValid && isDesignSelected) {
+                submitVoteBtn.disabled = false;
+            } else {
+                submitVoteBtn.disabled = true;
+            }
+        }
+
+        async function submitVote() {
+            if (!submitVoteBtn.disabled) {
+                submitVoteBtn.disabled = true;
+                messageDiv.innerHTML = ''; // Clear previous messages
+
+                const voteData = {
+                    studentId: studentIdInput.value,
+                    name: fullNameInput.value,
+                    grade: gradeSelect.value,
+                    room: roomSelect.value,
+                    chosenDesign: selectedDesign
+                };
+
+                try {
+                    const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=submitVote`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(voteData)
+                    });
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        displayMessage('โหวตสำเร็จ! ขอบคุณที่เข้าร่วม', 'success');
+                        // Clear form and reset selections
+                        studentIdInput.value = '';
+                        fullNameInput.value = '';
+                        gradeSelect.value = '';
+                        populateRooms(); // Reset rooms dropdown
+                        
+                        if (selectedDesign) {
+                            const prevSelectedCard = document.querySelector(`.design-card[data-design-id="${selectedDesign}"]`);
+                            if (prevSelectedCard) {
+                                prevSelectedCard.classList.remove('selected');
+                            }
+                        }
+                        selectedDesign = null;
+                        validateForm();
+                        loadResults(); // อัปเดตผลทันทีหลังโหวต
+                    } else {
+                        displayMessage(`โหวตไม่สำเร็จ: ${data.message}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error submitting vote:', error);
+                    displayMessage('เกิดข้อผิดพลาดในการส่งผลโหวต: ' + error.message, 'error');
+                } finally {
+                    submitVoteBtn.disabled = false;
+                }
+            }
+        }
+
+        async function loadResults() {
+            resultsDisplay.innerHTML = '<p>กำลังโหลดผลโหวต...</p>';
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=getResults`);
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderResults(data.results);
+                } else {
+                    resultsDisplay.innerHTML = `<p class="message error">ไม่สามารถโหลดผลโหวตได้: ${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error loading results:', error);
+                resultsDisplay.innerHTML = `<p class="message error">เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}</p>`;
+            }
+        }
+
+        function renderResults(results) {
+            resultsDisplay.innerHTML = '';
+            if (results.length === 0) {
+                resultsDisplay.innerHTML = '<p>ยังไม่มีผลโหวต</p>';
+                return;
+            }
+
+            const totalVotes = results.reduce((sum, item) => sum + item.votes, 0);
+
+            results.forEach(item => {
+                const percentage = totalVotes === 0 ? 0 : ((item.votes / totalVotes) * 100).toFixed(1);
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.innerHTML = `
+                    <img src="${item.imageURL || 'https://via.placeholder.com/80?text=No+Image'}" alt="${item.designName}">
+                    <div class="result-info">
+                        <h3>${item.designName}</h3>
+                        <p>คะแนนโหวต: ${item.votes}</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${percentage}%">
+                                <span>${percentage}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultsDisplay.appendChild(resultItem);
+            });
+        }
+
+        function displayMessage(msg, type) {
+            messageDiv.textContent = msg;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = 'message';
+            }, 5000); // Clear message after 5 seconds
+        }
+
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>

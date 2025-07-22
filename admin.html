@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <header>
-            <img src="https://img2.pic.in.th/pic/IMG_6029f00c26a177e405f6.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
+            <img src="logo.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
         </header>
 
         <div id="login-section">
@@ -70,8 +70,7 @@
                                 <th>Design ID</th>
                                 <th>Design Name</th>
                                 <th>Vote Count</th>
-                                <th>Image</th>
-                            </tr>
+                                <th>Image</th> </tr>
                         </thead>
                         <tbody>
                             </tbody>
@@ -99,11 +98,17 @@
         </div>
     </div>
 
+    <footer class="footer">
+        <p>&copy;2025 Peeranart</p>
+    </footer>
+
     <script>
-        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.6 ***
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxlYGtSMvpTmcyqTCUYOGXFw0wf-3XV9bzrm8rD7nkT6IRLDQadu5HHWuGJ7N0BgZw/exec'; 
 
-        // --- Login Elements ---
+        // --- อ้างอิง Elements ต่างๆ ใน HTML ---
+
+        // Login elements
         const loginSection = document.getElementById('login-section');
         const adminUsernameInput = document.getElementById('adminUsername');
         const adminPasswordInput = document.getElementById('adminPassword');
@@ -111,33 +116,33 @@
         const loginMessage = document.getElementById('login-message');
         const adminPanel = document.getElementById('admin-panel');
 
-        // --- Design Management Elements ---
+        // Design management elements
         const newDesignIdInput = document.getElementById('newDesignId');
         const newDesignNameInput = document.getElementById('newDesignName');
         const newDesignImageUrlInput = document.getElementById('newDesignImageUrl');
         const addDesignButton = document.getElementById('addDesignButton');
         const addDesignMessage = document.getElementById('add-design-message');
 
-        // --- Voting Time Management Elements ---
+        // Voting time management elements
         const voteStartTimeInput = document.getElementById('voteStartTime');
         const voteEndTimeInput = document.getElementById('voteEndTime');
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
         const setTimeMessage = document.getElementById('set-time-message');
         const currentVoteTimeDisplay = document.getElementById('current-vote-time');
 
-        // --- Admin Tools Elements ---
+        // Admin Tools elements
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
         const adminActionMessage = document.getElementById('admin-action-message');
 
-        // --- Data Display Elements ---
+        // Data display elements
         const refreshDataButton = document.getElementById('refreshDataButton');
         const adminVoteResultsTableBody = document.querySelector('#adminVoteResultsTable tbody');
         const adminUsersTableBody = document.querySelector('#adminUsersTable tbody');
 
-        // --- Functions ---
+        // --- ฟังก์ชันช่วยเหลือต่างๆ ---
 
-        // ฟังก์ชันสำหรับเรียก API (เหมือนกับใน index.html)
+        // ฟังก์ชันสำหรับเรียกใช้งาน Apps Script (Backend)
         async function callApi(action, data = {}) {
             try {
                 const response = await fetch(WEB_APP_URL, {
@@ -158,7 +163,9 @@
             }
         }
 
-        // --- Event Listeners ---
+        // --- Event Listeners (เมื่อผู้ดูแลทำอะไรบางอย่าง) ---
+
+        // เข้าสู่ระบบ Admin
         loginButton.addEventListener('click', async () => {
             const username = adminUsernameInput.value;
             const password = adminPasswordInput.value;
@@ -171,10 +178,10 @@
             if (result.status === 'success') {
                 loginMessage.textContent = result.message;
                 loginMessage.className = 'message success';
-                loginSection.style.display = 'none';
-                adminPanel.style.display = 'block';
-                loadAdminData(); // Load data on successful login
-                loadVoteTime(); // Load current vote time
+                loginSection.style.display = 'none'; // ซ่อนส่วน Login
+                adminPanel.style.display = 'block'; // แสดงแผง Admin
+                loadAdminData(); // โหลดข้อมูลเมื่อเข้าสู่ระบบสำเร็จ
+                loadVoteTime(); // โหลดเวลาโหวตปัจจุบัน
             } else {
                 loginMessage.textContent = result.message;
                 loginMessage.className = 'message error';
@@ -182,6 +189,7 @@
             loginButton.disabled = false;
         });
 
+        // เพิ่มแบบเสื้อใหม่
         addDesignButton.addEventListener('click', async () => {
             const designId = newDesignIdInput.value.trim().toUpperCase();
             const designName = newDesignNameInput.value.trim();
@@ -204,8 +212,8 @@
                 addDesignMessage.className = 'message success';
                 newDesignIdInput.value = '';
                 newDesignNameInput.value = '';
-                newDesignImageUrlInput.value = '';
-                loadAdminData(); // Reload tables
+                newDesignImageUrlInput.value = ''; // ล้างช่อง URL รูปภาพ
+                loadAdminData(); // รีโหลดข้อมูลตารางเมื่อเพิ่มสำเร็จ
             } else {
                 addDesignMessage.textContent = result.message;
                 addDesignMessage.className = 'message error';
@@ -213,6 +221,7 @@
             addDesignButton.disabled = false;
         });
 
+        // ตั้งเวลาเปิด-ปิดการโหวต
         setVoteTimeButton.addEventListener('click', async () => {
             const startTime = voteStartTimeInput.value;
             const endTime = voteEndTimeInput.value;
@@ -232,7 +241,7 @@
             if (result.status === 'success') {
                 setTimeMessage.textContent = result.message;
                 setTimeMessage.className = 'message success';
-                loadVoteTime();
+                loadVoteTime(); // โหลดเวลาโหวตที่ตั้งใหม่
             } else {
                 setTimeMessage.textContent = result.message;
                 setTimeMessage.className = 'message error';
@@ -240,6 +249,7 @@
             setVoteTimeButton.disabled = false;
         });
 
+        // รีเซ็ตคะแนนโหวตทั้งหมด
         resetVotesButton.addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ที่ต้องการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) {
                 return;
@@ -253,7 +263,7 @@
             if (result.status === 'success') {
                 adminActionMessage.textContent = result.message;
                 adminActionMessage.className = 'message success';
-                loadAdminData();
+                loadAdminData(); // รีโหลดข้อมูล
             } else {
                 adminActionMessage.textContent = result.message;
                 adminActionMessage.className = 'message error';
@@ -262,6 +272,7 @@
             clearUsersButton.disabled = false;
         });
 
+        // ล้างข้อมูลผู้ใช้งานทั้งหมด
         clearUsersButton.addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ที่ต้องการล้างข้อมูลผู้ใช้งานทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) {
                 return;
@@ -275,7 +286,7 @@
             if (result.status === 'success') {
                 adminActionMessage.textContent = result.message;
                 adminActionMessage.className = 'message success';
-                loadAdminData();
+                loadAdminData(); // รีโหลดข้อมูล
             } else {
                 adminActionMessage.textContent = result.message;
                 adminActionMessage.className = 'message error';
@@ -284,18 +295,22 @@
             clearUsersButton.disabled = false;
         });
 
+        // รีเฟรชข้อมูลในตาราง
         refreshDataButton.addEventListener('click', loadAdminData);
 
-        // --- Data Loading Functions ---
+        // --- Data Loading Functions (สำหรับโหลดและแสดงข้อมูลในหน้า Admin) ---
+
+        // โหลดเวลาโหวตปัจจุบัน
         async function loadVoteTime() {
             const result = await callApi('getVoteTime');
             if (result.status === 'success') {
                 if (result.startTime && result.endTime) {
+                    // แปลงเวลาให้เป็นรูปแบบที่อ่านง่ายสำหรับคนไทย
                     const startDisp = new Date(result.startTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                     const endDisp = new Date(result.endTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                     currentVoteTimeDisplay.textContent = `เวลาโหวตปัจจุบัน: เริ่ม ${startDisp} - สิ้นสุด ${endDisp}`;
 
-                    // Set input values for convenience
+                    // กำหนดค่าใน input fields เพื่อความสะดวกในการแก้ไข
                     voteStartTimeInput.value = result.startTime;
                     voteEndTimeInput.value = result.endTime;
                 } else {
@@ -308,18 +323,20 @@
             }
         }
 
+        // โหลดข้อมูลผู้ดูแลระบบทั้งหมด (ผลโหวตและข้อมูลผู้ใช้งาน)
         async function loadAdminData() {
             const result = await callApi('getAdminData');
             if (result.status === 'success') {
-                displayAdminVoteResults(result.votes);
-                displayAdminUsers(result.users);
+                displayAdminVoteResults(result.votes); // แสดงผลโหวต
+                displayAdminUsers(result.users); // แสดงข้อมูลผู้ใช้
             } else {
                 alert('ไม่สามารถโหลดข้อมูลผู้ดูแลได้: ' + result.message);
             }
         }
 
+        // แสดงผลโหวตในตาราง Admin
         function displayAdminVoteResults(votes) {
-            adminVoteResultsTableBody.innerHTML = '';
+            adminVoteResultsTableBody.innerHTML = ''; // ล้างของเก่า
             votes.forEach(row => {
                 const tr = document.createElement('tr');
                 // row[3] คือ ImageURL
@@ -334,8 +351,9 @@
             });
         }
 
+        // แสดงข้อมูลผู้ใช้งานในตาราง Admin
         function displayAdminUsers(users) {
-            adminUsersTableBody.innerHTML = '';
+            adminUsersTableBody.innerHTML = ''; // ล้างของเก่า
             users.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `

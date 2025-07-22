@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบโหวตเสื้อกีฬาสี</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>โหวตเลือกแบบเสื้อกีฬาสี</h1>
+        <header>
+            <img src="logo.png" alt="โลโก้โรงเรียน" class="logo"> <h1>โหวตเลือกแบบเสื้อกีฬาสี</h1>
+        </header>
+
         <div id="voting-status" class="status-message"></div>
 
         <div id="registration-form-section" class="form-section">
@@ -36,9 +40,10 @@
                     <option value="">เลือกห้อง</option>
                 </select>
 
-                <label for="voteChoice">เลือกแบบเสื้อ:</label>
+                <label>เลือกแบบเสื้อ:</label>
                 <div id="design-options" class="design-options">
-                    </div>
+                    <p>กำลังโหลดแบบเสื้อ...</p>
+                </div>
                 
                 <button type="submit" id="submitVoteButton">ยืนยันการโหวต</button>
             </form>
@@ -48,14 +53,16 @@
         <div id="results-section">
             <h2>ผลการโหวตแบบเรียลไทม์</h2>
             <div id="vote-results" class="vote-results">
-                </div>
+                <p>กำลังโหลดผลโหวต...</p>
+            </div>
         </div>
     </div>
 
     <script>
         // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw_TaKBn19ntd_qlXxCBEcExX3s7NTzKUjYSh4P07SOe6kCWtQqlArTkz5aOmTlFtC0/exec'; 
+        const WEB_APP_URL = 'YOUR_WEB_APP_URL_HERE'; 
 
+        // --- Elements ---
         const gradeSelect = document.getElementById('grade');
         const roomSelect = document.getElementById('room');
         const voteForm = document.getElementById('voteForm');
@@ -66,7 +73,7 @@
         const registrationFormSection = document.getElementById('registration-form-section');
         const submitVoteButton = document.getElementById('submitVoteButton');
 
-        // ข้อมูลห้องเรียนตามระดับชั้น
+        // --- Data ---
         const roomsByGrade = {
             'ม.1': ['1', '2', '3'],
             'ม.2': ['1', '2', '3', '4'],
@@ -76,10 +83,10 @@
             'ม.6': ['1', '2', '3']
         };
 
-        // อัปเดตตัวเลือกห้องเมื่อเลือกระดับชั้น
+        // --- Event Listeners ---
         gradeSelect.addEventListener('change', () => {
             const selectedGrade = gradeSelect.value;
-            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>'; // Clear existing options
+            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>';
             if (selectedGrade && roomsByGrade[selectedGrade]) {
                 roomsByGrade[selectedGrade].forEach(room => {
                     const option = document.createElement('option');
@@ -90,13 +97,62 @@
             }
         });
 
-        // ฟังก์ชันสำหรับเรียก API
+        voteForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            formMessage.textContent = 'กำลังส่งข้อมูล...';
+            formMessage.className = 'message loading';
+            submitVoteButton.disabled = true;
+
+            const studentId = document.getElementById('studentId').value;
+            const fullName = document.getElementById('fullName').value;
+            const grade = document.getElementById('grade').value;
+            const room = document.getElementById('room').value;
+            const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');
+
+            if (!voteChoiceElement) {
+                formMessage.textContent = 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต';
+                formMessage.className = 'message error';
+                submitVoteButton.disabled = false;
+                return;
+            }
+
+            const data = {
+                studentId: studentId,
+                fullName: fullName,
+                grade: grade,
+                room: room,
+                voteChoice: voteChoiceElement.value
+            };
+
+            const result = await callApi('registerAndVote', data);
+
+            if (result.status === 'success') {
+                formMessage.textContent = result.message;
+                formMessage.className = 'message success';
+                voteForm.reset();
+                gradeSelect.dispatchEvent(new Event('change')); // Reset room dropdown
+                updateSelectedDesignCard(null); // Clear selected visual
+                loadInitialData(); // Reload results
+            } else {
+                formMessage.textContent = result.message;
+                formMessage.className = 'message error';
+            }
+            submitVoteButton.disabled = false;
+        });
+
+        designOptionsDiv.addEventListener('change', (event) => {
+            if (event.target.name === 'voteChoice' && event.target.type === 'radio') {
+                updateSelectedDesignCard(event.target.value);
+            }
+        });
+
+        // --- Functions ---
         async function callApi(action, data = {}) {
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain;charset=utf-8', // Apps Script ต้องการ Content-Type นี้
+                        'Content-Type': 'text/plain;charset=utf-8',
                     },
                     body: JSON.stringify({ action, ...data }),
                 });
@@ -111,47 +167,60 @@
             }
         }
 
-        // โหลดตัวเลือกแบบเสื้อและแสดงผลโหวตเมื่อโหลดหน้า
         async function loadInitialData() {
-            const results = await callApi('getVoteResults');
-            if (results.status === 'success' && results.results) {
-                displayDesignOptions(results.results);
-                displayVoteResults(results.results);
+            // Load design options and initial vote results
+            const resultsData = await callApi('getVoteResults');
+            if (resultsData.status === 'success' && resultsData.results) {
+                displayDesignOptions(resultsData.results);
+                displayVoteResults(resultsData.results);
             } else {
-                designOptionsDiv.innerHTML = '<p>ไม่สามารถโหลดแบบเสื้อได้</p>';
-                voteResultsDiv.innerHTML = '<p>ไม่สามารถโหลดผลโหวตได้</p>';
+                designOptionsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดแบบเสื้อได้: ' + resultsData.message + '</p>';
+                voteResultsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดผลโหวตได้: ' + resultsData.message + '</p>';
             }
-            checkVotingStatus(); // ตรวจสอบสถานะการโหวตเมื่อโหลดหน้า
+            checkVotingStatus();
         }
 
-        // แสดงตัวเลือกแบบเสื้อ
         function displayDesignOptions(designs) {
             designOptionsDiv.innerHTML = '';
             if (designs.length === 0) {
-                designOptionsDiv.innerHTML = '<p>ยังไม่มีแบบเสื้อให้โหวต</p>';
+                designOptionsDiv.innerHTML = '<p class="message">ยังไม่มีแบบเสื้อให้โหวตในระบบ</p>';
                 return;
             }
             designs.forEach(design => {
                 const div = document.createElement('div');
-                div.classList.add('design-option');
+                div.classList.add('design-card');
+                div.setAttribute('data-design-id', design.designId); // Add data attribute for easier selection
                 div.innerHTML = `
                     <input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required>
-                    <label for="design-${design.designId}">แบบเสื้อ ${design.designId} - ${design.designName}</label>
+                    <label for="design-${design.designId}">
+                        <img src="${design.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}" alt="${design.designName}">
+                        แบบเสื้อ ${design.designId} - ${design.designName}
+                    </label>
                 `;
                 designOptionsDiv.appendChild(div);
             });
         }
 
-        // แสดงผลโหวต
+        function updateSelectedDesignCard(selectedDesignId) {
+            document.querySelectorAll('.design-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            if (selectedDesignId) {
+                const selectedCard = document.querySelector(`.design-card[data-design-id="${selectedDesignId}"]`);
+                if (selectedCard) {
+                    selectedCard.classList.add('selected');
+                }
+            }
+        }
+
         function displayVoteResults(results) {
             voteResultsDiv.innerHTML = '';
             if (results.length === 0) {
-                voteResultsDiv.innerHTML = '<p>ยังไม่มีผลการโหวต</p>';
+                voteResultsDiv.innerHTML = '<p class="message">ยังไม่มีผลการโหวต</p>';
                 return;
             }
 
-            // เรียงลำดับตาม VoteCount จากมากไปน้อย
-            results.sort((a, b) => b.voteCount - a.voteCount);
+            results.sort((a, b) => b.voteCount - a.voteCount); // Sort by vote count descending
 
             results.forEach(item => {
                 const div = document.createElement('div');
@@ -164,76 +233,45 @@
             });
         }
 
-        // ตรวจสอบสถานะการโหวต (เปิด/ปิด)
         async function checkVotingStatus() {
             const response = await callApi('getVoteTime');
             if (response.status === 'success') {
                 if (response.isVotingOpen) {
-                    votingStatusDiv.textContent = 'ขณะนี้เปิดให้โหวตแล้ว';
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว';
                     votingStatusDiv.className = 'status-message open';
-                    registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
+                    registrationFormSection.style.display = 'block';
                     submitVoteButton.disabled = false;
                 } else {
-                    votingStatusDiv.textContent = 'ขณะนี้ปิดรับการโหวตแล้ว';
+                    let message = '🔴 ขณะนี้ปิดรับการโหวตแล้ว';
+                    if (response.startTime && response.endTime) {
+                         const startDisp = new Date(response.startTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                         const endDisp = new Date(response.endTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                         const now = new Date();
+                         const startDateTime = new Date(response.startTime);
+                         const endDateTime = new Date(response.endTime);
+
+                         if (now < startDateTime) {
+                            message += ` (จะเปิดให้โหวตวันที่ ${startDisp})`;
+                         } else if (now > endDateTime) {
+                            message += ` (สิ้นสุดวันที่ ${endDisp})`;
+                         }
+                    }
+                    votingStatusDiv.textContent = message;
                     votingStatusDiv.className = 'status-message closed';
-                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
+                    registrationFormSection.style.display = 'none';
                     submitVoteButton.disabled = true;
                 }
             } else {
-                // หากไม่สามารถดึงเวลาได้ อาจจะถือว่าเปิดไว้ก่อน หรือแจ้งเตือน
-                votingStatusDiv.textContent = 'ไม่สามารถตรวจสอบสถานะการโหวตได้';
+                votingStatusDiv.textContent = '⚠️ ไม่สามารถตรวจสอบสถานะการโหวตได้: ' + response.message;
                 votingStatusDiv.className = 'status-message error';
-                registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
-                submitVoteButton.disabled = false; // ให้โหวตได้
+                registrationFormSection.style.display = 'block'; // Assume open if status can't be fetched
+                submitVoteButton.disabled = false;
             }
         }
 
-        // การส่งฟอร์มโหวต
-        voteForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // ป้องกันการ reload หน้า
-            formMessage.textContent = 'กำลังส่งข้อมูล...';
-            formMessage.className = 'message loading';
-            submitVoteButton.disabled = true;
-
-            const studentId = document.getElementById('studentId').value;
-            const fullName = document.getElementById('fullName').value;
-            const grade = document.getElementById('grade').value;
-            const room = document.getElementById('room').value;
-            const voteChoice = document.querySelector('input[name="voteChoice"]:checked');
-
-            if (!voteChoice) {
-                formMessage.textContent = 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต';
-                formMessage.className = 'message error';
-                submitVoteButton.disabled = false;
-                return;
-            }
-
-            const data = {
-                studentId: studentId,
-                fullName: fullName,
-                grade: grade,
-                room: room,
-                voteChoice: voteChoice.value
-            };
-
-            const result = await callApi('registerAndVote', data);
-
-            if (result.status === 'success') {
-                formMessage.textContent = result.message;
-                formMessage.className = 'message success';
-                voteForm.reset(); // ล้างฟอร์ม
-                gradeSelect.dispatchEvent(new Event('change')); // รีเซ็ตห้อง
-                loadInitialData(); // โหลดผลโหวตใหม่
-            } else {
-                formMessage.textContent = result.message;
-                formMessage.className = 'message error';
-            }
-            submitVoteButton.disabled = false;
-        });
-
-        // โหลดข้อมูลเริ่มต้นและอัปเดตผลทุก 10 วินาที
+        // --- Initial Load & Polling ---
         loadInitialData();
-        setInterval(loadInitialData, 10000); // อัปเดตทุก 10 วินาที
+        setInterval(loadInitialData, 10000); // Update every 10 seconds
     </script>
 </body>
 </html>

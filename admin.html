@@ -6,11 +6,12 @@
     <title>Admin - ระบบโหวตเสื้อกีฬาสี</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
+            <img src="logo.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
         </header>
 
         <div id="login-section">
@@ -88,7 +89,7 @@
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
                 
-                <h4>ผลโหวตปัจจุบัน</h4>
+                <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
                         <thead>
@@ -103,6 +104,11 @@
                             </tbody>
                     </table>
                 </div>
+
+                <h4>กราฟผลโหวต</h4>
+                <div style="width: 100%; height: 400px; margin: 20px auto;"> <canvas id="voteChart"></canvas>
+                </div>
+                <p id="chart-message" class="message"></p>
 
                 <h4>ข้อมูลผู้ใช้งานที่โหวตแล้ว</h4>
                 <div class="data-table-container">
@@ -138,7 +144,7 @@
     </footer>
 
     <script>
-        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz51zUGrGbdqJvPpPO8bMLqq40-fSBU_fHzZZx4xQnaJEZIUCeQOEDIRz37SxjZszw/exec'; 
 
         // --- อ้างอิง Elements ต่างๆ ใน HTML ---
@@ -184,6 +190,11 @@
         const refreshDataButton = document.getElementById('refreshDataButton');
         const adminVoteResultsTableBody = document.querySelector('#adminVoteResultsTable tbody');
         const adminUsersTableBody = document.querySelector('#adminUsersTable tbody');
+
+        // เพิ่มตัวแปรสำหรับกราฟ
+        let voteChartInstance = null; // เก็บ instance ของกราฟ Chart.js
+        const chartMessageDiv = document.getElementById('chart-message');
+
 
         // --- ฟังก์ชันช่วยเหลือต่างๆ ---
 
@@ -404,10 +415,13 @@
         async function loadAdminData() {
             const result = await callApi('getAdminData');
             if (result.status === 'success') {
-                displayAdminVoteResults(result.votes); // แสดงผลโหวต
-                displayAdminUsers(result.users); // แสดงข้อมูลผู้ใช้
+                displayAdminVoteResults(result.votes); // แสดงผลโหวตแบบตาราง
+                displayAdminUsers(result.users);     // แสดงข้อมูลผู้ใช้
+                displayVoteChart(result.votes);      // *** เรียกฟังก์ชันแสดงกราฟ ***
             } else {
                 alert('ไม่สามารถโหลดข้อมูลผู้ดูแลได้: ' + result.message);
+                chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้: ' + result.message;
+                chartMessageDiv.className = 'message error';
             }
         }
 
@@ -478,6 +492,101 @@
                     <td>${row[5]}</td>
                 `;
                 adminUsersTableBody.appendChild(tr);
+            });
+        }
+
+        // ฟังก์ชันสำหรับแสดงกราฟผลโหวต (สำหรับ Admin Panel)
+        function displayVoteChart(votes) {
+            const ctx = document.getElementById('voteChart').getContext('2d');
+
+            if (votes.length === 0) {
+                chartMessageDiv.textContent = 'ยังไม่มีข้อมูลผลโหวตสำหรับแสดงกราฟ';
+                chartMessageDiv.className = 'message info';
+                if (voteChartInstance) {
+                    voteChartInstance.destroy(); // ทำลายกราฟเก่าถ้ามี
+                    voteChartInstance = null;
+                }
+                return;
+            }
+
+            chartMessageDiv.textContent = ''; // ล้างข้อความ
+
+            // จัดการข้อมูลสำหรับ Chart.js
+            const labels = votes.map(vote => `แบบ ${vote[0]} - ${vote[1]}`); // Design ID - Design Name
+            const data = votes.map(vote => vote[2]); // Vote Count
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(255, 99, 71, 0.6)', // เพิ่มสี
+                'rgba(100, 149, 237, 0.6)'
+            ];
+            const borderColors = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 71, 1)',
+                'rgba(100, 149, 237, 1)'
+            ];
+
+            // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
+            if (voteChartInstance) {
+                voteChartInstance.destroy();
+            }
+
+            // สร้างกราฟแท่ง (Bar Chart)
+            voteChartInstance = new Chart(ctx, {
+                type: 'bar', // ชนิดกราฟ: แท่ง
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'คะแนนโหวต',
+                        data: data,
+                        backgroundColor: backgroundColors.slice(0, labels.length), // ใช้สีตามจำนวนแบบเสื้อ
+                        borderColor: borderColors.slice(0, labels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // ปรับขนาดตาม div container
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนคะแนน'
+                            },
+                            ticks: {
+                                precision: 0 // ไม่แสดงทศนิยมสำหรับคะแนนโหวต
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'แบบเสื้อ'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // ไม่แสดง legend (เพราะมี dataset เดียว)
+                        },
+                        title: {
+                            display: true,
+                            text: 'ผลโหวตแบบเสื้อกีฬาสี',
+                            font: {
+                                size: 18
+                            }
+                        }
+                    }
+                }
             });
         }
     </script>

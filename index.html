@@ -21,7 +21,7 @@
             <h2>กรอกข้อมูลเพื่อโหวต</h2>
             <form id="voteForm">
                 <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
-                <input type="number" id="studentId" name="studentId" min="10000" max="99999" required>
+                <input type="number" id="studentId" name="studentId" min="00000" max="99999" required>
 
                 <label for="fullName">ชื่อ-นามสกุล:</label>
                 <input type="text" id="fullName" name="fullName" required>
@@ -73,7 +73,7 @@
     </footer>
 
     <script>
-        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz51zUGrGbdqJvPpPO8bMLqq40-fSBU_fHzZZx4xQnaJEZIUCeQOEDIRz37SxjZszw/exec'; 
 
         // --- อ้างอิง Elements ต่างๆ ใน HTML ---
@@ -265,35 +265,44 @@
         async function checkVotingStatus() {
             const response = await callApi('getVoteTime');
             if (response.status === 'success') {
-                if (response.isVotingOpen) {
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว';
+                const now = new Date();
+                const startDateTime = response.startTime ? new Date(response.startTime) : null;
+                const endDateTime = response.endTime ? new Date(response.endTime) : null;
+
+                // ล้าง Timer เก่าก่อนเสมอ
+                clearInterval(countdownInterval);
+                countdownTimerDiv.style.display = 'none'; // ซ่อน Timer เริ่มต้น
+
+                if (startDateTime && now < startDateTime) {
+                    // กรณียังไม่ถึงเวลาเปิดโหวต: นับถอยหลังสู่เวลาเปิด
+                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว (จะเปิดให้โหวตในอีก:';
+                    votingStatusDiv.className = 'status-message closed';
+                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
+                    submitVoteButton.disabled = true;
+                    countdownTimerDiv.style.display = 'block'; // แสดง Timer
+                    startCountdown(startDateTime.getTime(), 'open'); // นับถอยหลังสู่เวลาเปิด
+                } else if (endDateTime && now > endDateTime) {
+                    // กรณีเลยเวลาปิดโหวตแล้ว
+                    let message = `🔴 ขณะนี้ปิดรับการโหวตแล้ว (สิ้นสุดวันที่ ${endDateTime.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })})`;
+                    votingStatusDiv.textContent = message;
+                    votingStatusDiv.className = 'status-message closed';
+                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
+                    submitVoteButton.disabled = true;
+                } else if (startDateTime && endDateTime && now >= startDateTime && now <= endDateTime) {
+                    // กรณีอยู่ในช่วงเปิดโหวต: นับถอยหลังสู่เวลาปิด
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (จะปิดในอีก:';
                     votingStatusDiv.className = 'status-message open';
                     registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
                     submitVoteButton.disabled = false;
-                    countdownTimerDiv.style.display = 'none'; // ซ่อน Timer
-                    clearInterval(countdownInterval); // หยุด Timer เก่าถ้ามี
+                    countdownTimerDiv.style.display = 'block'; // แสดง Timer
+                    startCountdown(endDateTime.getTime(), 'close'); // นับถอยหลังสู่เวลาปิด
                 } else {
-                    let message = '🔴 ขณะนี้ปิดรับการโหวตแล้ว';
-                    const now = new Date();
-                    const startDateTime = response.startTime ? new Date(response.startTime) : null;
-                    const endDateTime = response.endTime ? new Date(response.endTime) : null;
-
-                    if (startDateTime && now < startDateTime) { // ถ้ายังไม่ถึงเวลาเปิด
-                        message += ' (จะเปิดให้โหวตในอีก: ';
-                        votingStatusDiv.className = 'status-message closed';
-                        countdownTimerDiv.style.display = 'block'; // แสดง Timer
-                        startCountdown(startDateTime.getTime()); // เริ่มนับถอยหลังสู่เวลาเปิด
-                    } else { // ถ้าเลยเวลาปิดแล้ว
-                        if (endDateTime) {
-                            message += ` (สิ้นสุดวันที่ ${endDateTime.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })})`;
-                        }
-                        votingStatusDiv.className = 'status-message closed';
-                        countdownTimerDiv.style.display = 'none'; // ซ่อน Timer
-                        clearInterval(countdownInterval); // หยุด Timer
-                    }
-                    votingStatusDiv.textContent = message; // อัปเดตข้อความสถานะ
-                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
-                    submitVoteButton.disabled = true;
+                    // กรณีไม่มีการตั้งเวลาโหวต หรือเกิดข้อผิดพลาดในการดึงเวลา (ถือว่าเปิดตลอด)
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (ไม่มีการตั้งเวลาปิด)';
+                    votingStatusDiv.className = 'status-message open';
+                    registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
+                    submitVoteButton.disabled = false;
+                    countdownTimerDiv.style.display = 'none'; // ซ่อน Timer ถ้าไม่มีเวลาสิ้นสุด
                 }
             } else {
                 votingStatusDiv.textContent = '⚠️ ไม่สามารถตรวจสอบสถานะการโหวตได้: ' + response.message;
@@ -306,18 +315,20 @@
         }
 
         // ฟังก์ชันสำหรับเริ่มต้น/อัปเดตนับถอยหลัง
-        function startCountdown(targetTime) {
+        function startCountdown(targetTime, type) {
             clearInterval(countdownInterval); // ล้าง Interval เก่าก่อนเริ่มใหม่
             
             const updateCountdown = () => {
                 const now = new Date().getTime();
-                const distance = targetTime - now;
+                let distance = targetTime - now;
 
-                if (distance < 0) {
+                // หากเวลาเหลือแค่ไม่กี่วินาที (เช่น < 1000ms), หรือเป็นค่าติดลบ ให้หยุด Timer และรีโหลดสถานะ
+                if (distance < 1000) { // น้อยกว่า 1 วินาที
                     clearInterval(countdownInterval);
-                    countdownTimerDiv.textContent = 'การโหวตเริ่มต้นแล้ว!';
-                    countdownTimerDiv.style.display = 'none';
-                    loadInitialData(); // รีโหลดข้อมูลเมื่อ Timer หมด
+                    countdownTimerDiv.textContent = (type === 'open') ? 'การโหวตเริ่มต้นแล้ว!' : 'การโหวตสิ้นสุดลงแล้ว!';
+                    // อาจจะต้องซ่อน Timer หรือแสดงข้อความสุดท้ายแล้วซ่อน
+                    countdownTimerDiv.style.display = 'none'; // ซ่อน Timer เมื่อนับถอยหลังเสร็จ
+                    loadInitialData(); // รีโหลดข้อมูลเมื่อ Timer หมด (เพื่ออัปเดตสถานะการโหวต)
                     return;
                 }
 
@@ -326,7 +337,7 @@
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                countdownTimerDiv.innerHTML = `เหลือ: 
+                countdownTimerDiv.innerHTML = `
                     <span>${days}</span> วัน 
                     <span>${hours}</span> ชั่วโมง 
                     <span>${minutes}</span> นาที 

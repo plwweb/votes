@@ -172,6 +172,7 @@ button:disabled {
     background-color: var(--primary-pink);
     margin-right: 10px; /* เว้นระยะห่างระหว่างปุ่ม Admin */
     align-self: flex-start; /* ปุ่ม Admin ชิดซ้าย */
+    margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่างสำหรับปุ่มที่เรียงกัน */
 }
 .admin-section button:hover {
     background-color: #d1478f; /* สีชมพูเข้มขึ้นเมื่อเมาส์ชี้ */
@@ -203,6 +204,25 @@ button:disabled {
     background-color: #e2e3e5; /* สีกำลังโหลด */
     color: #383d41;
 }
+
+/* --- Countdown Timer (สำหรับแสดงเวลานับถอยหลัง) --- */
+#countdown-timer {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: var(--light-blue);
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+#countdown-timer span {
+    color: var(--primary-pink); /* สีตัวเลข */
+    font-size: 1.2em;
+    margin: 0 5px;
+}
+
 
 /* --- Design Options (การ์ดแบบเสื้อพร้อมรูปภาพ) --- */
 .design-options {
@@ -349,6 +369,23 @@ tr:hover {
     border-radius: 5px;
     border: 1px solid #eee;
 }
+
+/* Style for Delete button in Admin accounts table */
+.delete-button {
+    background-color: #f44336; /* สีแดง */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f; /* แดงเข้มขึ้น */
+}
+
 
 /* --- Footer (ส่วนท้ายของหน้าเว็บ) --- */
 .footer {

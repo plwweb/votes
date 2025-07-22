@@ -26,7 +26,7 @@
         </div>
 
         <div id="admin-panel" style="display: none;">
-            <h2>ยินดีต้อนรับผู้ดูแล!</h2>
+            <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
 
             <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
@@ -52,6 +52,32 @@
             </div>
 
             <div class="admin-section">
+                <h3>จัดการบัญชีผู้ดูแล</h3>
+                <label for="newAdminUsername">Username ใหม่:</label>
+                <input type="text" id="newAdminUsername" placeholder="username" required>
+                <label for="newAdminPassword">Password ใหม่:</label>
+                <input type="password" id="newAdminPassword" placeholder="password" required>
+                <label for="newAdminFullName">ชื่อผู้ดูแล:</label>
+                <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
+                <button id="addAdminButton">เพิ่มบัญชีผู้ดูแล</button>
+                <p id="add-admin-message" class="message"></p>
+
+                <h4>บัญชีผู้ดูแลที่มีอยู่</h4>
+                <div class="data-table-container">
+                    <table id="adminAccountsTable">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>ชื่อผู้ดูแล</th> <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-section">
                 <h3>เครื่องมือผู้ดูแล</h3>
                 <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
                 <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
@@ -70,7 +96,8 @@
                                 <th>Design ID</th>
                                 <th>Design Name</th>
                                 <th>Vote Count</th>
-                                <th>Image</th> </tr>
+                                <th>Image</th>
+                            </tr>
                         </thead>
                         <tbody>
                             </tbody>
@@ -98,7 +125,7 @@
         </div>
     </div>
 
-            <footer class="footer">
+    <footer class="footer">
         <p>
             &copy;2025 Student Council of Phu Luang Witthaya School 
             <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
@@ -110,11 +137,9 @@
         </p>
     </footer>
 
-
-
     <script>
-        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.6 ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxlYGtSMvpTmcyqTCUYOGXFw0wf-3XV9bzrm8rD7nkT6IRLDQadu5HHWuGJ7N0BgZw/exec'; 
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz51zUGrGbdqJvPpPO8bMLqq40-fSBU_fHzZZx4xQnaJEZIUCeQOEDIRz37SxjZszw/exec'; 
 
         // --- อ้างอิง Elements ต่างๆ ใน HTML ---
 
@@ -125,6 +150,7 @@
         const loginButton = document.getElementById('loginButton');
         const loginMessage = document.getElementById('login-message');
         const adminPanel = document.getElementById('admin-panel');
+        const welcomeMessage = document.getElementById('welcome-message'); // ข้อความต้อนรับผู้ดูแล
 
         // Design management elements
         const newDesignIdInput = document.getElementById('newDesignId');
@@ -139,6 +165,15 @@
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
         const setTimeMessage = document.getElementById('set-time-message');
         const currentVoteTimeDisplay = document.getElementById('current-vote-time');
+
+        // Admin Account management elements
+        const newAdminUsernameInput = document.getElementById('newAdminUsername');
+        const newAdminPasswordInput = document.getElementById('newAdminPassword');
+        const newAdminFullNameInput = document.getElementById('newAdminFullName'); // เพิ่ม input สำหรับชื่อผู้ดูแล
+        const addAdminButton = document.getElementById('addAdminButton');
+        const addAdminMessage = document.getElementById('add-admin-message');
+        const adminAccountsTableBody = document.querySelector('#adminAccountsTable tbody');
+
 
         // Admin Tools elements
         const resetVotesButton = document.getElementById('resetVotesButton');
@@ -190,8 +225,10 @@
                 loginMessage.className = 'message success';
                 loginSection.style.display = 'none'; // ซ่อนส่วน Login
                 adminPanel.style.display = 'block'; // แสดงแผง Admin
+                welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${result.fullName || username}!`; // แสดงชื่อผู้ดูแล
                 loadAdminData(); // โหลดข้อมูลเมื่อเข้าสู่ระบบสำเร็จ
                 loadVoteTime(); // โหลดเวลาโหวตปัจจุบัน
+                loadAdminAccounts(); // โหลดบัญชี Admin
             } else {
                 loginMessage.textContent = result.message;
                 loginMessage.className = 'message error';
@@ -259,6 +296,38 @@
             setVoteTimeButton.disabled = false;
         });
 
+        // เพิ่มบัญชีผู้ดูแลใหม่
+        addAdminButton.addEventListener('click', async () => {
+            const username = newAdminUsernameInput.value.trim();
+            const password = newAdminPasswordInput.value.trim();
+            const fullName = newAdminFullNameInput.value.trim(); // ดึงชื่อผู้ดูแล
+
+            if (!username || !password || !fullName) {
+                addAdminMessage.textContent = 'กรุณากรอก Username, Password และชื่อผู้ดูแล';
+                addAdminMessage.className = 'message error';
+                return;
+            }
+
+            addAdminButton.disabled = true;
+            addAdminMessage.textContent = 'กำลังเพิ่มบัญชี...';
+            addAdminMessage.className = 'message loading';
+
+            const result = await callApi('addAdminAccount', { username, password, fullName });
+
+            if (result.status === 'success') {
+                addAdminMessage.textContent = result.message;
+                addAdminMessage.className = 'message success';
+                newAdminUsernameInput.value = '';
+                newAdminPasswordInput.value = '';
+                newAdminFullNameInput.value = ''; // ล้างช่องชื่อผู้ดูแล
+                loadAdminAccounts(); // รีโหลดตารางบัญชี Admin
+            } else {
+                addAdminMessage.textContent = result.message;
+                addAdminMessage.className = 'message error';
+            }
+            addAdminButton.disabled = false;
+        });
+
         // รีเซ็ตคะแนนโหวตทั้งหมด
         resetVotesButton.addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ที่ต้องการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) {
@@ -315,12 +384,10 @@
             const result = await callApi('getVoteTime');
             if (result.status === 'success') {
                 if (result.startTime && result.endTime) {
-                    // แปลงเวลาให้เป็นรูปแบบที่อ่านง่ายสำหรับคนไทย
                     const startDisp = new Date(result.startTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                     const endDisp = new Date(result.endTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
                     currentVoteTimeDisplay.textContent = `เวลาโหวตปัจจุบัน: เริ่ม ${startDisp} - สิ้นสุด ${endDisp}`;
 
-                    // กำหนดค่าใน input fields เพื่อความสะดวกในการแก้ไข
                     voteStartTimeInput.value = result.startTime;
                     voteEndTimeInput.value = result.endTime;
                 } else {
@@ -344,12 +411,48 @@
             }
         }
 
+        // โหลดและแสดงข้อมูลบัญชี Admin
+        async function loadAdminAccounts() {
+            const result = await callApi('getAdminAccounts');
+            adminAccountsTableBody.innerHTML = ''; // ล้างของเก่า
+            if (result.status === 'success' && result.accounts.length > 0) {
+                result.accounts.forEach(account => {
+                    const tr = document.createElement('tr');
+                    // account[0] = Username, account[1] = Password, account[2] = FullName
+                    tr.innerHTML = `
+                        <td>${account[0]}</td>
+                        <td>${account[2] || 'ไม่ระบุชื่อ'}</td> <td>
+                            <button class="delete-button" data-username="${account[0]}">ลบ</button>
+                        </td>
+                    `;
+                    adminAccountsTableBody.appendChild(tr);
+                });
+                // เพิ่ม Event Listener สำหรับปุ่มลบ (ต้องทำหลังสร้างปุ่ม)
+                document.querySelectorAll('.delete-button').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        const usernameToDelete = event.target.dataset.username;
+                        if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบัญชี '${usernameToDelete}'?`)) {
+                            const deleteResult = await callApi('deleteAdminAccount', { username: usernameToDelete });
+                            if (deleteResult.status === 'success') {
+                                alert(deleteResult.message);
+                                loadAdminAccounts(); // รีโหลดบัญชี Admin หลังลบ
+                            } else {
+                                alert('Error: ' + deleteResult.message);
+                            }
+                        }
+                    });
+                });
+            } else {
+                adminAccountsTableBody.innerHTML = '<tr><td colspan="3">ยังไม่มีบัญชีผู้ดูแล</td></tr>'; // เปลี่ยน colspan
+            }
+        }
+
+
         // แสดงผลโหวตในตาราง Admin
         function displayAdminVoteResults(votes) {
             adminVoteResultsTableBody.innerHTML = ''; // ล้างของเก่า
             votes.forEach(row => {
                 const tr = document.createElement('tr');
-                // row[3] คือ ImageURL
                 const imageUrl = row[3] ? `<img src="${row[3]}" alt="${row[1]}">` : 'ไม่มีรูป';
                 tr.innerHTML = `
                     <td>${row[0]}</td>

@@ -3,70 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบโหวตเลือกแบบเสื้อกีฬาสี</title>
+    <title>ระบบโหวตเสื้อกีฬาสี</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo-placeholder">
-                <img src="https://via.placeholder.com/150x80?text=YOUR_LOGO" alt="School Logo" class="logo">
-            </div>
-            <h1>ระบบโหวตเลือกแบบเสื้อกีฬาสี</h1>
-            <p id="vote-status" class="status-message"></p>
-        </header>
+        <h1>โหวตเลือกแบบเสื้อกีฬาสี</h1>
+        <div id="voting-status" class="status-message"></div>
 
-        <section id="vote-section">
-            <h2>ข้อมูลผู้โหวต</h2>
-            <form id="voter-form">
-                <div class="form-group">
-                    <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
-                    <input type="text" id="studentId" maxlength="5" pattern="\d{5}" required>
-                </div>
-                <div class="form-group">
-                    <label for="fullName">ชื่อ-นามสกุล:</label>
-                    <input type="text" id="fullName" required>
-                </div>
-                <div class="form-group">
-                    <label for="grade">ระดับชั้น:</label>
-                    <select id="grade" required>
-                        <option value="">เลือกระดับชั้น</option>
-                        <option value="ม.1">ม.1</option>
-                        <option value="ม.2">ม.2</option>
-                        <option value="ม.3">ม.3</option>
-                        <option value="ม.4">ม.4</option>
-                        <option value="ม.5">ม.5</option>
-                        <option value="ม.6">ม.6</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="room">ห้อง:</label>
-                    <select id="room" required>
-                        <option value="">เลือกห้อง</option>
-                        </select>
-                </div>
-                <button type="submit" id="startVoteBtn" class="primary-btn">ยืนยันข้อมูลและเริ่มโหวต</button>
+        <div id="registration-form-section" class="form-section">
+            <h2>กรอกข้อมูลเพื่อโหวต</h2>
+            <form id="voteForm">
+                <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
+                <input type="number" id="studentId" name="studentId" min="10000" max="99999" required>
+
+                <label for="fullName">ชื่อ-นามสกุล:</label>
+                <input type="text" id="fullName" name="fullName" required>
+
+                <label for="grade">ระดับชั้น:</label>
+                <select id="grade" name="grade" required>
+                    <option value="">เลือกระดับชั้น</option>
+                    <option value="ม.1">ม.1</option>
+                    <option value="ม.2">ม.2</option>
+                    <option value="ม.3">ม.3</option>
+                    <option value="ม.4">ม.4</option>
+                    <option value="ม.5">ม.5</option>
+                    <option value="ม.6">ม.6</option>
+                </select>
+
+                <label for="room">ห้อง:</label>
+                <select id="room" name="room" required>
+                    <option value="">เลือกห้อง</option>
+                </select>
+
+                <label for="voteChoice">เลือกแบบเสื้อ:</label>
+                <div id="design-options" class="design-options">
+                    </div>
+                
+                <button type="submit" id="submitVoteButton">ยืนยันการโหวต</button>
             </form>
-        </section>
+            <p id="form-message" class="message"></p>
+        </div>
 
-        <section id="design-selection-section" class="hidden">
-            <h2>เลือกแบบเสื้อที่ชอบ</h2>
-            <div id="design-list" class="design-grid">
-                </div>
-        </section>
-
-        <section id="results-section">
+        <div id="results-section">
             <h2>ผลการโหวตแบบเรียลไทม์</h2>
-            <div id="results-chart-container">
-                <canvas id="resultsChart"></canvas>
-            </div>
-        </section>
+            <div id="vote-results" class="vote-results">
+                </div>
+        </div>
     </div>
 
-    <a href="admin.html" target="_blank" class="admin-button">เข้าสู่ระบบผู้ดูแล</a>
+    <script>
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ***
+        const WEB_APP_URL = 'YOUR_WEB_APP_URL_HERE'; 
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+        const gradeSelect = document.getElementById('grade');
+        const roomSelect = document.getElementById('room');
+        const voteForm = document.getElementById('voteForm');
+        const formMessage = document.getElementById('form-message');
+        const designOptionsDiv = document.getElementById('design-options');
+        const voteResultsDiv = document.getElementById('vote-results');
+        const votingStatusDiv = document.getElementById('voting-status');
+        const registrationFormSection = document.getElementById('registration-form-section');
+        const submitVoteButton = document.getElementById('submitVoteButton');
+
+        // ข้อมูลห้องเรียนตามระดับชั้น
+        const roomsByGrade = {
+            'ม.1': ['1', '2', '3'],
+            'ม.2': ['1', '2', '3', '4'],
+            'ม.3': ['1', '2', '3'],
+            'ม.4': ['1', '2', '3'],
+            'ม.5': ['1', '2', '3'],
+            'ม.6': ['1', '2', '3']
+        };
+
+        // อัปเดตตัวเลือกห้องเมื่อเลือกระดับชั้น
+        gradeSelect.addEventListener('change', () => {
+            const selectedGrade = gradeSelect.value;
+            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>'; // Clear existing options
+            if (selectedGrade && roomsByGrade[selectedGrade]) {
+                roomsByGrade[selectedGrade].forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room;
+                    option.textContent = room;
+                    roomSelect.appendChild(option);
+                });
+            }
+        });
+
+        // ฟังก์ชันสำหรับเรียก API
+        async function callApi(action, data = {}) {
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // Apps Script ต้องการ Content-Type นี้
+                    },
+                    body: JSON.stringify({ action, ...data }),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error calling API:', error);
+                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message };
+            }
+        }
+
+        // โหลดตัวเลือกแบบเสื้อและแสดงผลโหวตเมื่อโหลดหน้า
+        async function loadInitialData() {
+            const results = await callApi('getVoteResults');
+            if (results.status === 'success' && results.results) {
+                displayDesignOptions(results.results);
+                displayVoteResults(results.results);
+            } else {
+                designOptionsDiv.innerHTML = '<p>ไม่สามารถโหลดแบบเสื้อได้</p>';
+                voteResultsDiv.innerHTML = '<p>ไม่สามารถโหลดผลโหวตได้</p>';
+            }
+            checkVotingStatus(); // ตรวจสอบสถานะการโหวตเมื่อโหลดหน้า
+        }
+
+        // แสดงตัวเลือกแบบเสื้อ
+        function displayDesignOptions(designs) {
+            designOptionsDiv.innerHTML = '';
+            if (designs.length === 0) {
+                designOptionsDiv.innerHTML = '<p>ยังไม่มีแบบเสื้อให้โหวต</p>';
+                return;
+            }
+            designs.forEach(design => {
+                const div = document.createElement('div');
+                div.classList.add('design-option');
+                div.innerHTML = `
+                    <input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required>
+                    <label for="design-${design.designId}">แบบเสื้อ ${design.designId} - ${design.designName}</label>
+                `;
+                designOptionsDiv.appendChild(div);
+            });
+        }
+
+        // แสดงผลโหวต
+        function displayVoteResults(results) {
+            voteResultsDiv.innerHTML = '';
+            if (results.length === 0) {
+                voteResultsDiv.innerHTML = '<p>ยังไม่มีผลการโหวต</p>';
+                return;
+            }
+
+            // เรียงลำดับตาม VoteCount จากมากไปน้อย
+            results.sort((a, b) => b.voteCount - a.voteCount);
+
+            results.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('vote-item');
+                div.innerHTML = `
+                    <span>แบบเสื้อ ${item.designId} (${item.designName}):</span>
+                    <span class="vote-count">${item.voteCount} คะแนน</span>
+                `;
+                voteResultsDiv.appendChild(div);
+            });
+        }
+
+        // ตรวจสอบสถานะการโหวต (เปิด/ปิด)
+        async function checkVotingStatus() {
+            const response = await callApi('getVoteTime');
+            if (response.status === 'success') {
+                if (response.isVotingOpen) {
+                    votingStatusDiv.textContent = 'ขณะนี้เปิดให้โหวตแล้ว';
+                    votingStatusDiv.className = 'status-message open';
+                    registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
+                    submitVoteButton.disabled = false;
+                } else {
+                    votingStatusDiv.textContent = 'ขณะนี้ปิดรับการโหวตแล้ว';
+                    votingStatusDiv.className = 'status-message closed';
+                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
+                    submitVoteButton.disabled = true;
+                }
+            } else {
+                // หากไม่สามารถดึงเวลาได้ อาจจะถือว่าเปิดไว้ก่อน หรือแจ้งเตือน
+                votingStatusDiv.textContent = 'ไม่สามารถตรวจสอบสถานะการโหวตได้';
+                votingStatusDiv.className = 'status-message error';
+                registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
+                submitVoteButton.disabled = false; // ให้โหวตได้
+            }
+        }
+
+        // การส่งฟอร์มโหวต
+        voteForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // ป้องกันการ reload หน้า
+            formMessage.textContent = 'กำลังส่งข้อมูล...';
+            formMessage.className = 'message loading';
+            submitVoteButton.disabled = true;
+
+            const studentId = document.getElementById('studentId').value;
+            const fullName = document.getElementById('fullName').value;
+            const grade = document.getElementById('grade').value;
+            const room = document.getElementById('room').value;
+            const voteChoice = document.querySelector('input[name="voteChoice"]:checked');
+
+            if (!voteChoice) {
+                formMessage.textContent = 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต';
+                formMessage.className = 'message error';
+                submitVoteButton.disabled = false;
+                return;
+            }
+
+            const data = {
+                studentId: studentId,
+                fullName: fullName,
+                grade: grade,
+                room: room,
+                voteChoice: voteChoice.value
+            };
+
+            const result = await callApi('registerAndVote', data);
+
+            if (result.status === 'success') {
+                formMessage.textContent = result.message;
+                formMessage.className = 'message success';
+                voteForm.reset(); // ล้างฟอร์ม
+                gradeSelect.dispatchEvent(new Event('change')); // รีเซ็ตห้อง
+                loadInitialData(); // โหลดผลโหวตใหม่
+            } else {
+                formMessage.textContent = result.message;
+                formMessage.className = 'message error';
+            }
+            submitVoteButton.disabled = false;
+        });
+
+        // โหลดข้อมูลเริ่มต้นและอัปเดตผลทุก 10 วินาที
+        loadInitialData();
+        setInterval(loadInitialData, 10000); // อัปเดตทุก 10 วินาที
+    </script>
 </body>
 </html>

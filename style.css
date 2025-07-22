@@ -1,24 +1,24 @@
 /* style.css */
 
-/* --- ตัวแปรสีและ Font --- */
+/* --- ตัวแปรสีและ Font (ปรับเปลี่ยนได้ตามต้องการ) --- */
 :root {
     --primary-blue: #2196F3; /* Bright Blue */
-    --light-blue: #E3F2FD; /* Lighter Blue */
+    --light-blue: #E3F2FD; /* Lighter Blue for sections */
     --primary-pink: #FF4081; /* Accent Pink */
-    --light-pink: #FCE4EC; /* Lighter Pink */
-    --text-color: #333;
-    --border-color: #ddd;
-    --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%);
-    --shadow-light: rgba(0, 0, 0, 0.08);
-    --shadow-medium: rgba(0, 0, 0, 0.12);
+    --light-pink: #FCE4EC; /* Lighter Pink for results/sections */
+    --text-color: #333; /* General text color */
+    --border-color: #ddd; /* Border color for inputs/tables */
+    --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Page background gradient */
+    --shadow-light: rgba(0, 0, 0, 0.08); /* Light shadow for cards/elements */
+    --shadow-medium: rgba(0, 0, 0, 0.12); /* Medium shadow for container */
 }
 
-/* --- Base Styles --- */
+/* --- Base Styles (สไตล์พื้นฐานของหน้าเว็บ) --- */
 body {
     font-family: 'Kanit', sans-serif; /* ใช้ Font Kanit จาก Google Fonts */
     margin: 0;
     padding: 0;
-    background: var(--background-gradient);
+    background: var(--background-gradient); /* พื้นหลังไล่เฉดสี */
     color: var(--text-color);
     display: flex; /* ใช้ Flexbox เพื่อจัดเรียง content และ footer */
     flex-direction: column; /* จัดเรียงในแนวตั้ง */
@@ -26,9 +26,10 @@ body {
     align-items: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
     min-height: 100vh; /* ความสูงขั้นต่ำเต็มหน้าจอ */
     padding: 20px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* ทำให้ padding และ border อยู่ในขนาดที่กำหนด */
 }
 
+/* Container หลักของเนื้อหาทั้งหมด */
 .container {
     background-color: #ffffff;
     padding: 30px;
@@ -42,12 +43,13 @@ body {
     animation: fadeIn 1s ease-out; /* แอนิเมชันตอนโหลดหน้า */
 }
 
+/* Keyframe สำหรับแอนิเมชัน fadeIn */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Header & Logo --- */
+/* --- Header & Logo (ส่วนหัวและโลโก้) --- */
 header {
     display: flex;
     align-items: center;
@@ -66,7 +68,7 @@ h1 {
     color: var(--primary-blue);
     font-size: 2.8em;
     margin: 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* เงาข้อความเล็กน้อย */
 }
 
 h2 {
@@ -86,17 +88,17 @@ h3 {
     font-weight: 500;
 }
 
-/* --- Section Styling (กรอบแบ่งส่วน) --- */
+/* --- Section Styling (กรอบแบ่งส่วนเนื้อหา) --- */
 .form-section, .admin-section {
     background-color: var(--light-blue);
     padding: 30px;
     border-radius: 10px;
     margin-bottom: 30px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); /* เงาด้านใน */
     text-align: left; /* ข้อความและฟอร์มชิดซ้าย */
 }
 
-/* --- Form Elements --- */
+/* --- Form Elements (สไตล์สำหรับช่องกรอกข้อมูลและเลือก) --- */
 form {
     display: flex;
     flex-direction: column; /* จัดเรียง input ในแนวตั้ง */
@@ -122,10 +124,11 @@ select {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1.05em;
-    box-sizing: border-box; /* ทำให้ padding และ border อยู่ใน width ที่กำหนด */
+    box-sizing: border-box;
     transition: all 0.3s ease; /* แอนิเมชันตอน hover/focus */
 }
 
+/* เมื่อ input ถูก focus */
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="password"]:focus,
@@ -136,7 +139,7 @@ select:focus {
     outline: none; /* ลบเส้นกรอบ default */
 }
 
-/* --- Buttons --- */
+/* --- Buttons (สไตล์สำหรับปุ่มต่างๆ) --- */
 button {
     background-color: var(--primary-blue);
     color: white;
@@ -239,7 +242,7 @@ button:disabled {
     transform: scale(1.5); /* ทำให้ใหญ่ขึ้นเล็กน้อย */
     z-index: 1; /* ให้ปุ่มอยู่ด้านหน้าองค์ประกอบอื่น */
     margin-bottom: 0;
-    width: auto;
+    width: auto; /* ไม่ต้องให้เต็มความกว้าง */
 }
 
 .design-card img {
@@ -302,7 +305,7 @@ button:disabled {
     font-size: 1.1em;
 }
 
-/* --- Admin Data Tables --- */
+/* --- Admin Data Tables (ตารางแสดงข้อมูลสำหรับ Admin) --- */
 .data-table-container {
     max-height: 450px; /* กำหนดความสูงสูงสุดเพื่อให้ Scroll ได้ */
     overflow-y: auto; /* เปิด Scrollbar แนวตั้ง */
@@ -347,7 +350,7 @@ tr:hover {
     border: 1px solid #eee;
 }
 
-/* --- Footer --- */
+/* --- Footer (ส่วนท้ายของหน้าเว็บ) --- */
 .footer {
     margin-top: 40px;
     padding: 20px;
@@ -364,7 +367,31 @@ tr:hover {
     box-sizing: border-box;
 }
 .footer p {
-    margin: 0;
+    margin: 0; /* ลบ margin เริ่มต้นของ p ใน footer */
+}
+
+/* สไตล์สำหรับลิงก์ข้อความใน footer */
+.footer a {
+    color: #007bff; /* สีลิงก์ */
+    text-decoration: none; /* ไม่มีขีดเส้นใต้ */
+    font-weight: 500;
+}
+
+.footer a:hover {
+    text-decoration: underline; /* แสดงขีดเส้นใต้เมื่อเมาส์ชี้ */
+    color: #0056b3; /* สีเข้มขึ้นเมื่อเมาส์ชี้ */
+}
+
+/* สไตล์สำหรับไอคอนโซเชียลใน footer */
+.social-icon {
+    height: 1.2em; /* กำหนดความสูงของไอคอน */
+    vertical-align: middle; /* จัดให้ไอคอนอยู่กึ่งกลางกับข้อความ */
+    margin-left: 8px; /* ระยะห่างด้านซ้ายของไอคอน */
+    transition: transform 0.2s ease-in-out; /* เพิ่ม animation เมื่อ hover */
+}
+
+.social-icon:hover {
+    transform: scale(1.1); /* ทำให้ไอคอนใหญ่ขึ้นเล็กน้อยเมื่อเมาส์ชี้ */
 }
 
 /* --- Responsive Adjustments (ปรับหน้าเว็บให้เข้ากับขนาดหน้าจอต่างๆ) --- */

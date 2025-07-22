@@ -6,11 +6,12 @@
     <title>ระบบโหวตเสื้อกีฬาสี</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo"> <h1>โหวตเลือกแบบเสื้อกีฬาสี</h1>
+            <img src="logo.png" alt="โลโก้โรงเรียน" class="logo"> <h1>โหวตเลือกแบบเสื้อกีฬาสี</h1>
         </header>
 
         <div id="voting-status" class="status-message"></div>
@@ -21,7 +22,7 @@
             <h2>กรอกข้อมูลเพื่อโหวต</h2>
             <form id="voteForm">
                 <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
-                <input type="number" id="studentId" name="studentId" min="00000" max="99999" required>
+                <input type="number" id="studentId" name="studentId" min="10000" max="99999" required>
 
                 <label for="fullName">ชื่อ-นามสกุล:</label>
                 <input type="text" id="fullName" name="fullName" required>
@@ -54,6 +55,11 @@
 
         <div id="results-section">
             <h2>ผลการโหวตแบบเรียลไทม์</h2>
+            <div class="chart-container" style="width: 100%; height: 350px; margin: 20px auto;">
+                <canvas id="voteChart"></canvas>
+            </div>
+            <p id="chart-message" class="message"></p>
+            
             <div id="vote-results" class="vote-results">
                 <p>กำลังโหลดผลโหวต...</p>
             </div>
@@ -74,7 +80,7 @@
 
     <script>
         // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz51zUGrGbdqJvPpPO8bMLqq40-fSBU_fHzZZx4xQnaJEZIUCeQOEDIRz37SxjZszw/exec'; 
+        const WEB_APP_URL = 'YOUR_WEB_APP_URL_HERE'; 
 
         // --- อ้างอิง Elements ต่างๆ ใน HTML ---
         const gradeSelect = document.getElementById('grade');
@@ -89,6 +95,11 @@
         const submitVoteButton = document.getElementById('submitVoteButton');
 
         let countdownInterval; // ตัวแปรสำหรับเก็บ setInterval ของ Timer
+
+        // เพิ่มตัวแปรสำหรับกราฟ
+        let voteChartInstance = null; // เก็บ instance ของกราฟ Chart.js
+        const chartMessageDiv = document.getElementById('chart-message'); // สำหรับแสดงข้อความในส่วนกราฟ
+
 
         // --- ข้อมูลห้องเรียน (สามารถปรับเปลี่ยนได้ตามโรงเรียนของคุณ) ---
         const roomsByGrade = {
@@ -197,9 +208,12 @@
             if (resultsData.status === 'success' && resultsData.results) {
                 displayDesignOptions(resultsData.results); // แสดงแบบเสื้อ
                 displayVoteResults(resultsData.results); // แสดงผลโหวต
+                displayVoteChart(resultsData.results); // *** เรียกฟังก์ชันแสดงกราฟ ***
             } else {
                 designOptionsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดแบบเสื้อได้: ' + resultsData.message + '</p>';
                 voteResultsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดผลโหวตได้: ' + resultsData.message + '</p>';
+                chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้: ' + resultsData.message; // แสดงข้อความ error สำหรับกราฟ
+                chartMessageDiv.className = 'message error';
             }
             checkVotingStatus(); // ตรวจสอบสถานะการโหวต
         }
@@ -239,7 +253,7 @@
             }
         }
 
-        // แสดงผลการโหวต
+        // แสดงผลการโหวต (แบบตาราง)
         function displayVoteResults(results) {
             voteResultsDiv.innerHTML = ''; // ล้างของเก่า
             if (results.length === 0) {
@@ -275,7 +289,7 @@
 
                 if (startDateTime && now < startDateTime) {
                     // กรณียังไม่ถึงเวลาเปิดโหวต: นับถอยหลังสู่เวลาเปิด
-                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว จะเปิดให้โหวตในอีก';
+                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว (จะเปิดให้โหวตในอีก:';
                     votingStatusDiv.className = 'status-message closed';
                     registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
                     submitVoteButton.disabled = true;
@@ -290,7 +304,7 @@
                     submitVoteButton.disabled = true;
                 } else if (startDateTime && endDateTime && now >= startDateTime && now <= endDateTime) {
                     // กรณีอยู่ในช่วงเปิดโหวต: นับถอยหลังสู่เวลาปิด
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว จะปิดในอีก';
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (จะปิดในอีก:';
                     votingStatusDiv.className = 'status-message open';
                     registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
                     submitVoteButton.disabled = false;
@@ -298,7 +312,7 @@
                     startCountdown(endDateTime.getTime(), 'close'); // นับถอยหลังสู่เวลาปิด
                 } else {
                     // กรณีไม่มีการตั้งเวลาโหวต หรือเกิดข้อผิดพลาดในการดึงเวลา (ถือว่าเปิดตลอด)
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว ไม่มีการตั้งเวลาปิด';
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (ไม่มีการตั้งเวลาปิด)';
                     votingStatusDiv.className = 'status-message open';
                     registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
                     submitVoteButton.disabled = false;
@@ -346,6 +360,93 @@
 
             updateCountdown(); // อัปเดตทันทีเมื่อเริ่ม
             countdownInterval = setInterval(updateCountdown, 1000); // อัปเดตทุก 1 วินาที
+        }
+
+
+        // ฟังก์ชันสำหรับแสดงกราฟผลโหวต (เพิ่มใหม่)
+        function displayVoteChart(votes) {
+            const ctx = document.getElementById('voteChart').getContext('2d');
+
+            if (votes.length === 0) {
+                chartMessageDiv.textContent = 'ยังไม่มีข้อมูลผลโหวตสำหรับแสดงกราฟ';
+                chartMessageDiv.className = 'message info';
+                if (voteChartInstance) {
+                    voteChartInstance.destroy(); // ทำลายกราฟเก่าถ้ามี
+                    voteChartInstance = null;
+                }
+                return;
+            }
+
+            chartMessageDiv.textContent = ''; // ล้างข้อความ
+
+            // จัดการข้อมูลสำหรับ Chart.js
+            const labels = votes.map(vote => `แบบ ${vote.designId} - ${vote.designName}`); // Design ID - Design Name
+            const data = votes.map(vote => vote.voteCount); // Vote Count
+
+            // Generate a random color for each bar for variety
+            const generateRandomColor = () => {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                return `rgba(${r},${g},${b},0.7)`; // 70% opacity
+            };
+            const backgroundColors = data.map(() => generateRandomColor());
+            const borderColors = backgroundColors.map(color => color.replace('0.7', '1')); // Opaque border
+
+
+            // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
+            if (voteChartInstance) {
+                voteChartInstance.destroy();
+            }
+
+            // สร้างกราฟแท่ง (Bar Chart)
+            voteChartInstance = new Chart(ctx, {
+                type: 'bar', // ชนิดกราฟ: แท่ง
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'คะแนนโหวต',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // ปรับขนาดตาม div container
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนคะแนน'
+                            },
+                            ticks: {
+                                precision: 0 // ไม่แสดงทศนิยมสำหรับคะแนนโหวต
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'แบบเสื้อ'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // ไม่แสดง legend (เพราะมี dataset เดียว)
+                        },
+                        title: {
+                            display: true,
+                            text: 'ผลโหวตแบบเสื้อกีฬาสี',
+                            font: {
+                                size: 18
+                            }
+                        }
+                    }
+                }
+            });
         }
 
 

@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <header>
-            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
+            <img src="logo.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
         </header>
 
         <div id="login-section">
@@ -88,8 +88,7 @@
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                
-                <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
+                <button id="exportUsersDataButton">ส่งออกข้อมูลผู้ใช้งาน (.csv)</button> <button id="exportVotesDataButton">ส่งออกข้อมูลผลโหวต (.csv)</button> <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
                         <thead>
@@ -133,7 +132,7 @@
 
     <footer class="footer">
         <p>
-            &copy;2025 Student Council of Phu Luang Witthaya School 
+            &copy;2025 Student Council of Phu Luang Witthaya School
             <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
             </a>
@@ -145,7 +144,7 @@
 
     <script>
         // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz51zUGrGbdqJvPpPO8bMLqq40-fSBU_fHzZZx4xQnaJEZIUCeQOEDIRz37SxjZszw/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzRq_rjYHuQKVdp4NbdpN0kyIu7ibGI43-DwyiPBbiiqSgL_wMKp60jkgteO0tE8g/exec';
 
         // --- อ้างอิง Elements ต่างๆ ใน HTML ---
 
@@ -194,6 +193,10 @@
         // เพิ่มตัวแปรสำหรับกราฟ
         let voteChartInstance = null; // เก็บ instance ของกราฟ Chart.js
         const chartMessageDiv = document.getElementById('chart-message');
+
+        // Export data elements
+        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
+        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
 
 
         // --- ฟังก์ชันช่วยเหลือต่างๆ ---
@@ -387,6 +390,16 @@
 
         // รีเฟรชข้อมูลในตาราง
         refreshDataButton.addEventListener('click', loadAdminData);
+
+        // เพิ่ม Event Listeners สำหรับปุ่มส่งออกข้อมูล (เพิ่มใหม่)
+        exportUsersDataButton.addEventListener('click', async () => {
+            await exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton);
+        });
+
+        exportVotesDataButton.addEventListener('click', async () => {
+            await exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton);
+        });
+
 
         // --- Data Loading Functions (สำหรับโหลดและแสดงข้อมูลในหน้า Admin) ---
 
@@ -588,6 +601,48 @@
                     }
                 }
             });
+        }
+
+        // ฟังก์ชันสำหรับส่งออกข้อมูล (เพิ่มใหม่)
+        async function exportData(action, filename, buttonElement) {
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'กำลังเตรียมข้อมูล...';
+
+            const result = await callApi(action);
+
+            if (result.status === 'success' && result.data && result.headers) {
+                // สร้าง CSV content
+                let csvContent = result.headers.join(',') + '\n'; // เพิ่ม Header
+                result.data.forEach(row => {
+                    csvContent += row.map(cell => {
+                        // ห่อหุ้มเซลล์ที่มี comma หรือ double quote ด้วย double quote และ escap double quote ภายใน
+                        let processedCell = String(cell);
+                        if (processedCell.includes(',') || processedCell.includes('"') || processedCell.includes('\n')) {
+                            processedCell = '"' + processedCell.replace(/"/g, '""') + '"';
+                        }
+                        return processedCell;
+                    }).join(',') + '\n';
+                });
+
+                // สร้าง Blob และ URL สำหรับดาวน์โหลด
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+
+                // สร้างลิงก์ดาวน์โหลดแบบซ่อนและคลิกอัตโนมัติ
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a); // ลบลิงก์หลังจากดาวน์โหลด
+                URL.revokeObjectURL(url); // ล้าง URL object
+
+                alert(`ส่งออกข้อมูลไปยัง ${filename} สำเร็จ!`);
+            } else {
+                alert(`เกิดข้อผิดพลาดในการส่งออกข้อมูล: ${result.message || 'ไม่พบข้อมูล'}`);
+            }
+            buttonElement.disabled = false;
+            buttonElement.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
         }
     </script>
 </body>

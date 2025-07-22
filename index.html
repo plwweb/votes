@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบโหวตเลือกแบบเสื้อกีฬาสี</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-placeholder">
+                <img src="https://via.placeholder.com/150x80?text=YOUR_LOGO" alt="School Logo" class="logo">
+            </div>
+            <h1>ระบบโหวตเลือกแบบเสื้อกีฬาสี</h1>
+            <p id="vote-status" class="status-message"></p>
+        </header>
+
+        <section id="vote-section">
+            <h2>ข้อมูลผู้โหวต</h2>
+            <form id="voter-form">
+                <div class="form-group">
+                    <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
+                    <input type="text" id="studentId" maxlength="5" pattern="\d{5}" required>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">ชื่อ-นามสกุล:</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="grade">ระดับชั้น:</label>
+                    <select id="grade" required>
+                        <option value="">เลือกระดับชั้น</option>
+                        <option value="ม.1">ม.1</option>
+                        <option value="ม.2">ม.2</option>
+                        <option value="ม.3">ม.3</option>
+                        <option value="ม.4">ม.4</option>
+                        <option value="ม.5">ม.5</option>
+                        <option value="ม.6">ม.6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="room">ห้อง:</label>
+                    <select id="room" required>
+                        <option value="">เลือกห้อง</option>
+                        </select>
+                </div>
+                <button type="submit" id="startVoteBtn" class="primary-btn">ยืนยันข้อมูลและเริ่มโหวต</button>
+            </form>
+        </section>
+
+        <section id="design-selection-section" class="hidden">
+            <h2>เลือกแบบเสื้อที่ชอบ</h2>
+            <div id="design-list" class="design-grid">
+                </div>
+        </section>
+
+        <section id="results-section">
+            <h2>ผลการโหวตแบบเรียลไทม์</h2>
+            <div id="results-chart-container">
+                <canvas id="resultsChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <a href="admin.html" target="_blank" class="admin-button">เข้าสู่ระบบผู้ดูแล</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -289,7 +289,7 @@
 
                 if (startDateTime && now < startDateTime) {
                     // กรณียังไม่ถึงเวลาเปิดโหวต: นับถอยหลังสู่เวลาเปิด
-                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว (จะเปิดให้โหวตในอีก:';
+                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว จะเปิดให้โหวตในอีก';
                     votingStatusDiv.className = 'status-message closed';
                     registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
                     submitVoteButton.disabled = true;
@@ -304,7 +304,7 @@
                     submitVoteButton.disabled = true;
                 } else if (startDateTime && endDateTime && now >= startDateTime && now <= endDateTime) {
                     // กรณีอยู่ในช่วงเปิดโหวต: นับถอยหลังสู่เวลาปิด
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (จะปิดในอีก:';
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว จะปิดในอีก';
                     votingStatusDiv.className = 'status-message open';
                     registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
                     submitVoteButton.disabled = false;
@@ -312,7 +312,7 @@
                     startCountdown(endDateTime.getTime(), 'close'); // นับถอยหลังสู่เวลาปิด
                 } else {
                     // กรณีไม่มีการตั้งเวลาโหวต หรือเกิดข้อผิดพลาดในการดึงเวลา (ถือว่าเปิดตลอด)
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว (ไม่มีการตั้งเวลาปิด)';
+                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว ไม่มีการตั้งเวลาปิด';
                     votingStatusDiv.className = 'status-message open';
                     registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
                     submitVoteButton.disabled = false;

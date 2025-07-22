@@ -15,15 +15,16 @@
 
 /* --- Base Styles --- */
 body {
-    font-family: 'Kanit', sans-serif; /* ใช้ Font Kanit */
+    font-family: 'Kanit', sans-serif; /* ใช้ Font Kanit จาก Google Fonts */
     margin: 0;
     padding: 0;
     background: var(--background-gradient);
     color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+    display: flex; /* ใช้ Flexbox เพื่อจัดเรียง content และ footer */
+    flex-direction: column; /* จัดเรียงในแนวตั้ง */
+    justify-content: flex-start; /* จัดให้เริ่มต้นจากด้านบน */
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
+    min-height: 100vh; /* ความสูงขั้นต่ำเต็มหน้าจอ */
     padding: 20px;
     box-sizing: border-box;
 }
@@ -31,14 +32,14 @@ body {
 .container {
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px var(--shadow-medium);
-    max-width: 900px;
+    border-radius: 15px; /* มุมโค้งมน */
+    box-shadow: 0 8px 30px var(--shadow-medium); /* เงาให้ดูมีมิติ */
+    max-width: 900px; /* ความกว้างสูงสุด */
     width: 100%;
     text-align: center;
     margin-top: 20px;
     box-sizing: border-box;
-    animation: fadeIn 1s ease-out;
+    animation: fadeIn 1s ease-out; /* แอนิเมชันตอนโหลดหน้า */
 }
 
 @keyframes fadeIn {
@@ -50,14 +51,14 @@ body {
 header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* จัดโลโก้และชื่อเว็บอยู่ตรงกลาง */
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
-    height: 60px; /* Adjust logo size as needed */
+    height: 60px; /* ขนาดโลโก้ */
     margin-right: 15px;
 }
 
@@ -85,28 +86,28 @@ h3 {
     font-weight: 500;
 }
 
-/* --- Section Styling --- */
+/* --- Section Styling (กรอบแบ่งส่วน) --- */
 .form-section, .admin-section {
     background-color: var(--light-blue);
     padding: 30px;
     border-radius: 10px;
     margin-bottom: 30px;
     box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
-    text-align: left; /* Default to left for forms */
+    text-align: left; /* ข้อความและฟอร์มชิดซ้าย */
 }
 
 /* --- Form Elements --- */
 form {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Align form elements to left */
+    flex-direction: column; /* จัดเรียง input ในแนวตั้ง */
+    align-items: flex-start; /* จัดเรียง input ชิดซ้าย */
 }
 
 label {
     font-weight: 600;
     color: var(--text-color);
     margin-bottom: 8px;
-    display: block;
+    display: block; /* ให้ label ขึ้นบรรทัดใหม่ */
     width: 100%;
 }
 
@@ -115,14 +116,14 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 select {
-    width: calc(100% - 24px); /* Full width minus padding and border */
+    width: calc(100% - 24px); /* เกือบเต็มความกว้าง โดยมี padding และ border */
     padding: 12px;
     margin-bottom: 20px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1.05em;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
+    box-sizing: border-box; /* ทำให้ padding และ border อยู่ใน width ที่กำหนด */
+    transition: all 0.3s ease; /* แอนิเมชันตอน hover/focus */
 }
 
 input[type="text"]:focus,
@@ -131,8 +132,8 @@ input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 select:focus {
     border-color: var(--primary-pink);
-    box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
-    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2); /* เงารอบ input เมื่อ focus */
+    outline: none; /* ลบเส้นกรอบ default */
 }
 
 /* --- Buttons --- */
@@ -147,12 +148,12 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     margin-top: 15px;
     font-weight: 600;
-    align-self: center; /* Center button in forms */
+    align-self: center; /* จัดปุ่มให้อยู่กึ่งกลางในฟอร์ม */
 }
 
 button:hover {
-    background-color: #1976D2; /* Darker blue */
-    transform: translateY(-2px);
+    background-color: #1976D2; /* สีน้ำเงินเข้มขึ้นเมื่อเมาส์ชี้ */
+    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
     box-shadow: 0 6px 15px var(--shadow-light);
 }
 
@@ -163,17 +164,17 @@ button:disabled {
     box-shadow: none;
 }
 
-/* Specific button for Admin panel */
+/* ปุ่มสำหรับ Admin panel (สีชมพู) */
 .admin-section button {
-    background-color: var(--primary-pink); /* Admin buttons are pink */
-    margin-right: 10px; /* Spacing for multiple buttons */
-    align-self: flex-start; /* Align admin buttons to left */
+    background-color: var(--primary-pink);
+    margin-right: 10px; /* เว้นระยะห่างระหว่างปุ่ม Admin */
+    align-self: flex-start; /* ปุ่ม Admin ชิดซ้าย */
 }
 .admin-section button:hover {
-    background-color: #d1478f; /* Darker pink */
+    background-color: #d1478f; /* สีชมพูเข้มขึ้นเมื่อเมาส์ชี้ */
 }
 
-/* --- Message Styling --- */
+/* --- Message Styling (สำหรับแจ้งเตือนสถานะ) --- */
 .status-message, .message {
     padding: 12px 20px;
     border-radius: 8px;
@@ -184,27 +185,27 @@ button:disabled {
 }
 
 .status-message.open, .message.success {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #d4edda; /* สีเขียวอ่อน */
+    color: #155724; /* สีเขียวเข้ม */
     border: 1px solid #c3e6cb;
 }
 
 .status-message.closed, .message.error {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #f8d7da; /* สีแดงอ่อน */
+    color: #721c24; /* สีแดงเข้ม */
     border: 1px solid #f5c6cb;
 }
 
 .message.loading {
-    background-color: #e2e3e5;
+    background-color: #e2e3e5; /* สีกำลังโหลด */
     color: #383d41;
 }
 
-/* --- Design Options (Cards with Images) --- */
+/* --- Design Options (การ์ดแบบเสื้อพร้อมรูปภาพ) --- */
 .design-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Min card width 200px */
-    gap: 20px;
+    display: grid; /* ใช้ Grid Layout */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* ปรับให้แสดงหลายคอลัมน์และ Responsive */
+    gap: 20px; /* ระยะห่างระหว่างการ์ด */
     margin-top: 20px;
     margin-bottom: 30px;
     width: 100%;
@@ -213,15 +214,15 @@ button:disabled {
 
 .design-card {
     background-color: #ffffff;
-    border: 2px solid var(--light-pink); /* Thicker border */
+    border: 2px solid var(--light-pink); /* ขอบสีชมพูอ่อน */
     border-radius: 12px;
     padding: 15px;
     text-align: center;
     box-shadow: 0 4px 15px var(--shadow-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
-    position: relative;
-    display: flex;
+    position: relative; /* สำหรับตำแหน่งของ radio button */
+    display: flex; /* ใช้ Flexbox ภายใน card */
     flex-direction: column;
     align-items: center;
 }
@@ -232,23 +233,23 @@ button:disabled {
 }
 
 .design-card input[type="radio"] {
-    position: absolute;
+    position: absolute; /* วาง radio button ไว้มุมขวาบน */
     top: 15px;
     right: 15px;
-    transform: scale(1.5);
-    z-index: 1;
-    margin-bottom: 0; /* Override default input margin */
-    width: auto; /* Override default input width */
+    transform: scale(1.5); /* ทำให้ใหญ่ขึ้นเล็กน้อย */
+    z-index: 1; /* ให้ปุ่มอยู่ด้านหน้าองค์ประกอบอื่น */
+    margin-bottom: 0;
+    width: auto;
 }
 
 .design-card img {
     max-width: 100%;
-    height: 150px; /* Fixed height for images */
-    object-fit: contain; /* Ensure image fits without cropping */
+    height: 150px; /* กำหนดความสูงของรูปภาพให้เท่ากัน */
+    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีกับการ์ดโดยไม่ถูกตัด */
     border-radius: 8px;
     margin-bottom: 10px;
     border: 1px solid #eee;
-    background-color: #f5f5f5; /* Light background for images */
+    background-color: #f5f5f5; /* พื้นหลังสีอ่อนสำหรับรูปภาพ */
 }
 
 .design-card label {
@@ -261,29 +262,13 @@ button:disabled {
     padding: 5px 0;
 }
 
-/* Style for selected card */
-.design-card input[type="radio"]:checked + label {
-    color: var(--primary-pink);
-}
-.design-card input[type="radio"]:checked ~ .design-card { /* This selector is incorrect for direct styling of parent */
-    /* To style the parent when radio is checked, you need JavaScript or a different HTML structure */
-    /* For simplicity, we'll rely on the border-color for now */
-}
-/* A better way to style the selected card using parent selector (if input is within label) */
-.design-card input[type="radio"]:checked + label img {
-    border-color: var(--primary-pink); /* Highlight image border */
-}
-.design-card input[type="radio"]:checked + label {
-    color: var(--primary-pink);
-}
-/* Use JS to add a class 'selected' to the .design-card for better control */
+/* Style for selected card (เมื่อมีการ์ดถูกเลือก) */
 .design-card.selected {
-    border-color: var(--primary-pink);
-    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4);
+    border-color: var(--primary-pink); /* ขอบเป็นสีชมพู */
+    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4); /* เงารอบๆ การ์ด */
 }
 
-
-/* --- Vote Results --- */
+/* --- Vote Results (ผลการโหวต) --- */
 .vote-results {
     margin-top: 30px;
     padding: 25px;
@@ -296,14 +281,14 @@ button:disabled {
 
 .vote-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* จัดชื่อแบบเสื้อและคะแนนแยกกันคนละฝั่ง */
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px dashed #ffb3c8;
 }
 
 .vote-item:last-child {
-    border-bottom: none;
+    border-bottom: none; /* แถวสุดท้ายไม่มีเส้นแบ่ง */
 }
 
 .vote-item span:first-child {
@@ -319,57 +304,78 @@ button:disabled {
 
 /* --- Admin Data Tables --- */
 .data-table-container {
-    max-height: 450px;
-    overflow-y: auto;
+    max-height: 450px; /* กำหนดความสูงสูงสุดเพื่อให้ Scroll ได้ */
+    overflow-y: auto; /* เปิด Scrollbar แนวตั้ง */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: inset 0 1px 5px rgba(0,0,0,0.03);
-    margin-bottom: 20px; /* Space between tables */
+    margin-bottom: 20px; /* เว้นระยะห่างระหว่างตาราง */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* ทำให้เส้นตารางรวมกัน */
 }
 
 th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    word-break: break-word; /* Wrap long text */
+    word-break: break-word; /* ข้อความยาวๆ จะขึ้นบรรทัดใหม่ */
 }
 
 th {
     background-color: var(--primary-blue);
     color: white;
     font-weight: 600;
-    position: sticky;
+    position: sticky; /* ทำให้ Header ค้างเมื่อ Scroll ตาราง */
     top: 0;
     z-index: 10;
 }
-tr:nth-child(even) {
+tr:nth-child(even) { /* สลับสีแถวเพื่อให้ดูง่าย */
     background-color: #f9f9f9;
 }
 tr:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; /* เปลี่ยนสีเมื่อเมาส์ชี้ */
 }
 
 /* Special styles for image in admin table */
 .admin-table-image img {
-    width: 60px; /* Smaller image in table */
+    width: 60px; /* ขนาดรูปภาพในตาราง Admin */
     height: auto;
     border-radius: 5px;
     border: 1px solid #eee;
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
+/* --- Footer --- */
+.footer {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    color: #555;
+    font-size: 0.9em;
+    border-bottom-left-radius: 15px; /* ทำให้โค้งมนตาม container */
+    border-bottom-right-radius: 15px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 900px; /* ให้ความกว้างเท่า container */
+    box-sizing: border-box;
+}
+.footer p {
+    margin: 0;
+}
+
+/* --- Responsive Adjustments (ปรับหน้าเว็บให้เข้ากับขนาดหน้าจอต่างๆ) --- */
+@media (max-width: 768px) { /* สำหรับหน้าจอขนาดเล็ก (เช่น มือถือ) */
     .container {
         padding: 15px;
         margin-top: 10px;
+        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
     }
     header {
-        flex-direction: column;
+        flex-direction: column; /* จัดเรียงโลโก้และชื่อเว็บในแนวตั้ง */
         text-align: center;
     }
     .logo {
@@ -389,19 +395,22 @@ tr:hover {
     input[type="datetime-local"],
     select,
     button {
-        width: 100%;
+        width: 100%; /* input และ button เต็มความกว้าง */
     }
     form, .admin-section {
-        align-items: center; /* Center form elements on small screens */
+        align-items: center; /* จัดฟอร์มให้อยู่กึ่งกลาง */
     }
     label {
-        text-align: center; /* Center labels on small screens */
+        text-align: center; /* label อยู่กึ่งกลาง */
     }
     .design-options {
-        grid-template-columns: 1fr; /* Single column on small screens */
+        grid-template-columns: 1fr; /* แสดงการ์ดแบบเสื้อ 1 คอลัมน์ */
     }
     .admin-section button {
-        margin-right: 0; /* Remove right margin for stacked buttons */
-        margin-bottom: 10px; /* Add bottom margin for stacked buttons */
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .footer {
+        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
     }
 }

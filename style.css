@@ -1,379 +1,480 @@
-/* General Styles (รูปแบบทั่วไปของหน้าเว็บ) */
+
+
+/* --- ตัวแปรสีและ Font (ปรับเปลี่ยนได้ตามต้องการ) --- */
+:root {
+    --primary-blue: #2196F3; /* Bright Blue */
+    --light-blue: #E3F2FD; /* Lighter Blue for sections */
+    --primary-pink: #FF4081; /* Accent Pink */
+    --light-pink: #FCE4EC; /* Lighter Pink for results/sections */
+    --text-color: #333; /* General text color */
+    --border-color: #ddd; /* Border color for inputs/tables */
+    --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Page background gradient */
+    --shadow-light: rgba(0, 0, 0, 0.08); /* Light shadow for cards/elements */
+    --shadow-medium: rgba(0, 0, 0, 0.12); /* Medium shadow for container */
+}
+
+/* --- Base Styles (สไตล์พื้นฐานของหน้าเว็บ) --- */
 body {
-    font-family: 'Kanit', sans-serif; /* ใช้ Font 'Kanit' */
+    font-family: 'Kanit', sans-serif; /* ใช้ Font Kanit จาก Google Fonts */
     margin: 0;
     padding: 0;
-    background-color: #f4f7f6; /* สีพื้นหลังอ่อนๆ */
-    color: #333; /* สีกำหนดเป็นสีเทาเข้ม */
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 960px; /* ความกว้างสูงสุดของเนื้อหา */
-    margin: 20px auto; /* จัดกึ่งกลางหน้าจอ */
+    background: var(--background-gradient); /* พื้นหลังไล่เฉดสี */
+    color: var(--text-color);
+    display: flex; /* ใช้ Flexbox เพื่อจัดเรียง content และ footer */
+    flex-direction: column; /* จัดเรียงในแนวตั้ง */
+    justify-content: flex-start; /* จัดให้เริ่มต้นจากด้านบน */
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
+    min-height: 100vh; /* ความสูงขั้นต่ำเต็มหน้าจอ */
     padding: 20px;
-    background-color: #ffffff; /* พื้นหลังสีขาว */
-    border-radius: 10px; /* ขอบโค้งมน */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* เงาใต้กล่อง */
+    box-sizing: border-box; /* ทำให้ padding และ border อยู่ในขนาดที่กำหนด */
 }
 
-header {
+/* Container หลักของเนื้อหาทั้งหมด */
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* มุมโค้งมน */
+    box-shadow: 0 8px 30px var(--shadow-medium); /* เงาให้ดูมีมิติ */
+    max-width: 900px; /* ความกว้างสูงสุด */
+    width: 100%;
     text-align: center;
+    margin-top: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 1s ease-out; /* แอนิเมชันตอนโหลดหน้า */
+}
+
+/* Keyframe สำหรับแอนิเมชัน fadeIn */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header & Logo (ส่วนหัวและโลโก้) --- */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* จัดโลโก้และชื่อเว็บอยู่ตรงกลาง */
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #e0e0e0; /* เส้นแบ่งใต้ Header */
-    position: relative;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
-    max-width: 120px; /* ขนาดสูงสุดของโลโก้ */
-    height: auto;
+    height: 60px; /* ขนาดโลโก้ */
+    margin-right: 15px;
+}
+
+h1 {
+    color: var(--primary-blue);
+    font-size: 2.8em;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* เงาข้อความเล็กน้อย */
+}
+
+h2 {
+    color: var(--primary-pink);
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+h3 {
+    color: var(--primary-blue);
     margin-bottom: 15px;
-}
-
-h1, h2, h3 {
-    color: #0056b3; /* สีกำหนดเป็นสีน้ำเงินเข้ม */
-    margin-top: 0;
-}
-
-.section {
-    background-color: #fcfcfc; /* สีพื้นหลังอ่อนๆ สำหรับแต่ละ Section */
-    border-radius: 8px;
-    padding: 25px;
-    margin-bottom: 30px;
-    border: 1px solid #e9ecef;
-}
-
-/* Form Styles (รูปแบบฟอร์ม) */
-form label {
-    display: block; /* แสดงผลเป็นบล็อก เพื่อให้ขึ้นบรรทัดใหม่ */
-    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    font-size: 1.5em;
     font-weight: 500;
-    color: #555;
 }
 
-form input[type="text"],
-form input[type="password"],
-form input[type="time"],
-form input[type="file"] {
-    width: calc(100% - 20px); /* ความกว้าง 100% หัก padding */
+/* --- Section Styling (กรอบแบ่งส่วนเนื้อหา) --- */
+.form-section, .admin-section {
+    background-color: var(--light-blue);
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); /* เงาด้านใน */
+    text-align: left; /* ข้อความและฟอร์มชิดซ้าย */
+}
+
+/* --- Form Elements (สไตล์สำหรับช่องกรอกข้อมูลและเลือก) --- */
+form {
+    display: flex;
+    flex-direction: column; /* จัดเรียง input ในแนวตั้ง */
+    align-items: flex-start; /* จัดเรียง input ชิดซ้าย */
+}
+
+label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    display: block; /* ให้ label ขึ้นบรรทัดใหม่ */
+    width: 100%;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="datetime-local"],
+select {
+    width: calc(100% - 24px); /* เกือบเต็มความกว้าง โดยมี padding และ border */
     padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    font-size: 1rem;
-    box-sizing: border-box; /* รวม padding และ border ในความกว้าง */
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.05em;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* แอนิเมชันตอน hover/focus */
 }
 
-form input[type="file"] {
-    padding: 8px; /* Input ไฟล์จะใช้ padding น้อยกว่า */
+/* เมื่อ input ถูก focus */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="datetime-local"]:focus,
+select:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2); /* เงารอบ input เมื่อ focus */
+    outline: none; /* ลบเส้นกรอบ default */
 }
 
+/* --- Buttons (สไตล์สำหรับปุ่มต่างๆ) --- */
 button {
-    background-color: #007bff; /* สีน้ำเงินสดใส */
+    background-color: var(--primary-blue);
     color: white;
-    padding: 12px 25px;
+    padding: 14px 30px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1.15em;
     cursor: pointer;
-    font-size: 1.05rem;
-    transition: background-color 0.3s ease; /* เพิ่ม Transition เพื่อความสวยงาม */
-    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 15px;
+    font-weight: 600;
+    align-self: center; /* จัดปุ่มให้อยู่กึ่งกลางในฟอร์ม */
 }
 
 button:hover {
-    background-color: #0056b3; /* สีน้ำเงินเข้มขึ้นเมื่อ Hover */
+    background-color: #1976D2; /* สีน้ำเงินเข้มขึ้นเมื่อเมาส์ชี้ */
+    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
+    box-shadow: 0 6px 15px var(--shadow-light);
 }
 
 button:disabled {
-    background-color: #cccccc; /* สีเทาเมื่อปุ่มถูกปิดใช้งาน */
+    background-color: #cccccc;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/* Message Styles (รูปแบบข้อความสถานะ) */
-.message {
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 5px;
-    font-weight: 500;
+/* ปุ่มสำหรับ Admin panel (สีชมพู) */
+.admin-section button {
+    background-color: var(--primary-pink);
+    margin-right: 10px; /* เว้นระยะห่างระหว่างปุ่ม Admin */
+    align-self: flex-start; /* ปุ่ม Admin ชิดซ้าย */
+    margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่างสำหรับปุ่มที่เรียงกัน */
+}
+.admin-section button:hover {
+    background-color: #d1478f; /* สีชมพูเข้มขึ้นเมื่อเมาส์ชี้ */
+}
+
+/* --- Message Styling (สำหรับแจ้งเตือนสถานะ) --- */
+.status-message, .message {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
     text-align: center;
-    opacity: 0; /* ซ่อนไว้ตอนแรก */
-    transform: translateY(10px); /* เลื่อนลงเล็กน้อย */
-    transition: opacity 0.3s ease, transform 0.3s ease; /* Transition เมื่อแสดงผล */
 }
 
-.message.success {
+.status-message.open, .message.success {
     background-color: #d4edda; /* สีเขียวอ่อน */
-    color: #28a745; /* สีเขียวเข้ม */
-    opacity: 1;
-    transform: translateY(0);
+    color: #155724; /* สีเขียวเข้ม */
+    border: 1px solid #c3e6cb;
 }
 
-.message.error {
+.status-message.closed, .message.error {
     background-color: #f8d7da; /* สีแดงอ่อน */
-    color: #dc3545; /* สีแดงเข้ม */
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.message.info {
-    background-color: #d1ecf1; /* สีฟ้าอ่อน */
-    color: #17a2b8; /* สีฟ้าเข้ม */
-    opacity: 1;
-    transform: translateY(0);
+    color: #721c24; /* สีแดงเข้ม */
+    border: 1px solid #f5c6cb;
 }
 
 .message.loading {
-    background-color: #ffeeba; /* สีเหลืองอ่อน */
-    color: #ffc107; /* สีเหลืองเข้ม */
-    opacity: 1;
-    transform: translateY(0);
+    background-color: #e2e3e5; /* สีกำลังโหลด */
+    color: #383d41;
 }
 
-/* Design Selection Grid (ตารางเลือกแบบเสื้อ) */
-.design-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* สร้าง Grid ที่ปรับขนาดได้ */
-    gap: 20px; /* ระยะห่างระหว่าง Grid Item */
-    margin-top: 20px;
+/* --- Countdown Timer (สำหรับแสดงเวลานับถอยหลัง) --- */
+#countdown-timer {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-top: 10px;
     margin-bottom: 20px;
-    justify-items: center; /* จัดกึ่งกลาง Grid Item */
+    background-color: var(--light-blue);
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+#countdown-timer span {
+    color: var(--primary-pink); /* สีตัวเลข */
+    font-size: 1.2em;
+    margin: 0 5px;
 }
 
-.design-item {
-    background-color: #f5f5f5;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
+
+/* --- Design Options (การ์ดแบบเสื้อพร้อมรูปภาพ) --- */
+.design-options {
+    display: grid; /* ใช้ Grid Layout */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* ปรับให้แสดงหลายคอลัมน์และ Responsive */
+    gap: 20px; /* ระยะห่างระหว่างการ์ด */
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    justify-content: center;
+}
+
+.design-card {
+    background-color: #ffffff;
+    border: 2px solid var(--light-pink); /* ขอบสีชมพูอ่อน */
+    border-radius: 12px;
     padding: 15px;
     text-align: center;
+    box-shadow: 0 4px 15px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative; /* สำหรับตำแหน่งของ radio button */
+    display: flex; /* ใช้ Flexbox ภายใน card */
+    flex-direction: column;
+    align-items: center;
 }
 
-.design-item:hover {
-    border-color: #007bff; /* เปลี่ยนสีขอบเมื่อ Hover */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transform: translateY(-3px); /* เลื่อนขึ้นเล็กน้อยเมื่อ Hover */
-}
-
-.design-item.selected {
-    border-color: #007bff; /* สีขอบเมื่อถูกเลือก */
-    background-color: #e6f0ff; /* สีพื้นหลังเมื่อถูกเลือก */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+.design-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-medium);
 }
 
-.design-item img {
+.design-card input[type="radio"] {
+    position: absolute; /* วาง radio button ไว้มุมขวาบน */
+    top: 15px;
+    right: 15px;
+    transform: scale(1.5); /* ทำให้ใหญ่ขึ้นเล็กน้อย */
+    z-index: 1; /* ให้ปุ่มอยู่ด้านหน้าองค์ประกอบอื่น */
+    margin-bottom: 0;
+    width: auto; /* ไม่ต้องให้เต็มความกว้าง */
+}
+
+.design-card img {
     max-width: 100%;
-    height: 120px; /* กำหนดความสูงคงที่สำหรับรูปภาพ */
-    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีโดยรักษาสัดส่วน */
+    height: 150px; /* กำหนดความสูงของรูปภาพให้เท่ากัน */
+    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีกับการ์ดโดยไม่ถูกตัด */
     border-radius: 8px;
     margin-bottom: 10px;
-    background-color: white; /* พื้นหลังสีขาวสำหรับรูปภาพ (เผื่อมีรูปโปร่งใส) */
+    border: 1px solid #eee;
+    background-color: #f5f5f5; /* พื้นหลังสีอ่อนสำหรับรูปภาพ */
 }
 
-.design-item p {
+.design-card label {
+    font-size: 1.1em;
     font-weight: 600;
-    color: #333;
-    margin: 0;
-}
-
-/* Summary Cards (การ์ดสรุปผลโหวต) */
-.summary-card {
-    background-color: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 15px;
+    color: var(--primary-blue);
+    cursor: pointer;
+    margin-bottom: 0;
     text-align: center;
-    width: 180px; /* กำหนดความกว้างคงที่ */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease;
+    padding: 5px 0;
 }
 
-.summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* Style for selected card (เมื่อมีการ์ดถูกเลือก) */
+.design-card.selected {
+    border-color: var(--primary-pink); /* ขอบเป็นสีชมพู */
+    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4); /* เงารอบๆ การ์ด */
 }
 
-.summary-card .card-image {
-    max-width: 100%;
-    height: 100px; /* กำหนดความสูงคงที่สำหรับรูปภาพในการ์ด */
-    object-fit: contain;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: white;
+/* --- Vote Results (ผลการโหวต) --- */
+.vote-results {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: var(--light-pink);
+    border: 1px solid #ffccd9;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 4px 10px var(--shadow-light);
 }
 
-.summary-card .card-title {
-    font-weight: 600;
-    color: #0056b3;
-    margin: 0 0 5px 0;
+.vote-item {
+    display: flex;
+    justify-content: space-between; /* จัดชื่อแบบเสื้อและคะแนนแยกกันคนละฝั่ง */
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ffb3c8;
 }
 
-.summary-card .card-votes {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
+.vote-item:last-child {
+    border-bottom: none; /* แถวสุดท้ายไม่มีเส้นแบ่ง */
 }
 
-/* Admin Panel Specific Styles (รูปแบบสำหรับหน้า Admin) */
-.admin-section {
-    border: 1px dashed #cccccc; /* เส้นประ */
-    padding: 20px;
-    margin-bottom: 25px;
-    background-color: #fcfcfc;
-    border-radius: 8px;
+.vote-item span:first-child {
+    font-weight: 500;
+    color: var(--text-color);
 }
 
-.admin-section h3 {
-    color: #0056b3;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee; /* เส้นแบ่งใต้หัวข้อ */
-    padding-bottom: 10px;
+.vote-count {
+    font-weight: bold;
+    color: var(--primary-pink);
+    font-size: 1.1em;
 }
 
-.admin-section h4 {
-    color: #0056b3;
-    margin-top: 25px;
-    margin-bottom: 15px;
-}
-
-.admin-section button {
-    margin-right: 10px;
-}
-
-/* Table Styles (รูปแบบตาราง) */
+/* --- Admin Data Tables (ตารางแสดงข้อมูลสำหรับ Admin) --- */
 .data-table-container {
-    max-height: 400px; /* กำหนดความสูงสูงสุดเพื่อให้มี Scrollbar */
-    overflow-y: auto;
-    border: 1px solid #dee2e6;
+    max-height: 450px; /* กำหนดความสูงสูงสุดเพื่อให้ Scroll ได้ */
+    overflow-y: auto; /* เปิด Scrollbar แนวตั้ง */
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    margin-top: 20px;
-    background-color: #fff;
+    box-shadow: inset 0 1px 5px rgba(0,0,0,0.03);
+    margin-bottom: 20px; /* เว้นระยะห่างระหว่างตาราง */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse; /* ยุบขอบตาราง */
-    margin-bottom: 0;
+    border-collapse: collapse; /* ทำให้เส้นตารางรวมกัน */
 }
 
-table th, table td {
-    border: 1px solid #dee2e6;
-    padding: 10px;
+th, td {
+    padding: 12px;
     text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    word-break: break-word; /* ข้อความยาวๆ จะขึ้นบรรทัดใหม่ */
 }
 
-table th {
-    background-color: #e9ecef;
-    font-weight: 600;
-    color: #495057;
-    position: sticky;
-    top: 0; /* ทำให้ Header ตารางติดอยู่ด้านบนเมื่อ Scroll */
-    z-index: 1;
-}
-
-table tr:nth-child(even) {
-    background-color: #f8f9fa; /* สีแถวสลับ */
-}
-
-table tr:hover {
-    background-color: #e2f0fb; /* เปลี่ยนสีแถวเมื่อ Hover */
-}
-
-.delete-button, .delete-admin-button {
-    background-color: #dc3545; /* สีแดง */
+th {
+    background-color: var(--primary-blue);
     color: white;
-    padding: 8px 12px;
+    font-weight: 600;
+    position: sticky; /* ทำให้ Header ค้างเมื่อ Scroll ตาราง */
+    top: 0;
+    z-index: 10;
+}
+tr:nth-child(even) { /* สลับสีแถวเพื่อให้ดูง่าย */
+    background-color: #f9f9f9;
+}
+tr:hover {
+    background-color: #f0f0f0; /* เปลี่ยนสีเมื่อเมาส์ชี้ */
+}
+
+/* Special styles for image in admin table */
+.admin-table-image img {
+    width: 60px; /* ขนาดรูปภาพในตาราง Admin */
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+/* Style for Delete button in Admin accounts table */
+.delete-button {
+    background-color: #f44336; /* สีแดง */
+    color: white;
     border: none;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     transition: background-color 0.3s ease;
 }
 
-.delete-button:hover, .delete-admin-button:hover {
-    background-color: #c82333;
+.delete-button:hover {
+    background-color: #d32f2f; /* แดงเข้มขึ้น */
 }
 
-/* Footer Styles (ส่วนท้ายหน้าเว็บ) */
-footer {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
+
+/* --- Footer (ส่วนท้ายของหน้าเว็บ) --- */
+.footer {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f0f0f0;
     border-top: 1px solid #e0e0e0;
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-
-/* --- Banner Carousel Styles (รูปแบบ Banner สไลด์) --- */
-.banner-carousel-container {
-    position: relative;
+    text-align: center;
+    color: #555;
+    font-size: 0.9em;
+    border-bottom-left-radius: 15px; /* ทำให้โค้งมนตาม container */
+    border-bottom-right-radius: 15px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 900px; /* กำหนดความกว้างสูงสุดของ Banner */
-    margin: 40px auto; /* เพิ่มระยะห่างจากส่วนผลโหวตและจัดกึ่งกลาง */
-    overflow: hidden; /* ซ่อนส่วนที่เกินขอบ */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* เงา */
-    background-color: #f8f8f8; /* สีพื้นหลังเผื่อรูปภาพโหลดช้า */
-    aspect-ratio: 16 / 9; /* กำหนดอัตราส่วนรูปภาพ (เช่น 16:9) เพื่อให้พื้นที่คงที่ */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    max-width: 900px; /* ให้ความกว้างเท่า container */
+    box-sizing: border-box;
+}
+.footer p {
+    margin: 0; /* ลบ margin เริ่มต้นของ p ใน footer */
 }
 
-.banner-carousel {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    position: relative;
+/* สไตล์สำหรับลิงก์ข้อความใน footer */
+.footer a {
+    color: #007bff; /* สีลิงก์ */
+    text-decoration: none; /* ไม่มีขีดเส้นใต้ */
+    font-weight: 500;
 }
 
-.banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* รูปภาพจะถูกปรับให้พอดีในพื้นที่ โดยรักษาสัดส่วน */
-    display: none; /* ซ่อนรูปภาพทั้งหมดไว้ก่อน */
-    transition: opacity 0.8s ease-in-out; /* ทำให้การเปลี่ยนรูปดูนุ่มนวลขึ้น */
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
+.footer a:hover {
+    text-decoration: underline; /* แสดงขีดเส้นใต้เมื่อเมาส์ชี้ */
+    color: #0056b3; /* สีเข้มขึ้นเมื่อเมาส์ชี้ */
 }
 
-.banner-image.active {
-    display: block; /* แสดงเฉพาะรูปที่ active */
-    opacity: 1;
+/* สไตล์สำหรับไอคอนโซเชียลใน footer */
+.social-icon {
+    height: 1.2em; /* กำหนดความสูงของไอคอน */
+    vertical-align: middle; /* จัดให้ไอคอนอยู่กึ่งกลางกับข้อความ */
+    margin-left: 8px; /* ระยะห่างด้านซ้ายของไอคอน */
+    transition: transform 0.2s ease-in-out; /* เพิ่ม animation เมื่อ hover */
 }
 
-.carousel-indicators {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%); /* จัดกึ่งกลางจุดบ่งชี้ */
-    display: flex;
-    gap: 8px; /* ระยะห่างระหว่างจุด */
-    padding: 5px 10px;
-    background-color: rgba(0, 0, 0, 0.3); /* พื้นหลังของจุด indicators */
-    border-radius: 15px;
+.social-icon:hover {
+    transform: scale(1.1); /* ทำให้ไอคอนใหญ่ขึ้นเล็กน้อยเมื่อเมาส์ชี้ */
 }
 
-.indicator {
-    width: 10px;
-    height: 10px;
-    background-color: rgba(255, 255, 255, 0.7); /* สีของจุด */
-    border-radius: 50%; /* ทำให้เป็นวงกลม */
-    cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.indicator.active {
-    background-color: #007bff; /* สีเดียวกับปุ่มหลักเมื่อ active */
-    border-color: #0056b3;
-    transform: scale(1.2); /* จุดที่ active ใหญ่ขึ้นเล็กน้อย */
+/* --- Responsive Adjustments (ปรับหน้าเว็บให้เข้ากับขนาดหน้าจอต่างๆ) --- */
+@media (max-width: 768px) { /* สำหรับหน้าจอขนาดเล็ก (เช่น มือถือ) */
+    .container {
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
+    }
+    header {
+        flex-direction: column; /* จัดเรียงโลโก้และชื่อเว็บในแนวตั้ง */
+        text-align: center;
+    }
+    .logo {
+        height: 50px;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    h1 {
+        font-size: 2.2em;
+    }
+    h2 {
+        font-size: 1.7em;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    input[type="datetime-local"],
+    select,
+    button {
+        width: 100%; /* input และ button เต็มความกว้าง */
+    }
+    form, .admin-section {
+        align-items: center; /* จัดฟอร์มให้อยู่กึ่งกลาง */
+    }
+    label {
+        text-align: center; /* label อยู่กึ่งกลาง */
+    }
+    .design-options {
+        grid-template-columns: 1fr; /* แสดงการ์ดแบบเสื้อ 1 คอลัมน์ */
+    }
+    .admin-section button {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .footer {
+        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
+    }
 }

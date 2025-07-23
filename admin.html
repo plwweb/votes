@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+    </head>
 <body>
     <div class="container">
         <header>
@@ -445,7 +445,7 @@
             if (result.status === 'success' && result.accounts.length > 0) {
                 result.accounts.forEach(account => {
                     const tr = document.createElement('tr');
-                    // account[0] = Username, account[1] = Password, account[2] = FullName
+                    // account[0] = Username, account[1] = Password (hidden), account[2] = FullName
                     tr.innerHTML = `
                         <td>${account[0]}</td>
                         <td>${account[2] || 'ไม่ระบุชื่อ'}</td> <td>
@@ -480,7 +480,8 @@
             adminVoteResultsTableBody.innerHTML = ''; // ล้างของเก่า
             votes.forEach(row => {
                 const tr = document.createElement('tr');
-                const imageUrl = row[3] ? `<img src="${row[3]}" alt="${row[1]}">` : 'ไม่มีรูป';
+                // Row structure from Apps Script: [designId, designName, voteCount, imageUrl]
+                const imageUrl = row[3] ? `<img src="${row[3]}" alt="${row[1]}" style="max-width: 100px; max-height: 100px; display: block; margin: auto;">` : 'ไม่มีรูป'; // เพิ่ม style ให้รูปแสดงผลดีขึ้น
                 tr.innerHTML = `
                     <td>${row[0]}</td>
                     <td>${row[1]}</td>
@@ -496,6 +497,7 @@
             adminUsersTableBody.innerHTML = ''; // ล้างของเก่า
             users.forEach(row => {
                 const tr = document.createElement('tr');
+                // Row structure from Apps Script: [studentId, fullName, grade, room, timestamp, voteChoice]
                 tr.innerHTML = `
                     <td>${row[0]}</td>
                     <td>${row[1]}</td>
@@ -527,26 +529,17 @@
             // จัดการข้อมูลสำหรับ Chart.js
             const labels = votes.map(vote => `แบบ ${vote[0]} - ${vote[1]}`); // Design ID - Design Name
             const data = votes.map(vote => vote[2]); // Vote Count
-            const backgroundColors = [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-                'rgba(153, 102, 255, 0.6)',
-                'rgba(255, 159, 64, 0.6)',
-                'rgba(255, 99, 71, 0.6)', // เพิ่มสี
-                'rgba(100, 149, 237, 0.6)'
-            ];
-            const borderColors = [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 99, 71, 1)',
-                'rgba(100, 149, 237, 1)'
-            ];
+            
+            // Generate a random color for each bar for variety
+            const generateRandomColor = () => {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                return `rgba(${r},${g},${b},0.7)`; // 70% opacity
+            };
+            const backgroundColors = data.map(() => generateRandomColor());
+            const borderColors = backgroundColors.map(color => color.replace('0.7', '1')); // Opaque border
+
 
             // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
             if (voteChartInstance) {
@@ -561,8 +554,8 @@
                     datasets: [{
                         label: 'คะแนนโหวต',
                         data: data,
-                        backgroundColor: backgroundColors.slice(0, labels.length), // ใช้สีตามจำนวนแบบเสื้อ
-                        borderColor: borderColors.slice(0, labels.length),
+                        backgroundColor: backgroundColors, 
+                        borderColor: borderColors,
                         borderWidth: 1
                     }]
                 },
@@ -644,6 +637,30 @@
             buttonElement.disabled = false;
             buttonElement.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
         }
+
+        // Initial check if already logged in (e.g., if page refreshed and session maintained by Apps Script)
+        // Note: This relies on Apps Script's session management, which is basic. 
+        // For a more robust solution, you'd need server-side session tokens.
+        // For simplicity, we'll try to load admin data on page load.
+        // If the callApi for getAdminData returns an error, it implies not logged in.
+        async function checkLoginStatusOnLoad() {
+            const result = await callApi('getAdminData'); // Attempt to get data requiring login
+            if (result.status === 'success') {
+                loginSection.style.display = 'none'; // ซ่อนส่วน Login
+                adminPanel.style.display = 'block'; // แสดงแผง Admin
+                welcomeMessage.textContent = `ยินดีต้อนรับผู้ดูแล!`; // ตั้งข้อความต้อนรับทั่วไป (ชื่อจะอัปเดตหลังจาก loadAdminAccounts)
+                loadAdminData();
+                loadVoteTime();
+                loadAdminAccounts();
+            } else {
+                loginSection.style.display = 'block'; // แสดงส่วน Login
+                adminPanel.style.display = 'none'; // ซ่อนแผง Admin
+                loginMessage.textContent = 'กรุณาเข้าสู่ระบบ';
+                loginMessage.className = 'message info';
+            }
+        }
+
+        checkLoginStatusOnLoad(); // Call this function when the page loads
     </script>
 </body>
 </html>

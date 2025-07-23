@@ -6,19 +6,24 @@
     <title>Admin - ระบบโหวตเสื้อกีฬาสี</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> </head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <body>
     <div class="container">
-        <div id="login-section" class="section">
+        <header>
+            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo"> <h1>Admin Panel - ระบบโหวตเสื้อกีฬาสี</h1>
+        </header>
+
+        <div id="login-section">
             <h2>เข้าสู่ระบบผู้ดูแล</h2>
-            <form id="login-form">
-                <label for="username">ชื่อผู้ใช้:</label>
-                <input type="text" id="username" required>
-                <label for="password">รหัสผ่าน:</label>
-                <input type="password" id="password" required>
-                <button type="submit" id="loginButton">เข้าสู่ระบบ</button>
+            <div class="admin-section">
+                <label for="adminUsername">Username:</label>
+                <input type="text" id="adminUsername" required>
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" required>
+                <button id="loginButton">เข้าสู่ระบบ</button>
                 <p id="login-message" class="message"></p>
-            </form>
+            </div>
         </div>
 
         <div id="admin-panel" style="display: none;">
@@ -30,31 +35,41 @@
                 <input type="text" id="newDesignId" placeholder="S..." required>
                 <label for="newDesignName">ชื่อแบบเสื้อ:</label>
                 <input type="text" id="newDesignName" placeholder="เสื้อแบบที่ 4..." required>
-
-                <label for="newDesignImageFile">อัปโหลดรูปภาพแบบเสื้อ:</label>
-                <input type="file" id="newDesignImageFile" accept="image/*">
-                <p id="image-upload-status" class="message"></p>
-
+                <label for="newDesignImageUrl">URL รูปภาพแบบเสื้อ:</label>
+                <input type="text" id="newDesignImageUrl" placeholder="https://example.com/image.png">
                 <button id="addDesignButton">เพิ่มแบบเสื้อใหม่</button>
                 <p id="add-design-message" class="message"></p>
             </div>
 
             <div class="admin-section">
-                <h3>จัดการ Banner</h3>
-                <label for="newBannerImageFile">อัปโหลดรูปภาพ Banner:</label>
-                <input type="file" id="newBannerImageFile" accept="image/*">
-                <p id="banner-upload-status" class="message"></p>
-                <button id="addBannerButton">เพิ่ม Banner ใหม่</button>
-                <p id="add-banner-message" class="message"></p>
+                <h3>ตั้งเวลาเปิด-ปิดการโหวต</h3>
+                <label for="voteStartTime">เวลาเริ่มต้น:</label>
+                <input type="datetime-local" id="voteStartTime">
+                <label for="voteEndTime">เวลาสิ้นสุด:</label>
+                <input type="datetime-local" id="voteEndTime">
+                <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
+                <p id="set-time-message" class="message"></p>
+                <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
+            </div>
 
-                <h4>Banner ที่มีอยู่</h4>
+            <div class="admin-section">
+                <h3>จัดการบัญชีผู้ดูแล</h3>
+                <label for="newAdminUsername">Username ใหม่:</label>
+                <input type="text" id="newAdminUsername" placeholder="username" required>
+                <label for="newAdminPassword">Password ใหม่:</label>
+                <input type="password" id="newAdminPassword" placeholder="password" required>
+                <label for="newAdminFullName">ชื่อผู้ดูแล:</label>
+                <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
+                <button id="addAdminButton">เพิ่มบัญชีผู้ดูแล</button>
+                <p id="add-admin-message" class="message"></p>
+
+                <h4>บัญชีผู้ดูแลที่มีอยู่</h4>
                 <div class="data-table-container">
-                    <table id="adminBannersTable">
+                    <table id="adminAccountsTable">
                         <thead>
                             <tr>
-                                <th>รูปภาพ</th>
-                                <th>URL</th>
-                                <th>Actions</th>
+                                <th>Username</th>
+                                <th>ชื่อผู้ดูแล</th> <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,51 +79,47 @@
             </div>
 
             <div class="admin-section">
-                <h3>ตั้งเวลาเปิด-ปิดการโหวต</h3>
-                <label for="startTime">เวลาเปิด (HH:MM):</label>
-                <input type="time" id="startTime">
-                <label for="endTime">เวลาปิด (HH:MM):</label>
-                <input type="time" id="endTime">
-                <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
-                <p id="time-message" class="message"></p>
-                <p>สถานะปัจจุบัน: เปิดเวลา <span id="currentStartTime">--:--</span> น. ถึง <span id="currentEndTime">--:--</span> น.</p>
+                <h3>เครื่องมือผู้ดูแล</h3>
+                <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
+                <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
+                <p id="admin-action-message" class="message"></p>
             </div>
 
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                <button id="exportUsersDataButton">ส่งออกข้อมูลผู้ใช้งาน (.csv)</button>
-                <button id="exportVotesDataButton">ส่งออกข้อมูลผลโหวต (.csv)</button>
-                <h4>สรุปคะแนนโหวต</h4>
-                <div id="admin-design-charts" style="width: 100%; max-width: 600px; margin: 20px auto;">
-                    <canvas id="adminDesignVotesChart"></canvas>
-                </div>
+                <button id="exportUsersDataButton">ส่งออกข้อมูลผู้ใช้งาน (.csv)</button> <button id="exportVotesDataButton">ส่งออกข้อมูลผลโหวต (.csv)</button> <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
-                    <table id="adminVotesTable">
+                    <table id="adminVoteResultsTable">
                         <thead>
                             <tr>
                                 <th>Design ID</th>
                                 <th>Design Name</th>
                                 <th>Vote Count</th>
-                                <th>Image URL</th>
+                                <th>Image</th>
                             </tr>
                         </thead>
                         <tbody>
                             </tbody>
                     </table>
                 </div>
-                <h4>ข้อมูลผู้ใช้งานที่โหวต</h4>
-                <p>จำนวนผู้โหวตที่ไม่ซ้ำกัน: <span id="admin-unique-users">0</span> คน</p>
+
+                <h4>กราฟผลโหวต</h4>
+                <div style="width: 100%; height: 400px; margin: 20px auto;"> <canvas id="voteChart"></canvas>
+                </div>
+                <p id="chart-message" class="message"></p>
+
+                <h4>ข้อมูลผู้ใช้งานที่โหวตแล้ว</h4>
                 <div class="data-table-container">
                     <table id="adminUsersTable">
                         <thead>
                             <tr>
                                 <th>Student ID</th>
                                 <th>Full Name</th>
-                                <th>Class</th>
+                                <th>Grade</th>
                                 <th>Room</th>
-                                <th>Vote Timestamp</th>
-                                <th>Design ID</th>
+                                <th>Timestamp</th>
+                                <th>Vote Choice</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,83 +127,112 @@
                     </table>
                 </div>
             </div>
-
-            <div class="admin-section">
-                <h3>จัดการบัญชีผู้ดูแล</h3>
-                <h4>เพิ่มบัญชีผู้ดูแลใหม่</h4>
-                <label for="newAdminUsername">ชื่อผู้ใช้:</label>
-                <input type="text" id="newAdminUsername" required>
-                <label for="newAdminPassword">รหัสผ่าน:</label>
-                <input type="password" id="newAdminPassword" required>
-                <label for="newAdminFullName">ชื่อเต็ม:</label>
-                <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
-                <button id="addAdminButton">เพิ่มผู้ดูแล</button>
-                <p id="add-admin-message" class="message"></p>
-
-                <h4>รายชื่อผู้ดูแล</h4>
-                <div class="data-table-container">
-                    <table id="adminAccountsTable">
-                        <thead>
-                            <tr>
-                                <th>ชื่อผู้ใช้</th>
-                                <th>ชื่อเต็ม</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <button id="logoutButton">ออกจากระบบ</button>
         </div>
-        <footer>
-            <p>&copy; 2024 ระบบโหวตเสื้อกีฬาสี. All rights reserved.</p>
-        </footer>
     </div>
 
-    <script>
-        // Utility function สำหรับเรียกใช้ Google Apps Script Web App
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwHPJQbvafH9SDC5KEIi7xDX0Rz89-aDk87KvlpcERaQp5xsElIBdmIF8UI7-TSEbZF/exec'; // *** เปลี่ยนเป็น URL ของ Web App ที่คุณ Deploy (จากขั้นตอนที่ 6) ***
+    <footer class="footer">
+        <p>
+            &copy;2025 Student Council of Phu Luang Witthaya School
+            <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
+            </a>
+            <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
+            </a>
+        </p>
+    </footer>
 
+    <script>
+        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzRq_rjYHuQKVdp4NbdpN0kyIu7ibGI43-DwyiPBbiiqSgL_wMKp60jkgteO0tE8g/exec';
+
+        // --- อ้างอิง Elements ต่างๆ ใน HTML ---
+
+        // Login elements
+        const loginSection = document.getElementById('login-section');
+        const adminUsernameInput = document.getElementById('adminUsername');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const loginButton = document.getElementById('loginButton');
+        const loginMessage = document.getElementById('login-message');
+        const adminPanel = document.getElementById('admin-panel');
+        const welcomeMessage = document.getElementById('welcome-message'); // ข้อความต้อนรับผู้ดูแล
+
+        // Design management elements
+        const newDesignIdInput = document.getElementById('newDesignId');
+        const newDesignNameInput = document.getElementById('newDesignName');
+        const newDesignImageUrlInput = document.getElementById('newDesignImageUrl');
+        const addDesignButton = document.getElementById('addDesignButton');
+        const addDesignMessage = document.getElementById('add-design-message');
+
+        // Voting time management elements
+        const voteStartTimeInput = document.getElementById('voteStartTime');
+        const voteEndTimeInput = document.getElementById('voteEndTime');
+        const setVoteTimeButton = document.getElementById('setVoteTimeButton');
+        const setTimeMessage = document.getElementById('set-time-message');
+        const currentVoteTimeDisplay = document.getElementById('current-vote-time');
+
+        // Admin Account management elements
+        const newAdminUsernameInput = document.getElementById('newAdminUsername');
+        const newAdminPasswordInput = document.getElementById('newAdminPassword');
+        const newAdminFullNameInput = document.getElementById('newAdminFullName'); // เพิ่ม input สำหรับชื่อผู้ดูแล
+        const addAdminButton = document.getElementById('addAdminButton');
+        const addAdminMessage = document.getElementById('add-admin-message');
+        const adminAccountsTableBody = document.querySelector('#adminAccountsTable tbody');
+
+
+        // Admin Tools elements
+        const resetVotesButton = document.getElementById('resetVotesButton');
+        const clearUsersButton = document.getElementById('clearUsersButton');
+        const adminActionMessage = document.getElementById('admin-action-message');
+
+        // Data display elements
+        const refreshDataButton = document.getElementById('refreshDataButton');
+        const adminVoteResultsTableBody = document.querySelector('#adminVoteResultsTable tbody');
+        const adminUsersTableBody = document.querySelector('#adminUsersTable tbody');
+
+        // เพิ่มตัวแปรสำหรับกราฟ
+        let voteChartInstance = null; // เก็บ instance ของกราฟ Chart.js
+        const chartMessageDiv = document.getElementById('chart-message');
+
+        // Export data elements
+        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
+        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
+
+
+        // --- ฟังก์ชันช่วยเหลือต่างๆ ---
+
+        // ฟังก์ชันสำหรับเรียกใช้งาน Apps Script (Backend)
         async function callApi(action, data = {}) {
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain',
+                        'Content-Type': 'text/plain;charset=utf-8',
                     },
                     body: JSON.stringify({ action, ...data }),
                 });
-                return await response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                return result;
             } catch (error) {
-                console.error('API call failed:', error);
-                return { status: 'error', message: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ' + error.message };
+                console.error('Error calling API:', error);
+                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message };
             }
         }
 
-        // --- Login Logic (ส่วนการล็อกอิน) ---
-        const loginForm = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('loginButton');
-        const loginMessage = document.getElementById('login-message');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginSection = document.getElementById('login-section');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const logoutButton = document.getElementById('logoutButton');
+        // --- Event Listeners (เมื่อผู้ดูแลทำอะไรบางอย่าง) ---
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loginButton.disabled = true; // ปิดปุ่มล็อกอินชั่วคราว
-            loginMessage.textContent = 'กำลังตรวจสอบ...';
+        // เข้าสู่ระบบ Admin
+        loginButton.addEventListener('click', async () => {
+            const username = adminUsernameInput.value;
+            const password = adminPasswordInput.value;
+            loginMessage.textContent = 'กำลังเข้าสู่ระบบ...';
             loginMessage.className = 'message loading';
+            loginButton.disabled = true;
 
-            const username = usernameInput.value;
-            const password = passwordInput.value;
-
-            const result = await callApi('verifyAdmin', { username, password });
+            const result = await callApi('login', { username, password });
 
             if (result.status === 'success') {
                 loginMessage.textContent = result.message;
@@ -200,38 +240,21 @@
                 loginSection.style.display = 'none'; // ซ่อนส่วน Login
                 adminPanel.style.display = 'block'; // แสดงแผง Admin
                 welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${result.fullName || username}!`; // แสดงชื่อผู้ดูแล
-                loadAdminData(); // โหลดข้อมูล Admin ทั่วไป
+                loadAdminData(); // โหลดข้อมูลเมื่อเข้าสู่ระบบสำเร็จ
                 loadVoteTime(); // โหลดเวลาโหวตปัจจุบัน
                 loadAdminAccounts(); // โหลดบัญชี Admin
-                loadBanners(); // โหลด Banner เมื่อล็อกอินสำเร็จ
             } else {
                 loginMessage.textContent = result.message;
                 loginMessage.className = 'message error';
             }
-            loginButton.disabled = false; // เปิดปุ่มล็อกอินอีกครั้ง
+            loginButton.disabled = false;
         });
 
-        logoutButton.addEventListener('click', () => {
-            loginSection.style.display = 'block'; // แสดงส่วน Login
-            adminPanel.style.display = 'none'; // ซ่อน Admin Panel
-            usernameInput.value = ''; // ล้างค่าในช่อง Username
-            passwordInput.value = ''; // ล้างค่าในช่อง Password
-            loginMessage.textContent = ''; // ล้างข้อความสถานะ
-        });
-
-
-        // --- Design Management elements (จัดการแบบเสื้อ) ---
-        const newDesignIdInput = document.getElementById('newDesignId');
-        const newDesignNameInput = document.getElementById('newDesignName');
-        const newDesignImageFileInput = document.getElementById('newDesignImageFile');
-        const imageUploadStatus = document.getElementById('image-upload-status');
-        const addDesignButton = document.getElementById('addDesignButton');
-        const addDesignMessage = document.getElementById('add-design-message');
-
+        // เพิ่มแบบเสื้อใหม่
         addDesignButton.addEventListener('click', async () => {
-            const designId = newDesignIdInput.value.trim().toUpperCase(); // แปลงเป็นตัวพิมพ์ใหญ่
+            const designId = newDesignIdInput.value.trim().toUpperCase();
             const designName = newDesignNameInput.value.trim();
-            const imageFile = newDesignImageFileInput.files[0];
+            const imageUrl = newDesignImageUrlInput.value.trim();
 
             if (!designId || !designName) {
                 addDesignMessage.textContent = 'กรุณากรอก Design ID และชื่อแบบเสื้อ';
@@ -240,77 +263,18 @@
             }
 
             addDesignButton.disabled = true;
-            addDesignMessage.textContent = 'กำลังดำเนินการ...';
+            addDesignMessage.textContent = 'กำลังเพิ่มแบบเสื้อ...';
             addDesignMessage.className = 'message loading';
-            imageUploadStatus.textContent = ''; // ล้างสถานะการอัปโหลดรูปภาพก่อนหน้า
 
-            let imageUrl = ''; // ตัวแปรสำหรับเก็บ URL ของรูปภาพ
-
-            // ถ้ามีการเลือกไฟล์รูปภาพ ให้ทำการอัปโหลดก่อน
-            if (imageFile) {
-                imageUploadStatus.textContent = 'กำลังอัปโหลดรูปภาพ...';
-                imageUploadStatus.className = 'message loading';
-
-                const reader = new FileReader();
-                reader.readAsDataURL(imageFile); // อ่านไฟล์เป็น Base64
-
-                const fileReadPromise = new Promise((resolve, reject) => {
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = error => reject(error);
-                });
-
-                try {
-                    const base64Data = await fileReadPromise;
-                    const fileBytes = base64Data.split(',')[1]; // แยกส่วนข้อมูล Base64 จริงๆ ออกมา
-
-                    const uploadResult = await callApi('uploadFile', { // เรียกฟังก์ชัน uploadFile ใน Apps Script
-                        fileData: {
-                            fileName: imageFile.name, // ชื่อไฟล์
-                            mimeType: imageFile.type, // ชนิดไฟล์ (เช่น image/jpeg)
-                            bytes: fileBytes // ข้อมูลไฟล์ในรูปแบบ Base64
-                        }
-                    });
-
-                    if (uploadResult.status === 'success') {
-                        // Google Drive API จะส่ง URL ที่มี /view ออกมา เราต้องเปลี่ยนเป็น /uc?id= เพื่อใช้แสดงผลโดยตรง
-                        // ตัวอย่าง: https://drive.google.com/file/d/FILE_ID/view?usp=drivesdk
-                        // ต้องเปลี่ยนเป็น: https://drive.google.com/uc?id=FILE_ID
-                        const fileIdMatch = uploadResult.url.match(/\/d\/([a-zA-Z0-9_-]+)\/view/);
-                        if (fileIdMatch && fileIdMatch[1]) {
-                            imageUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}`;
-                        } else {
-                            imageUrl = uploadResult.url; // ถ้าไม่สามารถแปลงได้ ให้ใช้ URL เดิม
-                        }
-
-                        imageUploadStatus.textContent = 'อัปโหลดรูปภาพสำเร็จ!';
-                        imageUploadStatus.className = 'message success';
-                    } else {
-                        imageUploadStatus.textContent = `อัปโหลดรูปภาพล้มเหลว: ${uploadResult.message}`;
-                        imageUploadStatus.className = 'message error';
-                        addDesignButton.disabled = false;
-                        return; // หยุดการทำงานถ้าอัปโหลดรูปภาพไม่ได้
-                    }
-                } catch (error) {
-                    imageUploadStatus.textContent = `ข้อผิดพลาดในการอ่านไฟล์: ${error.message}`;
-                    imageUploadStatus.className = 'message error';
-                    addDesignButton.disabled = false;
-                    return;
-                }
-            }
-
-            // เมื่ออัปโหลดรูปภาพสำเร็จ (หรือไม่มีรูปภาพ) ก็เรียกเพิ่มแบบเสื้อลงใน Google Sheet
-            addDesignMessage.textContent = 'กำลังเพิ่มแบบเสื้อลงในระบบ...';
-            addDesignMessage.className = 'message loading';
             const result = await callApi('addDesign', { designId, designName, imageUrl });
 
             if (result.status === 'success') {
                 addDesignMessage.textContent = result.message;
                 addDesignMessage.className = 'message success';
-                newDesignIdInput.value = ''; // ล้างช่อง Design ID
-                newDesignNameInput.value = ''; // ล้างช่อง Design Name
-                newDesignImageFileInput.value = ''; // ล้างช่องเลือกไฟล์รูปภาพ
-                imageUploadStatus.textContent = ''; // ล้างสถานะการอัปโหลด
-                loadAdminData(); // รีโหลดข้อมูลในตาราง Admin เพื่อแสดงแบบเสื้อที่เพิ่มใหม่
+                newDesignIdInput.value = '';
+                newDesignNameInput.value = '';
+                newDesignImageUrlInput.value = ''; // ล้างช่อง URL รูปภาพ
+                loadAdminData(); // รีโหลดข้อมูลตารางเมื่อเพิ่มสำเร็จ
             } else {
                 addDesignMessage.textContent = result.message;
                 addDesignMessage.className = 'message error';
@@ -318,194 +282,116 @@
             addDesignButton.disabled = false;
         });
 
-
-        // --- Banner Management elements (จัดการ Banner) ---
-        const newBannerImageFileInput = document.getElementById('newBannerImageFile');
-        const bannerUploadStatus = document.getElementById('banner-upload-status');
-        const addBannerButton = document.getElementById('addBannerButton');
-        const addBannerMessage = document.getElementById('add-banner-message');
-        const adminBannersTableBody = document.querySelector('#adminBannersTable tbody');
-
-        addBannerButton.addEventListener('click', async () => {
-            const imageFile = newBannerImageFileInput.files[0];
-
-            if (!imageFile) {
-                addBannerMessage.textContent = 'กรุณาเลือกไฟล์รูปภาพสำหรับ Banner';
-                addBannerMessage.className = 'message error';
-                return;
-            }
-
-            addBannerButton.disabled = true;
-            addBannerMessage.textContent = 'กำลังดำเนินการ...';
-            addBannerMessage.className = 'message loading';
-            bannerUploadStatus.textContent = '';
-
-            let bannerImageUrl = '';
-
-            // อัปโหลดรูปภาพ Banner ไปยัง Google Drive ก่อน
-            bannerUploadStatus.textContent = 'กำลังอัปโหลดรูปภาพ Banner...';
-            bannerUploadStatus.className = 'message loading';
-
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile);
-
-            const fileReadPromise = new Promise((resolve, reject) => {
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-
-            try {
-                const base64Data = await fileReadPromise;
-                const fileBytes = base64Data.split(',')[1];
-
-                const uploadResult = await callApi('uploadFile', { // ใช้ฟังก์ชัน uploadFile เดิม
-                    fileData: {
-                        fileName: `banner_${Date.now()}_${imageFile.name}`, // ตั้งชื่อไฟล์ให้ไม่ซ้ำกัน
-                        mimeType: imageFile.type,
-                        bytes: fileBytes
-                    }
-                });
-
-                if (uploadResult.status === 'success') {
-                    // Firebase API จะส่ง url ที่มี /view ออกมา เราต้องเปลี่ยนเป็น /uc?id= เพื่อใช้แสดงผล
-                    const fileIdMatch = uploadResult.url.match(/\/d\/([a-zA-Z0-9_-]+)\/view/);
-                    if (fileIdMatch && fileIdMatch[1]) {
-                        bannerImageUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}`;
-                    } else {
-                        bannerImageUrl = uploadResult.url;
-                    }
-
-                    bannerUploadStatus.textContent = 'อัปโหลดรูปภาพ Banner สำเร็จ!';
-                    bannerUploadStatus.className = 'message success';
-                } else {
-                    bannerUploadStatus.textContent = `อัปโหลดรูปภาพ Banner ล้มเหลว: ${uploadResult.message}`;
-                    bannerUploadStatus.className = 'message error';
-                    addBannerButton.disabled = false;
-                    return; // หยุดการทำงานถ้าอัปโหลดรูปภาพไม่ได้
-                }
-            } catch (error) {
-                bannerUploadStatus.textContent = `ข้อผิดพลาดในการอ่านไฟล์: ${error.message}`;
-                bannerUploadStatus.className = 'message error';
-                addBannerButton.disabled = false;
-                return;
-            }
-
-            // เมื่ออัปโหลดรูปภาพสำเร็จ ก็เพิ่ม URL ของ Banner ลงใน Google Sheet
-            addBannerMessage.textContent = 'กำลังเพิ่ม Banner ลงในระบบ...';
-            addBannerMessage.className = 'message loading';
-            const result = await callApi('addBanner', { imageUrl: bannerImageUrl });
-
-            if (result.status === 'success') {
-                addBannerMessage.textContent = result.message;
-                addBannerMessage.className = 'message success';
-                newBannerImageFileInput.value = ''; // ล้างช่องเลือกไฟล์
-                bannerUploadStatus.textContent = ''; // ล้างสถานะ
-                loadBanners(); // รีโหลด Banner ในตาราง Admin
-            } else {
-                addBannerMessage.textContent = result.message;
-                addBannerMessage.className = 'message error';
-            }
-            addBannerButton.disabled = false;
-        });
-
-        // ฟังก์ชันสำหรับโหลดและแสดง Banner ใน Admin Panel
-        async function loadBanners() {
-            const result = await callApi('getBanners');
-            adminBannersTableBody.innerHTML = ''; // ล้างข้อมูลเก่า
-            if (result.status === 'success' && result.banners && result.banners.length > 0) {
-                result.banners.forEach(url => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><img src="${url}" alt="Banner" style="max-width: 100px; max-height: 100px; object-fit: contain;"></td>
-                        <td>${url}</td>
-                        <td>
-                            <button class="delete-button" data-banner-url="${url}">ลบ</button>
-                        </td>
-                    `;
-                    adminBannersTableBody.appendChild(tr);
-                });
-
-                // เพิ่ม Event Listener สำหรับปุ่มลบ (ต้องทำหลังสร้างปุ่ม)
-                document.querySelectorAll('#adminBannersTable .delete-button').forEach(button => {
-                    button.addEventListener('click', async (event) => {
-                        const bannerUrlToDelete = event.target.dataset.bannerUrl;
-                        if (confirm(`คุณแน่ใจหรือไม่ที่จะลบ Banner นี้?\nURL: ${bannerUrlToDelete}`)) {
-                            const deleteResult = await callApi('deleteBanner', { bannerUrl: bannerUrlToDelete });
-                            if (deleteResult.status === 'success') {
-                                alert(deleteResult.message);
-                                loadBanners(); // รีโหลด Banner หลังลบ
-                            } else {
-                                alert('Error: ' + deleteResult.message);
-                            }
-                        }
-                    });
-                });
-
-            } else {
-                adminBannersTableBody.innerHTML = '<tr><td colspan="3">ยังไม่มี Banner</td></tr>';
-            }
-        }
-
-
-        // --- Vote Time Management (จัดการเวลาโหวต) ---
-        const startTimeInput = document.getElementById('startTime');
-        const endTimeInput = document.getElementById('endTime');
-        const setVoteTimeButton = document.getElementById('setVoteTimeButton');
-        const timeMessage = document.getElementById('time-message');
-        const currentStartTimeSpan = document.getElementById('currentStartTime');
-        const currentEndTimeSpan = document.getElementById('currentEndTime');
-
+        // ตั้งเวลาเปิด-ปิดการโหวต
         setVoteTimeButton.addEventListener('click', async () => {
-            const startTime = startTimeInput.value;
-            const endTime = endTimeInput.value;
+            const startTime = voteStartTimeInput.value;
+            const endTime = voteEndTimeInput.value;
 
             if (!startTime || !endTime) {
-                timeMessage.textContent = 'กรุณากรอกเวลาเปิดและเวลาปิดให้ครบถ้วน';
-                timeMessage.className = 'message error';
+                setTimeMessage.textContent = 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด';
+                setTimeMessage.className = 'message error';
                 return;
             }
 
             setVoteTimeButton.disabled = true;
-            timeMessage.textContent = 'กำลังตั้งเวลา...';
-            timeMessage.className = 'message loading';
+            setTimeMessage.textContent = 'กำลังตั้งเวลา...';
+            setTimeMessage.className = 'message loading';
 
-            const result = await callApi('setVotingTime', { startTime, endTime });
+            const result = await callApi('updateVoteTime', { startTime, endTime });
 
             if (result.status === 'success') {
-                timeMessage.textContent = result.message;
-                timeMessage.className = 'message success';
-                loadVoteTime(); // รีโหลดเพื่อแสดงเวลาที่อัปเดต
+                setTimeMessage.textContent = result.message;
+                setTimeMessage.className = 'message success';
+                loadVoteTime(); // โหลดเวลาโหวตที่ตั้งใหม่
             } else {
-                timeMessage.textContent = result.message;
-                timeMessage.className = 'message error';
+                setTimeMessage.textContent = result.message;
+                setTimeMessage.className = 'message error';
             }
             setVoteTimeButton.disabled = false;
         });
 
-        async function loadVoteTime() {
-            const result = await callApi('getVotingTime');
-            if (result.status === 'success') {
-                currentStartTimeSpan.textContent = result.startTime || '--:--';
-                currentEndTimeSpan.textContent = result.endTime || '--:--';
-            } else {
-                timeMessage.textContent = 'ไม่สามารถโหลดเวลาโหวตได้';
-                timeMessage.className = 'message error';
+        // เพิ่มบัญชีผู้ดูแลใหม่
+        addAdminButton.addEventListener('click', async () => {
+            const username = newAdminUsernameInput.value.trim();
+            const password = newAdminPasswordInput.value.trim();
+            const fullName = newAdminFullNameInput.value.trim(); // ดึงชื่อผู้ดูแล
+
+            if (!username || !password || !fullName) {
+                addAdminMessage.textContent = 'กรุณากรอก Username, Password และชื่อผู้ดูแล';
+                addAdminMessage.className = 'message error';
+                return;
             }
-        }
 
+            addAdminButton.disabled = true;
+            addAdminMessage.textContent = 'กำลังเพิ่มบัญชี...';
+            addAdminMessage.className = 'message loading';
 
-        // --- Data Export & Display (ส่งออกข้อมูลและแสดงผล) ---
-        const refreshDataButton = document.getElementById('refreshDataButton');
-        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
-        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
-        const adminUsersTableBody = document.querySelector('#adminUsersTable tbody');
-        const adminVotesTableBody = document.querySelector('#adminVotesTable tbody');
-        const adminUniqueUsersSpan = document.getElementById('admin-unique-users');
-        const adminDesignVotesChartCtx = document.getElementById('adminDesignVotesChart').getContext('2d');
-        let adminChartInstance = null; // เก็บ instance ของ Chart.js สำหรับ Admin
+            const result = await callApi('addAdminAccount', { username, password, fullName });
 
+            if (result.status === 'success') {
+                addAdminMessage.textContent = result.message;
+                addAdminMessage.className = 'message success';
+                newAdminUsernameInput.value = '';
+                newAdminPasswordInput.value = '';
+                newAdminFullNameInput.value = ''; // ล้างช่องชื่อผู้ดูแล
+                loadAdminAccounts(); // รีโหลดตารางบัญชี Admin
+            } else {
+                addAdminMessage.textContent = result.message;
+                addAdminMessage.className = 'message error';
+            }
+            addAdminButton.disabled = false;
+        });
+
+        // รีเซ็ตคะแนนโหวตทั้งหมด
+        resetVotesButton.addEventListener('click', async () => {
+            if (!confirm('คุณแน่ใจหรือไม่ที่ต้องการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) {
+                return;
+            }
+            adminActionMessage.textContent = 'กำลังรีเซ็ตคะแนนโหวต...';
+            adminActionMessage.className = 'message loading';
+            resetVotesButton.disabled = true;
+            clearUsersButton.disabled = true;
+
+            const result = await callApi('resetVotes');
+            if (result.status === 'success') {
+                adminActionMessage.textContent = result.message;
+                adminActionMessage.className = 'message success';
+                loadAdminData(); // รีโหลดข้อมูล
+            } else {
+                adminActionMessage.textContent = result.message;
+                adminActionMessage.className = 'message error';
+            }
+            resetVotesButton.disabled = false;
+            clearUsersButton.disabled = false;
+        });
+
+        // ล้างข้อมูลผู้ใช้งานทั้งหมด
+        clearUsersButton.addEventListener('click', async () => {
+            if (!confirm('คุณแน่ใจหรือไม่ที่ต้องการล้างข้อมูลผู้ใช้งานทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) {
+                return;
+            }
+            adminActionMessage.textContent = 'กำลังล้างข้อมูลผู้ใช้งาน...';
+            adminActionMessage.className = 'message loading';
+            resetVotesButton.disabled = true;
+            clearUsersButton.disabled = true;
+
+            const result = await callApi('clearUsers');
+            if (result.status === 'success') {
+                adminActionMessage.textContent = result.message;
+                adminActionMessage.className = 'message success';
+                loadAdminData(); // รีโหลดข้อมูล
+            } else {
+                adminActionMessage.textContent = result.message;
+                adminActionMessage.className = 'message error';
+            }
+            resetVotesButton.disabled = false;
+            clearUsersButton.disabled = false;
+        });
+
+        // รีเฟรชข้อมูลในตาราง
         refreshDataButton.addEventListener('click', loadAdminData);
 
+        // เพิ่ม Event Listeners สำหรับปุ่มส่งออกข้อมูล (เพิ่มใหม่)
         exportUsersDataButton.addEventListener('click', async () => {
             await exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton);
         });
@@ -514,133 +400,223 @@
             await exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton);
         });
 
-        // ฟังก์ชันหลักสำหรับโหลดข้อมูลทั้งหมดใน Admin Panel
-        async function loadAdminData() {
-            await loadVoteCountAndDisplayAdmin();
-            await loadUniqueUsersCountAdmin();
-            await loadUsersDataAdmin();
+
+        // --- Data Loading Functions (สำหรับโหลดและแสดงข้อมูลในหน้า Admin) ---
+
+        // โหลดเวลาโหวตปัจจุบัน
+        async function loadVoteTime() {
+            const result = await callApi('getVoteTime');
+            if (result.status === 'success') {
+                if (result.startTime && result.endTime) {
+                    const startDisp = new Date(result.startTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                    const endDisp = new Date(result.endTime).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+                    currentVoteTimeDisplay.textContent = `เวลาโหวตปัจจุบัน: เริ่ม ${startDisp} - สิ้นสุด ${endDisp}`;
+
+                    voteStartTimeInput.value = result.startTime;
+                    voteEndTimeInput.value = result.endTime;
+                } else {
+                    currentVoteTimeDisplay.textContent = 'ยังไม่มีการตั้งเวลาโหวต';
+                    voteStartTimeInput.value = '';
+                    voteEndTimeInput.value = '';
+                }
+            } else {
+                currentVoteTimeDisplay.textContent = 'ไม่สามารถโหลดเวลาโหวตได้: ' + result.message;
+            }
         }
 
-        // โหลดคะแนนโหวตและแสดงผลในตาราง Admin พร้อมกราฟ
-        async function loadVoteCountAndDisplayAdmin() {
-            const result = await callApi('getVoteCount');
-            adminVotesTableBody.innerHTML = ''; // ล้างแถวเก่า
+        // โหลดข้อมูลผู้ดูแลระบบทั้งหมด (ผลโหวตและข้อมูลผู้ใช้งาน)
+        async function loadAdminData() {
+            const result = await callApi('getAdminData');
+            if (result.status === 'success') {
+                displayAdminVoteResults(result.votes); // แสดงผลโหวตแบบตาราง
+                displayAdminUsers(result.users);     // แสดงข้อมูลผู้ใช้
+                displayVoteChart(result.votes);      // *** เรียกฟังก์ชันแสดงกราฟ ***
+            } else {
+                alert('ไม่สามารถโหลดข้อมูลผู้ดูแลได้: ' + result.message);
+                chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้: ' + result.message;
+                chartMessageDiv.className = 'message error';
+            }
+        }
 
-            if (result.status === 'success' && result.voteCounts && result.voteCounts.length > 0) {
-                result.voteCounts.forEach(design => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${design.designId}</td>
-                        <td>${design.designName}</td>
-                        <td>${design.count}</td>
-                        <td><a href="${design.imageUrl}" target="_blank">${design.imageUrl ? 'ดูรูปภาพ' : 'ไม่มีรูปภาพ'}</a></td>
+        // โหลดและแสดงข้อมูลบัญชี Admin
+        async function loadAdminAccounts() {
+            const result = await callApi('getAdminAccounts');
+            adminAccountsTableBody.innerHTML = ''; // ล้างของเก่า
+            if (result.status === 'success' && result.accounts.length > 0) {
+                result.accounts.forEach(account => {
+                    const tr = document.createElement('tr');
+                    // account[0] = Username, account[1] = Password, account[2] = FullName
+                    tr.innerHTML = `
+                        <td>${account[0]}</td>
+                        <td>${account[2] || 'ไม่ระบุชื่อ'}</td> <td>
+                            <button class="delete-button" data-username="${account[0]}">ลบ</button>
+                        </td>
                     `;
-                    adminVotesTableBody.appendChild(row);
+                    adminAccountsTableBody.appendChild(tr);
                 });
+                // เพิ่ม Event Listener สำหรับปุ่มลบ (ต้องทำหลังสร้างปุ่ม)
+                document.querySelectorAll('.delete-button').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        const usernameToDelete = event.target.dataset.username;
+                        if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบัญชี '${usernameToDelete}'?`)) {
+                            const deleteResult = await callApi('deleteAdminAccount', { username: usernameToDelete });
+                            if (deleteResult.status === 'success') {
+                                alert(deleteResult.message);
+                                loadAdminAccounts(); // รีโหลดบัญชี Admin หลังลบ
+                            } else {
+                                alert('Error: ' + deleteResult.message);
+                            }
+                        }
+                    });
+                });
+            } else {
+                adminAccountsTableBody.innerHTML = '<tr><td colspan="3">ยังไม่มีบัญชีผู้ดูแล</td></tr>'; // เปลี่ยน colspan
+            }
+        }
 
-                // อัปเดตกราฟ Chart.js
-                const labels = result.voteCounts.map(d => d.designName);
-                const data = result.voteCounts.map(d => d.count);
-                const backgroundColors = [
-                    'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
-                    'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)',
-                    'rgba(199, 199, 199, 0.7)', 'rgba(83, 102, 255, 0.7)'
-                ];
-                const borderColors = [
-                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)',
-                    'rgba(199, 199, 199, 1)', 'rgba(83, 102, 255, 1)'
-                ];
 
-                if (adminChartInstance) {
-                    adminChartInstance.destroy(); // ทำลายกราฟเก่า
+        // แสดงผลโหวตในตาราง Admin
+        function displayAdminVoteResults(votes) {
+            adminVoteResultsTableBody.innerHTML = ''; // ล้างของเก่า
+            votes.forEach(row => {
+                const tr = document.createElement('tr');
+                const imageUrl = row[3] ? `<img src="${row[3]}" alt="${row[1]}">` : 'ไม่มีรูป';
+                tr.innerHTML = `
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[2]}</td>
+                    <td class="admin-table-image">${imageUrl}</td>
+                `;
+                adminVoteResultsTableBody.appendChild(tr);
+            });
+        }
+
+        // แสดงข้อมูลผู้ใช้งานในตาราง Admin
+        function displayAdminUsers(users) {
+            adminUsersTableBody.innerHTML = ''; // ล้างของเก่า
+            users.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[2]}</td>
+                    <td>${row[3]}</td>
+                    <td>${row[4]}</td>
+                    <td>${row[5]}</td>
+                `;
+                adminUsersTableBody.appendChild(tr);
+            });
+        }
+
+        // ฟังก์ชันสำหรับแสดงกราฟผลโหวต (สำหรับ Admin Panel)
+        function displayVoteChart(votes) {
+            const ctx = document.getElementById('voteChart').getContext('2d');
+
+            if (votes.length === 0) {
+                chartMessageDiv.textContent = 'ยังไม่มีข้อมูลผลโหวตสำหรับแสดงกราฟ';
+                chartMessageDiv.className = 'message info';
+                if (voteChartInstance) {
+                    voteChartInstance.destroy(); // ทำลายกราฟเก่าถ้ามี
+                    voteChartInstance = null;
                 }
+                return;
+            }
 
-                adminChartInstance = new Chart(adminDesignVotesChartCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: backgroundColors.slice(0, labels.length),
-                            borderColor: borderColors.slice(0, labels.length),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
+            chartMessageDiv.textContent = ''; // ล้างข้อความ
+
+            // จัดการข้อมูลสำหรับ Chart.js
+            const labels = votes.map(vote => `แบบ ${vote[0]} - ${vote[1]}`); // Design ID - Design Name
+            const data = votes.map(vote => vote[2]); // Vote Count
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(255, 99, 71, 0.6)', // เพิ่มสี
+                'rgba(100, 149, 237, 0.6)'
+            ];
+            const borderColors = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 71, 1)',
+                'rgba(100, 149, 237, 1)'
+            ];
+
+            // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
+            if (voteChartInstance) {
+                voteChartInstance.destroy();
+            }
+
+            // สร้างกราฟแท่ง (Bar Chart)
+            voteChartInstance = new Chart(ctx, {
+                type: 'bar', // ชนิดกราฟ: แท่ง
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'คะแนนโหวต',
+                        data: data,
+                        backgroundColor: backgroundColors.slice(0, labels.length), // ใช้สีตามจำนวนแบบเสื้อ
+                        borderColor: borderColors.slice(0, labels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // ปรับขนาดตาม div container
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนคะแนน'
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed !== null) {
-                                            label += context.parsed + ' คะแนน';
-                                        }
-                                        return label;
-                                    }
-                                }
+                            ticks: {
+                                precision: 0 // ไม่แสดงทศนิยมสำหรับคะแนนโหวต
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'แบบเสื้อ'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // ไม่แสดง legend (เพราะมี dataset เดียว)
+                        },
+                        title: {
+                            display: true,
+                            text: 'ผลโหวตแบบเสื้อกีฬาสี',
+                            font: {
+                                size: 18
                             }
                         }
                     }
-                });
-
-            } else {
-                adminVotesTableBody.innerHTML = '<tr><td colspan="4">ยังไม่มีข้อมูลคะแนนโหวต</td></tr>';
-                if (adminChartInstance) adminChartInstance.destroy(); // ทำลายกราฟถ้าไม่มีข้อมูล
-            }
+                }
+            });
         }
 
-        // โหลดข้อมูลผู้ใช้งานที่โหวต
-        async function loadUsersDataAdmin() {
-            const result = await callApi('getExportUsersData');
-            adminUsersTableBody.innerHTML = ''; // ล้างแถวเก่า
-
-            if (result.status === 'success' && result.data && result.data.length > 0) {
-                result.data.forEach(rowData => {
-                    const row = document.createElement('tr');
-                    rowData.forEach(cellData => {
-                        const td = document.createElement('td');
-                        td.textContent = cellData;
-                        row.appendChild(td);
-                    });
-                    adminUsersTableBody.appendChild(row);
-                });
-            } else {
-                adminUsersTableBody.innerHTML = '<tr><td colspan="6">ยังไม่มีข้อมูลผู้ใช้งานที่โหวต</td></tr>';
-            }
-        }
-
-        // โหลดจำนวนผู้ใช้งานที่ไม่ซ้ำกัน
-        async function loadUniqueUsersCountAdmin() {
-            const result = await callApi('getUniqueUsers');
-            if (result.status === 'success') {
-                adminUniqueUsersSpan.textContent = result.uniqueUsersCount;
-            } else {
-                adminUniqueUsersSpan.textContent = 'ไม่สามารถโหลดได้';
-            }
-        }
-
-        // ฟังก์ชันสำหรับส่งออกข้อมูลเป็นไฟล์ CSV
+        // ฟังก์ชันสำหรับส่งออกข้อมูล (เพิ่มใหม่)
         async function exportData(action, filename, buttonElement) {
-            buttonElement.disabled = true; // ปิดปุ่มระหว่างการดำเนินการ
+            buttonElement.disabled = true;
             buttonElement.textContent = 'กำลังเตรียมข้อมูล...';
 
             const result = await callApi(action);
 
             if (result.status === 'success' && result.data && result.headers) {
-                // สร้าง CSV string
-                let csvContent = result.headers.join(',') + '\n';
+                // สร้าง CSV content
+                let csvContent = result.headers.join(',') + '\n'; // เพิ่ม Header
                 result.data.forEach(row => {
                     csvContent += row.map(cell => {
+                        // ห่อหุ้มเซลล์ที่มี comma หรือ double quote ด้วย double quote และ escap double quote ภายใน
                         let processedCell = String(cell);
-                        // จัดการ Double quotes และ commas ภายในข้อมูล
                         if (processedCell.includes(',') || processedCell.includes('"') || processedCell.includes('\n')) {
                             processedCell = '"' + processedCell.replace(/"/g, '""') + '"';
                         }
@@ -651,97 +627,23 @@
                 // สร้าง Blob และ URL สำหรับดาวน์โหลด
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
+
+                // สร้างลิงก์ดาวน์โหลดแบบซ่อนและคลิกอัตโนมัติ
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = filename; // กำหนดชื่อไฟล์
+                a.download = filename;
                 document.body.appendChild(a);
-                a.click(); // คลิกเพื่อดาวน์โหลด
-                document.body.removeChild(a); // ลบ Element ออก
-                URL.revokeObjectURL(url); // คืนทรัพยากร
+                a.click();
+                document.body.removeChild(a); // ลบลิงก์หลังจากดาวน์โหลด
+                URL.revokeObjectURL(url); // ล้าง URL object
+
                 alert(`ส่งออกข้อมูลไปยัง ${filename} สำเร็จ!`);
             } else {
                 alert(`เกิดข้อผิดพลาดในการส่งออกข้อมูล: ${result.message || 'ไม่พบข้อมูล'}`);
             }
-            buttonElement.disabled = false; // เปิดปุ่มอีกครั้ง
+            buttonElement.disabled = false;
             buttonElement.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
         }
-
-        // --- Admin Account Management (จัดการบัญชีผู้ดูแล) ---
-        const newAdminUsernameInput = document.getElementById('newAdminUsername');
-        const newAdminPasswordInput = document.getElementById('newAdminPassword');
-        const newAdminFullNameInput = document.getElementById('newAdminFullName');
-        const addAdminButton = document.getElementById('addAdminButton');
-        const addAdminMessage = document.getElementById('add-admin-message');
-        const adminAccountsTableBody = document.querySelector('#adminAccountsTable tbody');
-
-        addAdminButton.addEventListener('click', async () => {
-            const adminUsername = newAdminUsernameInput.value.trim();
-            const adminPassword = newAdminPasswordInput.value.trim();
-            const adminFullName = newAdminFullNameInput.value.trim();
-
-            if (!adminUsername || !adminPassword || !adminFullName) {
-                addAdminMessage.textContent = 'กรุณากรอกชื่อผู้ใช้ รหัสผ่าน และชื่อเต็ม';
-                addAdminMessage.className = 'message error';
-                return;
-            }
-
-            addAdminButton.disabled = true;
-            addAdminMessage.textContent = 'กำลังเพิ่มบัญชี...';
-            addAdminMessage.className = 'message loading';
-
-            const result = await callApi('addAdmin', { adminUsername, adminPassword, adminFullName });
-
-            if (result.status === 'success') {
-                addAdminMessage.textContent = result.message;
-                addAdminMessage.className = 'message success';
-                newAdminUsernameInput.value = '';
-                newAdminPasswordInput.value = '';
-                newAdminFullNameInput.value = '';
-                loadAdminAccounts(); // รีโหลดตารางบัญชี Admin
-            } else {
-                addAdminMessage.textContent = result.message;
-                addAdminMessage.className = 'message error';
-            }
-            addAdminButton.disabled = false;
-        });
-
-        // โหลดรายชื่อบัญชีผู้ดูแลทั้งหมด
-        async function loadAdminAccounts() {
-            const result = await callApi('getAdmins');
-            adminAccountsTableBody.innerHTML = ''; // ล้างแถวเก่า
-
-            if (result.status === 'success' && result.admins && result.admins.length > 0) {
-                result.admins.forEach(admin => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${admin.username}</td>
-                        <td>${admin.fullName}</td>
-                        <td><button class="delete-admin-button" data-username="${admin.username}">ลบ</button></td>
-                    `;
-                    adminAccountsTableBody.appendChild(row);
-                });
-
-                // เพิ่ม Event Listener ให้กับปุ่ม "ลบ" แต่ละปุ่ม
-                document.querySelectorAll('.delete-admin-button').forEach(button => {
-                    button.addEventListener('click', async (e) => {
-                        const usernameToDelete = e.target.dataset.username;
-                        if (confirm(`คุณแน่ใจหรือไม่ที่จะลบผู้ดูแล: ${usernameToDelete}?`)) {
-                            const deleteResult = await callApi('deleteAdmin', { adminUsername: usernameToDelete });
-                            if (deleteResult.status === 'success') {
-                                alert(deleteResult.message);
-                                loadAdminAccounts(); // รีโหลดหลังจากลบ
-                            } else {
-                                alert('Error: ' + deleteResult.message);
-                            }
-                        }
-                    });
-                });
-
-            } else {
-                adminAccountsTableBody.innerHTML = '<tr><td colspan="3">ยังไม่มีบัญชีผู้ดูแล</td></tr>';
-            }
-        }
-
     </script>
 </body>
 </html>

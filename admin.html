@@ -147,30 +147,38 @@
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
+        const loginMessage = document.getElementById('login-message');
         const welcomeMessage = document.getElementById('welcome-message');
         const dashboardSummaryDiv = document.getElementById('dashboard-summary');
         const gradeFilterSelect = document.getElementById('gradeFilter');
         const refreshDataButton = document.getElementById('refreshDataButton');
         const addDesignButton = document.getElementById('addDesignButton');
+        const addDesignMessage = document.getElementById('add-design-message');
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
+        const setTimeMessage = document.getElementById('set-time-message');
         const addAdminButton = document.getElementById('addAdminButton');
+        const addAdminMessage = document.getElementById('add-admin-message');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
+        const adminActionMessage = document.getElementById('admin-action-message');
         const exportUsersDataButton = document.getElementById('exportUsersDataButton');
         const exportVotesDataButton = document.getElementById('exportVotesDataButton');
         let voteChartInstance = null;
-        
 
         // --- Functions ---
-        async function callApi(action, data = {}) { 
-            try { 
-                const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }), }); 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); 
-                return await response.json(); 
-            } catch (error) { 
-                console.error('Error calling API:', error); 
-                return { status: 'error', message: 'API call failed: ' + error.message }; 
-            } 
+        async function callApi(action, data = {}) {
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action, ...data }),
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error calling API:', error);
+                return { status: 'error', message: 'API call failed: ' + error.message };
+            }
         }
 
         function showAdminPanel(adminName) {
@@ -178,7 +186,7 @@
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
         }
-        
+
         async function loadAllAdminData() {
             loadAdminData();
             loadDashboardData();
@@ -192,7 +200,230 @@
             if (result.status === 'success') {
                 let summaryHtml = `<p><strong>จำนวนผู้โหวตทั้งหมด:</strong> ${result.totalVoters} คน</p>`;
                 summaryHtml += '<strong>ผู้โหวตแยกตามระดับชั้นและห้อง:</strong>';
+
                 const sortedGrades = Object.keys(result.votesByGradeAndRoom).sort();
                 summaryHtml += '<ul>';
                 for (const grade of sortedGrades) {
-                    const gradeData = result.votesByG
+                    const gradeData = result.votesByGradeAndRoom[grade];
+                    summaryHtml += `<li><strong>${grade}</strong> (รวม ${gradeData.total} คน)`;
+
+                    const sortedRooms = Object.keys(gradeData.rooms).sort((a, b) => a - b);
+                    if (sortedRooms.length > 0) {
+                        summaryHtml += '<ul>';
+                        for (const room of sortedRooms) {
+                            summaryHtml += `<li>ห้อง ${room}: ${gradeData.rooms[room]} คน</li>`;
+                        }
+                        summaryHtml += '</ul>';
+                    }
+                    summaryHtml += '</li>';
+                }
+                summaryHtml += '</ul>';
+                dashboardSummaryDiv.innerHTML = summaryHtml;
+            } else {
+                dashboardSummaryDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดข้อมูลสรุปได้</p>';
+            }
+        }
+
+        async function loadAdminData() {
+            const result = await callApi('getAdminData');
+            if (result.status === 'success') {
+                displayAdminVoteResults(result.votes);
+                displayAdminUsers(result.users);
+                displayVoteChart(result.votes);
+            }
+        }
+
+        async function loadVoteTime() {
+            const result = await callApi('getVoteTime');
+            if (result.status === 'success') {
+                const display = document.getElementById('current-vote-time');
+                display.textContent = (result.startTime && result.endTime) ?
+                    `เวลาโหวต: ${new Date(result.startTime).toLocaleString('th-TH')} - ${new Date(result.endTime).toLocaleString('th-TH')}` :
+                    'ยังไม่มีการตั้งเวลาโหวต';
+            }
+        }
+
+        async function loadAdminAccounts() {
+            const result = await callApi('getAdminAccounts');
+            const tbody = document.querySelector('#adminAccountsTable tbody');
+            tbody.innerHTML = '';
+            if (result.status === 'success' && result.accounts.length > 0) {
+                result.accounts.forEach(account => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${account[0]}</td><td>${account[2] || ''}</td><td><button class="delete-button" data-username="${account[0]}">ลบ</button></td>`;
+                    tbody.appendChild(tr);
+                });
+                document.querySelectorAll('.delete-button').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        if (confirm(`ยืนยันการลบบัญชี '${e.target.dataset.username}'?`)) {
+                            const delResult = await callApi('deleteAdminAccount', { username: e.target.dataset.username });
+                            alert(delResult.message);
+                            loadAdminAccounts();
+                        }
+                    });
+                });
+            }
+        }
+
+        function displayAdminVoteResults(votes) {
+            const tbody = document.querySelector('#adminVoteResultsTable tbody');
+            tbody.innerHTML = '';
+            votes.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function displayAdminUsers(users) {
+            const tbody = document.querySelector('#adminUsersTable tbody');
+            tbody.innerHTML = '';
+            users.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td>`;
+                tbody.appendChild(tr);
+            });
+            // Reset filter to 'all' whenever new data is loaded
+            document.getElementById('gradeFilter').value = 'all';
+        }
+
+        function displayVoteChart(votes) {
+            const ctx = document.getElementById('voteChart').getContext('2d');
+            if (voteChartInstance) voteChartInstance.destroy();
+            voteChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: votes.map(v => `${v[0]} - ${v[1]}`),
+                    datasets: [{
+                        label: 'คะแนนโหวต',
+                        data: votes.map(v => v[2]),
+                        backgroundColor: votes.map(() => `rgba(${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},0.7)`)
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        
+        async function exportData(action, filename, button) {
+            button.disabled = true;
+            button.textContent = 'กำลังเตรียมข้อมูล...';
+            const result = await callApi(action);
+            if (result.status === 'success' && result.data) {
+                let csvContent = result.headers.join(',') + '\n';
+                result.data.forEach(row => {
+                    csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            button.disabled = false;
+            button.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
+        }
+
+        // --- Event Listeners for Buttons ---
+        loginButton.addEventListener('click', async () => {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            if(!username || !password) {
+                loginMessage.textContent = 'กรุณากรอก Username และ Password';
+                loginMessage.className = 'message error';
+                return;
+            }
+            loginMessage.textContent = 'กำลังเข้าสู่ระบบ...';
+            loginMessage.className = 'message loading';
+            loginButton.disabled = true;
+            const result = await callApi('login', { username, password });
+            if (result.status === 'success') {
+                showAdminPanel(result.fullName || username);
+                loadAllAdminData();
+            } else {
+                loginMessage.textContent = result.message;
+                loginMessage.className = 'message error';
+            }
+            loginButton.disabled = false;
+        });
+
+        refreshDataButton.addEventListener('click', loadAllAdminData);
+
+        gradeFilterSelect.addEventListener('change', () => {
+            const selectedGrade = gradeFilterSelect.value;
+            const tableRows = document.querySelectorAll('#adminUsersTable tbody tr');
+            tableRows.forEach(row => {
+                const rowGrade = row.cells[2].textContent;
+                row.style.display = (selectedGrade === 'all' || rowGrade === selectedGrade) ? '' : 'none';
+            });
+        });
+
+        addDesignButton.addEventListener('click', async () => {
+            const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
+            const designName = document.getElementById('newDesignName').value.trim();
+            const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
+            if (!designId || !designName) {
+                addDesignMessage.textContent = 'กรุณากรอก Design ID และชื่อแบบเสื้อ';
+                return;
+            }
+            const result = await callApi('addDesign', { designId, designName, imageUrl });
+            addDesignMessage.textContent = result.message;
+            if (result.status === 'success') {
+                loadAllAdminData();
+                document.getElementById('newDesignId').value = '';
+                document.getElementById('newDesignName').value = '';
+                document.getElementById('newDesignImageUrl').value = '';
+            }
+        });
+
+        setVoteTimeButton.addEventListener('click', async () => {
+            const startTime = document.getElementById('voteStartTime').value;
+            const endTime = document.getElementById('voteEndTime').value;
+            if (!startTime || !endTime) {
+                setTimeMessage.textContent = 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด';
+                return;
+            }
+            const result = await callApi('updateVoteTime', { startTime, endTime });
+            setTimeMessage.textContent = result.message;
+            if(result.status === 'success') loadVoteTime();
+        });
+
+        addAdminButton.addEventListener('click', async () => {
+            const username = document.getElementById('newAdminUsername').value.trim();
+            const password = document.getElementById('newAdminPassword').value.trim();
+            const fullName = document.getElementById('newAdminFullName').value.trim();
+            if (!username || !password || !fullName) {
+                addAdminMessage.textContent = 'กรุณากรอกข้อมูลให้ครบถ้วน';
+                return;
+            }
+            const result = await callApi('addAdminAccount', { username, password, fullName });
+            addAdminMessage.textContent = result.message;
+            if(result.status === 'success') {
+                loadAdminAccounts();
+                document.getElementById('newAdminUsername').value = '';
+                document.getElementById('newAdminPassword').value = '';
+                document.getElementById('newAdminFullName').value = '';
+            }
+        });
+
+        resetVotesButton.addEventListener('click', async () => {
+            if (!confirm('ยืนยันการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
+            const result = await callApi('resetVotes');
+            adminActionMessage.textContent = result.message;
+            if(result.status === 'success') loadAllAdminData();
+        });
+
+        clearUsersButton.addEventListener('click', async () => {
+            if (!confirm('ยืนยันการล้างข้อมูลผู้ใช้งานทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
+            const result = await callApi('clearUsers');
+            adminActionMessage.textContent = result.message;
+            if(result.status === 'success') loadAllAdminData();
+        });
+        
+        exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
+        exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
+    </script>
+</body>
+</html>

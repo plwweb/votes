@@ -59,14 +59,7 @@
             </div>
         </div>
         
-        <div id="check-status-section" class="form-section" style="background-color: var(--light-pink);">
-            <h2>ตรวจสอบสถานะการโหวตของคุณ</h2>
-            <label for="checkStudentId">กรอกรหัสนักเรียนเพื่อตรวจสอบ:</label>
-            <input type="number" id="checkStudentId" placeholder="รหัสนักเรียน 5 หลัก">
-            <button id="checkStatusButton">ตรวจสอบ</button>
-            <p id="check-status-message" class="message"></p>
         </div>
-    </div>
 
     <footer class="footer">
         <p>
@@ -97,9 +90,8 @@
         let countdownInterval;
         let voteChartInstance = null;
         const chartMessageDiv = document.getElementById('chart-message');
-        const checkStudentIdInput = document.getElementById('checkStudentId');
-        const checkStatusButton = document.getElementById('checkStatusButton');
-        const checkStatusMessage = document.getElementById('check-status-message');
+        
+        // *** Element ของส่วนตรวจสอบสถานะถูกนำออกไปแล้ว ***
 
         const roomsByGrade = { 'ม.1': ['1', '2', '3'], 'ม.2': ['1', '2', '3', '4'], 'ม.3': ['1', '2', '3'], 'ม.4': ['1', '2', '3'], 'ม.5': ['1', '2', '3'], 'ม.6': ['1', '2', '3'] };
 
@@ -132,9 +124,6 @@
                 return;
             }
             
-            // *** ลบ: หน้าต่างยืนยันข้อมูล ***
-            // if (!confirm(...)) { return; }
-
             formMessage.textContent = 'กำลังส่งข้อมูล...';
             formMessage.className = 'message loading';
             submitVoteButton.disabled = true;
@@ -162,31 +151,9 @@
             }
         });
 
-        checkStatusButton.addEventListener('click', async () => {
-            const studentId = checkStudentIdInput.value;
-            if (!studentId) {
-                checkStatusMessage.textContent = 'กรุณากรอกรหัสนักเรียน';
-                checkStatusMessage.className = 'message error';
-                return;
-            }
-            checkStatusMessage.textContent = 'กำลังตรวจสอบ...';
-            checkStatusMessage.className = 'message loading';
-            checkStatusButton.disabled = true;
-
-            const result = await callApi('checkVoteStatus', { studentId });
-
-            if (result.status === 'success') {
-                checkStatusMessage.textContent = result.message;
-                checkStatusMessage.className = result.voted ? 'message success' : 'message info';
-            } else {
-                checkStatusMessage.textContent = 'เกิดข้อผิดพลาด: ' + result.message;
-                checkStatusMessage.className = 'message error';
-            }
-            checkStatusButton.disabled = false;
-        });
+        // *** Event Listener ของส่วนตรวจสอบสถานะถูกนำออกไปแล้ว ***
 
         // --- Functions ---
-        // (ส่วนฟังก์ชันที่เหลือเหมือนเดิม ไม่ต้องแก้ไข)
         async function callApi(action, data = {}) { try { const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }), }); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return await response.json(); } catch (error) { console.error('Error calling API:', error); return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message }; } }
         async function loadInitialData() { const resultsData = await callApi('getVoteResults'); if (resultsData.status === 'success' && resultsData.results) { displayDesignOptions(resultsData.results); displayVoteResults(resultsData.results); displayVoteChart(resultsData.results); } else { designOptionsDiv.innerHTML = `<p class="message error">ไม่สามารถโหลดแบบเสื้อได้</p>`; voteResultsDiv.innerHTML = `<p class="message error">ไม่สามารถโหลดผลโหวตได้</p>`; chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้'; } checkVotingStatus(); }
         function displayDesignOptions(designs) { designOptionsDiv.innerHTML = ''; if (designs.length === 0) { designOptionsDiv.innerHTML = '<p class="message">ยังไม่มีแบบเสื้อให้โหวต</p>'; return; } designs.forEach(design => { const div = document.createElement('div'); div.classList.add('design-card'); div.setAttribute('data-design-id', design.designId); div.innerHTML = `<input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required><label for="design-${design.designId}"><img src="${design.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}" alt="${design.designName}">แบบเสื้อ ${design.designId} - ${design.designName}</label>`; designOptionsDiv.appendChild(div); }); }

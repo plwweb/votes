@@ -30,13 +30,6 @@
         <div id="admin-panel" style="display: none;">
             <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
 
-            <div class="admin-section" style="background-color: var(--light-pink);">
-                <h3>Dashboard สรุปผล</h3>
-                <div id="dashboard-summary">
-                    <p>กำลังโหลดข้อมูลสรุป...</p>
-                </div>
-            </div>
-
             <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
                 <label for="newDesignId">Design ID (เช่น S4):</label>
@@ -125,6 +118,14 @@
                     </table>
                 </div>
             </div>
+
+            <div class="admin-section" style="background-color: var(--light-pink);">
+                <h3>Dashboard สรุปผล</h3>
+                <div id="dashboard-summary">
+                    <p>กำลังโหลดข้อมูลสรุป...</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -200,13 +201,11 @@
             if (result.status === 'success') {
                 let summaryHtml = `<p><strong>จำนวนผู้โหวตทั้งหมด:</strong> ${result.totalVoters} คน</p>`;
                 summaryHtml += '<strong>ผู้โหวตแยกตามระดับชั้นและห้อง:</strong>';
-
                 const sortedGrades = Object.keys(result.votesByGradeAndRoom).sort();
                 summaryHtml += '<ul>';
                 for (const grade of sortedGrades) {
                     const gradeData = result.votesByGradeAndRoom[grade];
                     summaryHtml += `<li><strong>${grade}</strong> (รวม ${gradeData.total} คน)`;
-
                     const sortedRooms = Object.keys(gradeData.rooms).sort((a, b) => a - b);
                     if (sortedRooms.length > 0) {
                         summaryHtml += '<ul>';
@@ -283,7 +282,6 @@
                 tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td>`;
                 tbody.appendChild(tr);
             });
-            // Reset filter to 'all' whenever new data is loaded
             document.getElementById('gradeFilter').value = 'all';
         }
 
@@ -366,10 +364,12 @@
             const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
             if (!designId || !designName) {
                 addDesignMessage.textContent = 'กรุณากรอก Design ID และชื่อแบบเสื้อ';
+                addDesignMessage.className = 'message error';
                 return;
             }
             const result = await callApi('addDesign', { designId, designName, imageUrl });
             addDesignMessage.textContent = result.message;
+            addDesignMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if (result.status === 'success') {
                 loadAllAdminData();
                 document.getElementById('newDesignId').value = '';
@@ -383,10 +383,12 @@
             const endTime = document.getElementById('voteEndTime').value;
             if (!startTime || !endTime) {
                 setTimeMessage.textContent = 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด';
+                setTimeMessage.className = 'message error';
                 return;
             }
             const result = await callApi('updateVoteTime', { startTime, endTime });
             setTimeMessage.textContent = result.message;
+            setTimeMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if(result.status === 'success') loadVoteTime();
         });
 
@@ -396,10 +398,12 @@
             const fullName = document.getElementById('newAdminFullName').value.trim();
             if (!username || !password || !fullName) {
                 addAdminMessage.textContent = 'กรุณากรอกข้อมูลให้ครบถ้วน';
+                addAdminMessage.className = 'message error';
                 return;
             }
             const result = await callApi('addAdminAccount', { username, password, fullName });
             addAdminMessage.textContent = result.message;
+            addAdminMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if(result.status === 'success') {
                 loadAdminAccounts();
                 document.getElementById('newAdminUsername').value = '';
@@ -412,6 +416,7 @@
             if (!confirm('ยืนยันการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
             const result = await callApi('resetVotes');
             adminActionMessage.textContent = result.message;
+            adminActionMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if(result.status === 'success') loadAllAdminData();
         });
 
@@ -419,6 +424,7 @@
             if (!confirm('ยืนยันการล้างข้อมูลผู้ใช้งานทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
             const result = await callApi('clearUsers');
             adminActionMessage.textContent = result.message;
+            adminActionMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if(result.status === 'success') loadAllAdminData();
         });
         

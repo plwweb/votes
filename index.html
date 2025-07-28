@@ -7,26 +7,32 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
+</head>
 <body>
     <div class="container">
         <header>
-            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo"> <h1>โหวตแบบเสื้อกีฬาสี</h1>
+            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
+            <h1>โหวตแบบเสื้อกีฬาสี</h1>
         </header>
+
+        <div id="check-status-section" class="form-section" style="background-color: var(--light-pink);">
+            <h2>ตรวจสอบสถานะการโหวตของคุณ</h2>
+            <label for="checkStudentId">กรอกรหัสนักเรียนเพื่อตรวจสอบ:</label>
+            <input type="number" id="checkStudentId" placeholder="รหัสนักเรียน 5 หลัก">
+            <button id="checkStatusButton">ตรวจสอบ</button>
+            <p id="check-status-message" class="message"></p>
+        </div>
 
         <div id="voting-status" class="status-message"></div>
         <div id="countdown-timer" style="display: none;"></div>
-
 
         <div id="registration-form-section" class="form-section">
             <h2>กรอกข้อมูลเพื่อโหวต</h2>
             <form id="voteForm">
                 <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
                 <input type="number" id="studentId" name="studentId" min="00000" max="99999" required>
-
                 <label for="fullName">ชื่อ-นามสกุล:</label>
                 <input type="text" id="fullName" name="fullName" required>
-
                 <label for="grade">ระดับชั้น:</label>
                 <select id="grade" name="grade" required>
                     <option value="">เลือกระดับชั้น</option>
@@ -37,17 +43,14 @@
                     <option value="ม.5">ม.5</option>
                     <option value="ม.6">ม.6</option>
                 </select>
-
                 <label for="room">ห้อง:</label>
                 <select id="room" name="room" required>
                     <option value="">เลือกห้อง</option>
                 </select>
-
                 <label>เลือกแบบเสื้อ:</label>
                 <div id="design-options" class="design-options">
                     <p>กำลังโหลดแบบเสื้อ...</p>
                 </div>
-                
                 <button type="submit" id="submitVoteButton">ยืนยันการโหวต</button>
             </form>
             <p id="form-message" class="message"></p>
@@ -59,7 +62,6 @@
                 <canvas id="voteChart"></canvas>
             </div>
             <p id="chart-message" class="message"></p>
-            
             <div id="vote-results" class="vote-results">
                 <p>กำลังโหลดผลโหวต...</p>
             </div>
@@ -68,7 +70,7 @@
 
     <footer class="footer">
         <p>
-            &copy;2025 Student Council of Phu Luang Witthaya School 
+            &copy;2025 Student Council of Phu Luang Witthaya School
             <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
             </a>
@@ -79,10 +81,9 @@
     </footer>
 
     <script>
-        // *** เปลี่ยน YOUR_WEB_APP_URL_HERE เป็น URL ที่คุณได้จากการ Deploy Apps Script ในขั้นตอนที่ 2.4 ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
 
-        // --- อ้างอิง Elements ต่างๆ ใน HTML ---
+        // --- อ้างอิง Elements ---
         const gradeSelect = document.getElementById('grade');
         const roomSelect = document.getElementById('room');
         const voteForm = document.getElementById('voteForm');
@@ -90,33 +91,24 @@
         const designOptionsDiv = document.getElementById('design-options');
         const voteResultsDiv = document.getElementById('vote-results');
         const votingStatusDiv = document.getElementById('voting-status');
-        const countdownTimerDiv = document.getElementById('countdown-timer'); // เพิ่ม Timer Div
+        const countdownTimerDiv = document.getElementById('countdown-timer');
         const registrationFormSection = document.getElementById('registration-form-section');
         const submitVoteButton = document.getElementById('submitVoteButton');
+        let countdownInterval;
+        let voteChartInstance = null;
+        const chartMessageDiv = document.getElementById('chart-message');
 
-        let countdownInterval; // ตัวแปรสำหรับเก็บ setInterval ของ Timer
+        // *** เพิ่ม: อ้างอิง Elements ของส่วนตรวจสอบสถานะ ***
+        const checkStudentIdInput = document.getElementById('checkStudentId');
+        const checkStatusButton = document.getElementById('checkStatusButton');
+        const checkStatusMessage = document.getElementById('check-status-message');
 
-        // เพิ่มตัวแปรสำหรับกราฟ
-        let voteChartInstance = null; // เก็บ instance ของกราฟ Chart.js
-        const chartMessageDiv = document.getElementById('chart-message'); // สำหรับแสดงข้อความในส่วนกราฟ
+        const roomsByGrade = { 'ม.1': ['1', '2', '3'], 'ม.2': ['1', '2', '3', '4'], 'ม.3': ['1', '2', '3'], 'ม.4': ['1', '2', '3'], 'ม.5': ['1', '2', '3'], 'ม.6': ['1', '2', '3'] };
 
-
-        // --- ข้อมูลห้องเรียน (สามารถปรับเปลี่ยนได้ตามโรงเรียนของคุณ) ---
-        const roomsByGrade = {
-            'ม.1': ['1', '2', '3'],
-            'ม.2': ['1', '2', '3', '4'],
-            'ม.3': ['1', '2', '3'],
-            'ม.4': ['1', '2', '3'],
-            'ม.5': ['1', '2', '3'],
-            'ม.6': ['1', '2', '3']
-        };
-
-        // --- Event Listeners (เมื่อผู้ใช้ทำอะไรบางอย่าง) ---
-
-        // เมื่อมีการเปลี่ยนระดับชั้น ให้ปรับ Dropdown ห้อง
+        // --- Event Listeners ---
         gradeSelect.addEventListener('change', () => {
             const selectedGrade = gradeSelect.value;
-            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>'; // ล้างห้องเดิม
+            roomSelect.innerHTML = '<option value="">เลือกห้อง</option>';
             if (selectedGrade && roomsByGrade[selectedGrade]) {
                 roomsByGrade[selectedGrade].forEach(room => {
                     const option = document.createElement('option');
@@ -127,329 +119,244 @@
             }
         });
 
-        // เมื่อฟอร์มถูก Submit (นักเรียนกดปุ่มยืนยันการโหวต)
         voteForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // หยุดการโหลดหน้าซ้ำของฟอร์ม
-            formMessage.textContent = 'กำลังส่งข้อมูล...';
-            formMessage.className = 'message loading'; // แสดงสถานะกำลังโหลด
-            submitVoteButton.disabled = true; // ปิดปุ่มชั่วคราว
+            event.preventDefault();
 
             const studentId = document.getElementById('studentId').value;
             const fullName = document.getElementById('fullName').value;
             const grade = document.getElementById('grade').value;
             const room = document.getElementById('room').value;
-            const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked'); // แบบเสื้อที่ถูกเลือก
+            const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');
 
             if (!voteChoiceElement) {
                 formMessage.textContent = 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต';
                 formMessage.className = 'message error';
-                submitVoteButton.disabled = false;
                 return;
             }
+            
+            // *** เพิ่ม: หน้าต่างยืนยันข้อมูล ***
+            const confirmationMessage = `กรุณายืนยันข้อมูล:\n\nรหัสนักเรียน: ${studentId}\nชื่อ: ${fullName}\nระดับชั้น: ${grade}/${room}\nโหวตให้: แบบ ${voteChoiceElement.value}\n\nข้อมูลถูกต้องหรือไม่?`;
+            if (!confirm(confirmationMessage)) {
+                return; // ถ้าผู้ใช้กด Cancel ให้ออกจากฟังก์ชัน
+            }
 
-            const data = {
-                studentId: studentId,
-                fullName: fullName,
-                grade: grade,
-                room: room,
-                voteChoice: voteChoiceElement.value
-            };
+            formMessage.textContent = 'กำลังส่งข้อมูล...';
+            formMessage.className = 'message loading';
+            submitVoteButton.disabled = true;
 
-            // เรียกใช้ Apps Script เพื่อลงทะเบียนและบันทึกโหวต
+            const data = { studentId, fullName, grade, room, voteChoice: voteChoiceElement.value };
             const result = await callApi('registerAndVote', data);
 
             if (result.status === 'success') {
                 formMessage.textContent = result.message;
                 formMessage.className = 'message success';
-                voteForm.reset(); // ล้างฟอร์ม
-                gradeSelect.dispatchEvent(new Event('change')); // รีเซ็ต dropdown ห้อง
-                updateSelectedDesignCard(null); // ลบไฮไลท์การ์ดที่เลือก
-                loadInitialData(); // โหลดผลโหวตใหม่
+                voteForm.reset();
+                gradeSelect.dispatchEvent(new Event('change'));
+                updateSelectedDesignCard(null);
+                loadInitialData();
             } else {
                 formMessage.textContent = result.message;
                 formMessage.className = 'message error';
             }
-            submitVoteButton.disabled = false; // เปิดปุ่มอีกครั้ง
+            submitVoteButton.disabled = false;
         });
 
-        // เมื่อมีการเลือกแบบเสื้อ (คลิกที่ Radio Button)
         designOptionsDiv.addEventListener('change', (event) => {
             if (event.target.name === 'voteChoice' && event.target.type === 'radio') {
-                updateSelectedDesignCard(event.target.value); // ไฮไลท์การ์ดที่เลือก
+                updateSelectedDesignCard(event.target.value);
             }
         });
 
-        // --- ฟังก์ชันช่วยเหลือต่างๆ ---
+        // *** เพิ่ม: Event Listener สำหรับปุ่มตรวจสอบสถานะ ***
+        checkStatusButton.addEventListener('click', async () => {
+            const studentId = checkStudentIdInput.value;
+            if (!studentId) {
+                checkStatusMessage.textContent = 'กรุณากรอกรหัสนักเรียน';
+                checkStatusMessage.className = 'message error';
+                return;
+            }
+            checkStatusMessage.textContent = 'กำลังตรวจสอบ...';
+            checkStatusMessage.className = 'message loading';
+            checkStatusButton.disabled = true;
 
-        // ฟังก์ชันสำหรับเรียกใช้งาน Apps Script (Backend)
+            const result = await callApi('checkVoteStatus', { studentId });
+
+            if (result.status === 'success') {
+                checkStatusMessage.textContent = result.message;
+                checkStatusMessage.className = result.voted ? 'message success' : 'message info';
+            } else {
+                checkStatusMessage.textContent = 'เกิดข้อผิดพลาด: ' + result.message;
+                checkStatusMessage.className = 'message error';
+            }
+            checkStatusButton.disabled = false;
+        });
+
+        // --- Functions ---
         async function callApi(action, data = {}) {
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8', // สำคัญสำหรับ Apps Script
-                    },
-                    body: JSON.stringify({ action, ...data }), // แปลงข้อมูลเป็น JSON string
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action, ...data }),
                 });
-                if (!response.ok) { // ถ้าการเรียก API ไม่สำเร็จ
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result = await response.json(); // แปลง response เป็น JSON
-                return result;
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
                 console.error('Error calling API:', error);
                 return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message };
             }
         }
 
-        // โหลดข้อมูลเริ่มต้น (แบบเสื้อและผลโหวต) และตรวจสอบสถานะโหวต
         async function loadInitialData() {
             const resultsData = await callApi('getVoteResults');
             if (resultsData.status === 'success' && resultsData.results) {
-                displayDesignOptions(resultsData.results); // แสดงแบบเสื้อ
-                displayVoteResults(resultsData.results); // แสดงผลโหวต
-                displayVoteChart(resultsData.results); // *** เรียกฟังก์ชันแสดงกราฟ ***
+                displayDesignOptions(resultsData.results);
+                displayVoteResults(resultsData.results);
+                displayVoteChart(resultsData.results);
             } else {
-                designOptionsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดแบบเสื้อได้: ' + resultsData.message + '</p>';
-                voteResultsDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดผลโหวตได้: ' + resultsData.message + '</p>';
-                chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้: ' + resultsData.message; // แสดงข้อความ error สำหรับกราฟ
+                designOptionsDiv.innerHTML = `<p class="message error">ไม่สามารถโหลดแบบเสื้อได้: ${resultsData.message}</p>`;
+                voteResultsDiv.innerHTML = `<p class="message error">ไม่สามารถโหลดผลโหวตได้: ${resultsData.message}</p>`;
+                chartMessageDiv.textContent = 'ไม่สามารถโหลดข้อมูลกราฟได้: ' + resultsData.message;
                 chartMessageDiv.className = 'message error';
             }
-            checkVotingStatus(); // ตรวจสอบสถานะการโหวต
+            checkVotingStatus();
         }
 
-        // แสดงแบบเสื้อให้เลือก พร้อมรูปภาพ
         function displayDesignOptions(designs) {
-            designOptionsDiv.innerHTML = ''; // ล้างของเก่า
+            designOptionsDiv.innerHTML = '';
             if (designs.length === 0) {
-                designOptionsDiv.innerHTML = '<p class="message">ยังไม่มีแบบเสื้อให้โหวตในระบบ โปรดรอผู้ดูแลเพิ่มแบบเสื้อ</p>';
+                designOptionsDiv.innerHTML = '<p class="message">ยังไม่มีแบบเสื้อให้โหวต</p>';
                 return;
             }
             designs.forEach(design => {
                 const div = document.createElement('div');
-                div.classList.add('design-card'); // เพิ่มคลาส CSS สำหรับการ์ด
-                div.setAttribute('data-design-id', design.designId); // เก็บ Design ID ไว้ใน data attribute
+                div.classList.add('design-card');
+                div.setAttribute('data-design-id', design.designId);
                 div.innerHTML = `
                     <input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required>
                     <label for="design-${design.designId}">
                         <img src="${design.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}" alt="${design.designName}">
                         แบบเสื้อ ${design.designId} - ${design.designName}
-                    </label>
-                `;
+                    </label>`;
                 designOptionsDiv.appendChild(div);
             });
         }
 
-        // ไฮไลท์การ์ดแบบเสื้อที่ถูกเลือก
         function updateSelectedDesignCard(selectedDesignId) {
-            document.querySelectorAll('.design-card').forEach(card => {
-                card.classList.remove('selected'); // ลบไฮไลท์เดิม
-            });
+            document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
             if (selectedDesignId) {
                 const selectedCard = document.querySelector(`.design-card[data-design-id="${selectedDesignId}"]`);
-                if (selectedCard) {
-                    selectedCard.classList.add('selected'); // เพิ่มไฮไลท์ใหม่
-                }
+                if (selectedCard) selectedCard.classList.add('selected');
             }
         }
 
-        // แสดงผลการโหวต (แบบตาราง)
         function displayVoteResults(results) {
-            voteResultsDiv.innerHTML = ''; // ล้างของเก่า
+            voteResultsDiv.innerHTML = '';
             if (results.length === 0) {
                 voteResultsDiv.innerHTML = '<p class="message">ยังไม่มีผลการโหวต</p>';
                 return;
             }
-
-            // เรียงลำดับตามคะแนนโหวตจากมากไปน้อย
             results.sort((a, b) => b.voteCount - a.voteCount);
-
             results.forEach(item => {
                 const div = document.createElement('div');
                 div.classList.add('vote-item');
-                div.innerHTML = `
-                    <span>แบบเสื้อ ${item.designId} (${item.designName}):</span>
-                    <span class="vote-count">${item.voteCount} คะแนน</span>
-                `;
+                div.innerHTML = `<span>แบบเสื้อ ${item.designId} (${item.designName}):</span><span class="vote-count">${item.voteCount} คะแนน</span>`;
                 voteResultsDiv.appendChild(div);
             });
         }
 
-        // ตรวจสอบสถานะการโหวต (เปิด/ปิด) และแสดง Timer
         async function checkVotingStatus() {
             const response = await callApi('getVoteTime');
             if (response.status === 'success') {
                 const now = new Date();
                 const startDateTime = response.startTime ? new Date(response.startTime) : null;
                 const endDateTime = response.endTime ? new Date(response.endTime) : null;
-
-                // ล้าง Timer เก่าก่อนเสมอ
                 clearInterval(countdownInterval);
-                countdownTimerDiv.style.display = 'none'; // ซ่อน Timer เริ่มต้น
+                countdownTimerDiv.style.display = 'none';
 
                 if (startDateTime && now < startDateTime) {
-                    // กรณียังไม่ถึงเวลาเปิดโหวต: นับถอยหลังสู่เวลาเปิด
-                    votingStatusDiv.textContent = '🔴 ขณะนี้ปิดรับการโหวตแล้ว จะเปิดให้โหวตในอีก';
+                    votingStatusDiv.textContent = '🔴 ปิดรับการโหวต จะเปิดในอีก';
                     votingStatusDiv.className = 'status-message closed';
-                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
-                    submitVoteButton.disabled = true;
-                    countdownTimerDiv.style.display = 'block'; // แสดง Timer
-                    startCountdown(startDateTime.getTime(), 'open'); // นับถอยหลังสู่เวลาเปิด
+                    registrationFormSection.style.display = 'none';
+                    countdownTimerDiv.style.display = 'block';
+                    startCountdown(startDateTime.getTime(), 'open');
                 } else if (endDateTime && now > endDateTime) {
-                    // กรณีเลยเวลาปิดโหวตแล้ว
-                    let message = `🔴 ขณะนี้ปิดรับการโหวตแล้ว (สิ้นสุดวันที่ ${endDateTime.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })})`;
-                    votingStatusDiv.textContent = message;
+                    votingStatusDiv.textContent = `🔴 ปิดรับการโหวตแล้ว (สิ้นสุดวันที่ ${endDateTime.toLocaleString('th-TH')})`;
                     votingStatusDiv.className = 'status-message closed';
-                    registrationFormSection.style.display = 'none'; // ซ่อนฟอร์ม
-                    submitVoteButton.disabled = true;
-                } else if (startDateTime && endDateTime && now >= startDateTime && now <= endDateTime) {
-                    // กรณีอยู่ในช่วงเปิดโหวต: นับถอยหลังสู่เวลาปิด
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว จะปิดในอีก';
+                    registrationFormSection.style.display = 'none';
+                } else if (startDateTime && endDateTime) {
+                    votingStatusDiv.textContent = '🟢 เปิดให้โหวตแล้ว จะปิดในอีก';
                     votingStatusDiv.className = 'status-message open';
-                    registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
-                    submitVoteButton.disabled = false;
-                    countdownTimerDiv.style.display = 'block'; // แสดง Timer
-                    startCountdown(endDateTime.getTime(), 'close'); // นับถอยหลังสู่เวลาปิด
+                    registrationFormSection.style.display = 'block';
+                    countdownTimerDiv.style.display = 'block';
+                    startCountdown(endDateTime.getTime(), 'close');
                 } else {
-                    // กรณีไม่มีการตั้งเวลาโหวต หรือเกิดข้อผิดพลาดในการดึงเวลา (ถือว่าเปิดตลอด)
-                    votingStatusDiv.textContent = '🟢 ขณะนี้เปิดให้โหวตแล้ว ไม่มีการตั้งเวลาปิด';
+                    votingStatusDiv.textContent = '🟢 เปิดให้โหวตแล้ว (ไม่มีการตั้งเวลาปิด)';
                     votingStatusDiv.className = 'status-message open';
-                    registrationFormSection.style.display = 'block'; // แสดงฟอร์ม
-                    submitVoteButton.disabled = false;
-                    countdownTimerDiv.style.display = 'none'; // ซ่อน Timer ถ้าไม่มีเวลาสิ้นสุด
+                    registrationFormSection.style.display = 'block';
                 }
             } else {
-                votingStatusDiv.textContent = '⚠️ ไม่สามารถตรวจสอบสถานะการโหวตได้: ' + response.message;
+                votingStatusDiv.textContent = '⚠️ ไม่สามารถตรวจสอบสถานะการโหวตได้';
                 votingStatusDiv.className = 'status-message error';
-                registrationFormSection.style.display = 'block'; // ถือว่าเปิดถ้าตรวจสอบไม่ได้
-                submitVoteButton.disabled = false;
-                countdownTimerDiv.style.display = 'none';
-                clearInterval(countdownInterval);
             }
         }
 
-        // ฟังก์ชันสำหรับเริ่มต้น/อัปเดตนับถอยหลัง
         function startCountdown(targetTime, type) {
-            clearInterval(countdownInterval); // ล้าง Interval เก่าก่อนเริ่มใหม่
-            
+            clearInterval(countdownInterval);
             const updateCountdown = () => {
-                const now = new Date().getTime();
-                let distance = targetTime - now;
-
-                // หากเวลาเหลือแค่ไม่กี่วินาที (เช่น < 1000ms), หรือเป็นค่าติดลบ ให้หยุด Timer และรีโหลดสถานะ
-                if (distance < 1000) { // น้อยกว่า 1 วินาที
+                const distance = targetTime - new Date().getTime();
+                if (distance < 1000) {
                     clearInterval(countdownInterval);
-                    countdownTimerDiv.textContent = (type === 'open') ? 'การโหวตเริ่มต้นแล้ว!' : 'การโหวตสิ้นสุดลงแล้ว!';
-                    // อาจจะต้องซ่อน Timer หรือแสดงข้อความสุดท้ายแล้วซ่อน
-                    countdownTimerDiv.style.display = 'none'; // ซ่อน Timer เมื่อนับถอยหลังเสร็จ
-                    loadInitialData(); // รีโหลดข้อมูลเมื่อ Timer หมด (เพื่ออัปเดตสถานะการโหวต)
+                    countdownTimerDiv.style.display = 'none';
+                    loadInitialData();
                     return;
                 }
-
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                countdownTimerDiv.innerHTML = `
-                    <span>${days}</span> วัน 
-                    <span>${hours}</span> ชั่วโมง 
-                    <span>${minutes}</span> นาที 
-                    <span>${seconds}</span> วินาที`;
+                countdownTimerDiv.innerHTML = `<span>${days}</span> วัน <span>${hours}</span> ชั่วโมง <span>${minutes}</span> นาที <span>${seconds}</span> วินาที`;
             };
-
-            updateCountdown(); // อัปเดตทันทีเมื่อเริ่ม
-            countdownInterval = setInterval(updateCountdown, 1000); // อัปเดตทุก 1 วินาที
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
         }
 
-
-        // ฟังก์ชันสำหรับแสดงกราฟผลโหวต (เพิ่มใหม่)
         function displayVoteChart(votes) {
             const ctx = document.getElementById('voteChart').getContext('2d');
-
             if (votes.length === 0) {
-                chartMessageDiv.textContent = 'ยังไม่มีข้อมูลผลโหวตสำหรับแสดงกราฟ';
+                chartMessageDiv.textContent = 'ยังไม่มีข้อมูลสำหรับแสดงกราฟ';
                 chartMessageDiv.className = 'message info';
-                if (voteChartInstance) {
-                    voteChartInstance.destroy(); // ทำลายกราฟเก่าถ้ามี
-                    voteChartInstance = null;
-                }
+                if (voteChartInstance) voteChartInstance.destroy();
                 return;
             }
-
-            chartMessageDiv.textContent = ''; // ล้างข้อความ
-
-            // จัดการข้อมูลสำหรับ Chart.js
-            const labels = votes.map(vote => `แบบ ${vote.designId} - ${vote.designName}`); // Design ID - Design Name
-            const data = votes.map(vote => vote.voteCount); // Vote Count
-
-            // Generate a random color for each bar for variety
-            const generateRandomColor = () => {
-                const r = Math.floor(Math.random() * 255);
-                const g = Math.floor(Math.random() * 255);
-                const b = Math.floor(Math.random() * 255);
-                return `rgba(${r},${g},${b},0.7)`; // 70% opacity
-            };
-            const backgroundColors = data.map(() => generateRandomColor());
-            const borderColors = backgroundColors.map(color => color.replace('0.7', '1')); // Opaque border
-
-
-            // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
-            if (voteChartInstance) {
-                voteChartInstance.destroy();
-            }
-
-            // สร้างกราฟแท่ง (Bar Chart)
+            chartMessageDiv.textContent = '';
+            const labels = votes.map(vote => `แบบ ${vote.designId} - ${vote.designName}`);
+            const data = votes.map(vote => vote.voteCount);
+            const backgroundColors = data.map(() => `rgba(${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},0.7)`);
+            if (voteChartInstance) voteChartInstance.destroy();
             voteChartInstance = new Chart(ctx, {
-                type: 'bar', // ชนิดกราฟ: แท่ง
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'คะแนนโหวต',
                         data: data,
                         backgroundColor: backgroundColors,
-                        borderColor: borderColors,
+                        borderColor: backgroundColors.map(c => c.replace('0.7', '1')),
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // ปรับขนาดตาม div container
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'จำนวนคะแนน'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'แบบเสื้อ'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false // ไม่แสดง legend (เพราะมี dataset เดียว)
-                        },
-                        title: {
-                            display: true,
-                            text: 'ผลโหวตแบบเสื้อกีฬาสี',
-                            font: {
-                                size: 18
-                            }
-                        }
-                    }
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'จำนวนคะแนน' } }, x: { title: { display: true, text: 'แบบเสื้อ' } } },
+                    plugins: { legend: { display: false }, title: { display: true, text: 'ผลโหวตแบบเสื้อกีฬาสี', font: { size: 18 } } }
                 }
             });
         }
 
-
-        // --- โหลดข้อมูลเริ่มต้นและอัปเดตอัตโนมัติ ---
         loadInitialData();
-        setInterval(loadInitialData, 10000); // อัปเดตข้อมูลทุก 10 วินาที
+        setInterval(loadInitialData, 10000);
     </script>
 </body>
 </html>

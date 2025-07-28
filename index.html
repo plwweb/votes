@@ -59,7 +59,7 @@
             </div>
         </div>
         
-        </div>
+    </div>
 
     <footer class="footer">
         <p>
@@ -70,6 +70,7 @@
             <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
             </a>
+            <span style="margin: 0 10px;">|</span> <a href="admin.html" style="text-decoration: none;">Admin Login</a>
         </p>
     </footer>
 
@@ -91,8 +92,6 @@
         let voteChartInstance = null;
         const chartMessageDiv = document.getElementById('chart-message');
         
-        // *** Element ของส่วนตรวจสอบสถานะถูกนำออกไปแล้ว ***
-
         const roomsByGrade = { 'ม.1': ['1', '2', '3'], 'ม.2': ['1', '2', '3', '4'], 'ม.3': ['1', '2', '3'], 'ม.4': ['1', '2', '3'], 'ม.5': ['1', '2', '3'], 'ม.6': ['1', '2', '3'] };
 
         // --- Event Listeners ---
@@ -150,8 +149,6 @@
                 updateSelectedDesignCard(event.target.value);
             }
         });
-
-        // *** Event Listener ของส่วนตรวจสอบสถานะถูกนำออกไปแล้ว ***
 
         // --- Functions ---
         async function callApi(action, data = {}) { try { const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }), }); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return await response.json(); } catch (error) { console.error('Error calling API:', error); return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message }; } }

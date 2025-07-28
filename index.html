@@ -72,6 +72,7 @@
             &copy;2025 Student Council of Phu Luang Witthaya School
             <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon"></a>
             <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon"></a>
+            <span style="margin: 0 10px;">|</span> <a href="admin.html" style="text-decoration: none;">Admin Login</a>
         </p>
     </footer>
 
@@ -140,14 +141,14 @@
                 votingStatusDiv.textContent = '🔴 ปิดรับการโหวต จะเปิดในอีก';
                 votingStatusDiv.className = 'status-message closed';
                 registrationFormSection.style.display = 'none';
-                results-section.style.display = 'none';
+                document.getElementById('results-section').style.display = 'none';
                 countdownTimerDiv.style.display = 'block';
                 startCountdown(startDateTime.getTime());
             } else if (endDateTime && now > endDateTime) {
                 votingStatusDiv.textContent = `🔴 ปิดรับการโหวตแล้ว (สิ้นสุดวันที่ ${endDateTime.toLocaleString('th-TH')})`;
                 votingStatusDiv.className = 'status-message closed';
                 registrationFormSection.style.display = 'none';
-                loadInitialData(false); // โหลดผลครั้งสุดท้าย แต่ไม่ตั้งเวลาอัปเดต
+                loadInitialData(false); 
             } else {
                 votingStatusDiv.textContent = '🟢 เปิดให้โหวตแล้ว' + (endDateTime ? ' จะปิดในอีก' : ' (ไม่มีการตั้งเวลาปิด)');
                 votingStatusDiv.className = 'status-message open';
@@ -156,7 +157,7 @@
                     countdownTimerDiv.style.display = 'block';
                     startCountdown(endDateTime.getTime());
                 }
-                loadInitialData(true); // โหลดข้อมูลและตั้งเวลาอัปเดต
+                loadInitialData(true); 
             }
         }
         
@@ -176,7 +177,7 @@
                          displayVoteResults(latestResults.results);
                          displayVoteChart(latestResults.results);
                     }
-                }, 15000); // อัปเดตทุก 15 วินาที
+                }, 15000); 
             }
         }
         

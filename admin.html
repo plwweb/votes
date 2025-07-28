@@ -29,6 +29,7 @@
 
         <div id="admin-panel" style="display: none;">
             <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
+            
             <div class="admin-section" style="background-color: var(--light-pink);">
                 <h3>Dashboard สรุปผล</h3>
                 <div id="dashboard-summary">
@@ -38,99 +39,49 @@
 
             <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
-                <label for="newDesignId">Design ID (เช่น S4):</label>
-                <input type="text" id="newDesignId" placeholder="S..." required>
-                <label for="newDesignName">ชื่อแบบเสื้อ:</label>
-                <input type="text" id="newDesignName" placeholder="เสื้อแบบที่ 4..." required>
-                <label for="newDesignImageUrl">URL รูปภาพแบบเสื้อ:</label>
-                <input type="text" id="newDesignImageUrl" placeholder="https://example.com/image.png">
-                <button id="addDesignButton">เพิ่มแบบเสื้อใหม่</button>
-                <p id="add-design-message" class="message"></p>
+                <label for="newDesignId">Design ID:</label><input type="text" id="newDesignId" placeholder="S...">
+                <label for="newDesignName">ชื่อแบบเสื้อ:</label><input type="text" id="newDesignName" placeholder="เสื้อแบบที่...">
+                <label for="newDesignImageUrl">URL รูปภาพ:</label><input type="text" id="newDesignImageUrl" placeholder="https://...">
+                <button id="addDesignButton">เพิ่มแบบเสื้อ</button>
             </div>
 
             <div class="admin-section">
-                <h3>ตั้งเวลาเปิด-ปิดการโหวต</h3>
-                <label for="voteStartTime">เวลาเริ่มต้น:</label>
-                <input type="datetime-local" id="voteStartTime">
-                <label for="voteEndTime">เวลาสิ้นสุด:</label>
-                <input type="datetime-local" id="voteEndTime">
-                <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
-                <p id="set-time-message" class="message"></p>
-                <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
-            </div>
-
-            <div class="admin-section">
-                <h3>จัดการบัญชีผู้ดูแล</h3>
-                <label for="newAdminUsername">Username ใหม่:</label>
-                <input type="text" id="newAdminUsername" placeholder="username" required>
-                <label for="newAdminPassword">Password ใหม่:</label>
-                <input type="password" id="newAdminPassword" placeholder="password" required>
-                <label for="newAdminFullName">ชื่อผู้ดูแล:</label>
-                <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
-                <button id="addAdminButton">เพิ่มบัญชีผู้ดูแล</button>
-                <p id="add-admin-message" class="message"></p>
-                <h4>บัญชีผู้ดูแลที่มีอยู่</h4>
-                <div class="data-table-container">
-                    <table id="adminAccountsTable">
-                        <thead>
-                            <tr><th>Username</th><th>ชื่อผู้ดูแล</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="admin-section">
-                <h3>เครื่องมือผู้ดูแล</h3>
-                <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
-                <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
-                <p id="admin-action-message" class="message"></p>
+                 <h3>ตั้งเวลาเปิด-ปิดการโหวต</h3>
+                 <label for="voteStartTime">เวลาเริ่มต้น:</label><input type="datetime-local" id="voteStartTime">
+                 <label for="voteEndTime">เวลาสิ้นสุด:</label><input type="datetime-local" id="voteEndTime">
+                 <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
+                 <p id="current-vote-time"></p>
             </div>
 
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                <button id="exportUsersDataButton">ส่งออกข้อมูลผู้ใช้งาน (.csv)</button>
-                <button id="exportVotesDataButton">ส่งออกข้อมูลผลโหวต (.csv)</button>
                 <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
-                        <thead>
-                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th></tr>
-                        </thead>
+                        <thead><tr><th>ID</th><th>ชื่อ</th><th>คะแนน</th><th>รูป</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
-
                 <h4>กราฟผลโหวต</h4>
-                <div style="width: 100%; height: 400px; margin: 20px auto;">
-                    <canvas id="voteChart"></canvas>
-                </div>
-                <p id="chart-message" class="message"></p>
-
+                <div style="width:100%;height:400px;margin:20px auto;"><canvas id="voteChart"></canvas></div>
                 <h4>ข้อมูลผู้ใช้งานที่โหวตแล้ว</h4>
-                <div style="margin-bottom: 15px;">
+                <div>
                     <label for="gradeFilter">กรองตามระดับชั้น:</label>
                     <select id="gradeFilter">
                         <option value="all">แสดงทั้งหมด</option>
-                        <option value="ม.1">ม.1</option>
-                        <option value="ม.2">ม.2</option>
-                        <option value="ม.3">ม.3</option>
-                        <option value="ม.4">ม.4</option>
-                        <option value="ม.5">ม.5</option>
-                        <option value="ม.6">ม.6</option>
+                        <option value="ม.1">ม.1</option><option value="ม.2">ม.2</option><option value="ม.3">ม.3</option>
+                        <option value="ม.4">ม.4</option><option value="ม.5">ม.5</option><option value="ม.6">ม.6</option>
                     </select>
                 </div>
                 <div class="data-table-container">
                     <table id="adminUsersTable">
-                        <thead>
-                            <tr><th>Student ID</th><th>Full Name</th><th>Grade</th><th>Room</th><th>Timestamp</th><th>Vote Choice</th></tr>
-                        </thead>
-                        <tbody></tbody>
+                         <thead><tr><th>ID นักเรียน</th><th>ชื่อ</th><th>ชั้น</th><th>ห้อง</th><th>เวลา</th><th>โหวตให้</th></tr></thead>
+                         <tbody></tbody>
                     </table>
                 </div>
             </div>
-        </div>
+             </div>
     </div>
 
         <footer class="footer">
@@ -153,86 +104,42 @@
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
-        const loginMessage = document.getElementById('login-message');
         const welcomeMessage = document.getElementById('welcome-message');
-        const addDesignButton = document.getElementById('addDesignButton');
-        const setVoteTimeButton = document.getElementById('setVoteTimeButton');
-        const addAdminButton = document.getElementById('addAdminButton');
-        const resetVotesButton = document.getElementById('resetVotesButton');
-        const clearUsersButton = document.getElementById('clearUsersButton');
-        const refreshDataButton = document.getElementById('refreshDataButton');
-        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
-        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
-        let voteChartInstance = null;
-        
-        // *** เพิ่ม: อ้างอิง Elements ใหม่ ***
         const dashboardSummaryDiv = document.getElementById('dashboard-summary');
         const gradeFilterSelect = document.getElementById('gradeFilter');
-
-        // --- Functions ---
-        async function callApi(action, data = {}) {
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action, ...data }),
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error calling API:', error);
-                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message };
-            }
-        }
+        const refreshDataButton = document.getElementById('refreshDataButton');
+        let voteChartInstance = null;
 
         // --- Event Listeners ---
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            loginMessage.textContent = 'กำลังเข้าสู่ระบบ...';
-            loginMessage.className = 'message loading';
             loginButton.disabled = true;
-
             const result = await callApi('login', { username, password });
-
             if (result.status === 'success') {
-                loginMessage.textContent = result.message;
-                loginMessage.className = 'message success';
                 showAdminPanel(result.fullName || username);
-                loadAllAdminData(); // โหลดข้อมูลทั้งหมดเมื่อเข้าสู่ระบบสำเร็จ
+                loadAllAdminData();
             } else {
-                loginMessage.textContent = result.message;
-                loginMessage.className = 'message error';
+                alert('Login failed: ' + result.message);
             }
             loginButton.disabled = false;
         });
-
-        addDesignButton.addEventListener('click', async () => { /* ... โค้ดเดิม ... */ });
-        setVoteTimeButton.addEventListener('click', async () => { /* ... โค้ดเดิม ... */ });
-        addAdminButton.addEventListener('click', async () => { /* ... โค้ดเดิม ... */ });
-        resetVotesButton.addEventListener('click', async () => { /* ... โค้ดเดิม ... */ });
-        clearUsersButton.addEventListener('click', async () => { /* ... โค้ดเดิม ... */ });
+        
         refreshDataButton.addEventListener('click', loadAllAdminData);
-        exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
-        exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
 
-        // *** เพิ่ม: Event Listener สำหรับตัวกรอง ***
         gradeFilterSelect.addEventListener('change', () => {
             const selectedGrade = gradeFilterSelect.value;
             const tableRows = document.querySelectorAll('#adminUsersTable tbody tr');
-            
             tableRows.forEach(row => {
-                // คอลัมน์ที่ 3 (index 2) คือระดับชั้น
                 const rowGrade = row.cells[2].textContent;
-                if (selectedGrade === 'all' || rowGrade === selectedGrade) {
-                    row.style.display = ''; // แสดงแถว
-                } else {
-                    row.style.display = 'none'; // ซ่อนแถว
-                }
+                row.style.display = (selectedGrade === 'all' || rowGrade === selectedGrade) ? '' : 'none';
             });
         });
 
-        // --- Data Loading & Display ---
+
+        // --- Functions ---
+        async function callApi(action, data = {}) { try { const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }), }); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return await response.json(); } catch (error) { console.error('Error calling API:', error); return { status: 'error', message: 'API call failed' }; } }
+        
         function showAdminPanel(adminName) {
             loginSection.style.display = 'none';
             adminPanel.style.display = 'block';
@@ -243,71 +150,38 @@
             loadAdminData();
             loadDashboardData();
             loadVoteTime();
-            loadAdminAccounts();
         }
         
+        // *** แก้ไข: ฟังก์ชันแสดงผล Dashboard ให้ละเอียดขึ้น ***
         async function loadDashboardData() {
             dashboardSummaryDiv.innerHTML = '<p>กำลังโหลดข้อมูลสรุป...</p>';
             const result = await callApi('getAdminDashboardData');
             if (result.status === 'success') {
                 let summaryHtml = `<p><strong>จำนวนผู้โหวตทั้งหมด:</strong> ${result.totalVoters} คน</p>`;
-                summaryHtml += '<strong>ผู้โหวตแยกตามระดับชั้น:</strong><ul>';
-                for (const grade in result.votesByGrade) {
-                    summaryHtml += `<li>${grade}: ${result.votesByGrade[grade]} คน</li>`;
+                summaryHtml += '<strong>ผู้โหวตแยกตามระดับชั้นและห้อง:</strong>';
+                
+                const sortedGrades = Object.keys(result.votesByGradeAndRoom).sort();
+
+                summaryHtml += '<ul>';
+                for (const grade of sortedGrades) {
+                    const gradeData = result.votesByGradeAndRoom[grade];
+                    summaryHtml += `<li><strong>${grade}</strong> (รวม ${gradeData.total} คน)`;
+                    
+                    const sortedRooms = Object.keys(gradeData.rooms).sort((a,b) => a - b);
+                    summaryHtml += '<ul>';
+                    for (const room of sortedRooms) {
+                        summaryHtml += `<li>ห้อง ${room}: ${gradeData.rooms[room]} คน</li>`;
+                    }
+                    summaryHtml += '</ul></li>';
                 }
                 summaryHtml += '</ul>';
+                
                 dashboardSummaryDiv.innerHTML = summaryHtml;
             } else {
                 dashboardSummaryDiv.innerHTML = '<p class="message error">ไม่สามารถโหลดข้อมูลสรุปได้</p>';
             }
         }
 
-        async function loadAdminData() { /* ... โค้ดเดิม ... */ }
-        async function loadVoteTime() { /* ... โค้ดเดิม ... */ }
-        async function loadAdminAccounts() { /* ... โค้ดเดิม ... */ }
-        function displayAdminVoteResults(votes) { /* ... โค้ดเดิม ... */ }
-        function displayAdminUsers(users) { /* ... โค้ดเดิม ... */ }
-        function displayVoteChart(votes) { /* ... โค้ดเดิม ... */ }
-        async function exportData(action, filename, button) { /* ... โค้ดเดิม ... */ }
-        
-        // *** ลบ: การตรวจสอบสถานะ Login เมื่อโหลดหน้าเว็บ ***
-        // document.addEventListener('DOMContentLoaded', () => { ... });
-
-        // --- ใส่โค้ดฟังก์ชันที่ไม่ได้แก้ไขจากไฟล์เดิมของคุณที่นี่ ---
-        // (เพื่อความกระชับ ผมจะย่อส่วนนี้ แต่คุณต้องคัดลอกมาทั้งหมด)
-        addDesignButton.addEventListener('click', async () => {
-            const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
-            const designName = document.getElementById('newDesignName').value.trim();
-            const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
-            if (!designId || !designName) return;
-            const result = await callApi('addDesign', { designId, designName, imageUrl });
-            if(result.status === 'success') loadAllAdminData();
-        });
-        setVoteTimeButton.addEventListener('click', async () => {
-            const startTime = document.getElementById('voteStartTime').value;
-            const endTime = document.getElementById('voteEndTime').value;
-            if (!startTime || !endTime) return;
-            const result = await callApi('updateVoteTime', { startTime, endTime });
-            if(result.status === 'success') loadVoteTime();
-        });
-        addAdminButton.addEventListener('click', async () => {
-            const username = document.getElementById('newAdminUsername').value.trim();
-            const password = document.getElementById('newAdminPassword').value.trim();
-            const fullName = document.getElementById('newAdminFullName').value.trim();
-            if (!username || !password || !fullName) return;
-            const result = await callApi('addAdminAccount', { username, password, fullName });
-            if(result.status === 'success') loadAdminAccounts();
-        });
-        resetVotesButton.addEventListener('click', async () => {
-            if (!confirm('ยืนยันการรีเซ็ตคะแนนโหวตทั้งหมด?')) return;
-            const result = await callApi('resetVotes');
-            if(result.status === 'success') loadAllAdminData();
-        });
-        clearUsersButton.addEventListener('click', async () => {
-            if (!confirm('ยืนยันการล้างข้อมูลผู้ใช้งานทั้งหมด?')) return;
-            const result = await callApi('clearUsers');
-            if(result.status === 'success') loadAllAdminData();
-        });
         async function loadAdminData() {
             const result = await callApi('getAdminData');
             if (result.status === 'success') {
@@ -316,41 +190,24 @@
                 displayVoteChart(result.votes);
             }
         }
+
         async function loadVoteTime() {
             const result = await callApi('getVoteTime');
             if (result.status === 'success') {
                 document.getElementById('current-vote-time').textContent = (result.startTime && result.endTime) ? `เวลาโหวต: ${new Date(result.startTime).toLocaleString('th-TH')} - ${new Date(result.endTime).toLocaleString('th-TH')}` : 'ยังไม่มีการตั้งเวลาโหวต';
             }
         }
-        async function loadAdminAccounts() {
-            const result = await callApi('getAdminAccounts');
-            const tbody = document.querySelector('#adminAccountsTable tbody');
-            tbody.innerHTML = '';
-            if (result.status === 'success' && result.accounts.length > 0) {
-                result.accounts.forEach(account => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${account[0]}</td><td>${account[2] || ''}</td><td><button class="delete-button" data-username="${account[0]}">ลบ</button></td>`;
-                    tbody.appendChild(tr);
-                });
-                document.querySelectorAll('.delete-button').forEach(button => {
-                    button.addEventListener('click', async (e) => {
-                        if (confirm(`ยืนยันการลบบัญชี '${e.target.dataset.username}'?`)) {
-                            await callApi('deleteAdminAccount', { username: e.target.dataset.username });
-                            loadAdminAccounts();
-                        }
-                    });
-                });
-            }
-        }
+        
         function displayAdminVoteResults(votes) {
             const tbody = document.querySelector('#adminVoteResultsTable tbody');
             tbody.innerHTML = '';
             votes.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="width:60px;"></td>`;
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><img src="${row[3] || ''}" style="width:60px;"></td>`;
                 tbody.appendChild(tr);
             });
         }
+
         function displayAdminUsers(users) {
             const tbody = document.querySelector('#adminUsersTable tbody');
             tbody.innerHTML = '';
@@ -360,6 +217,7 @@
                 tbody.appendChild(tr);
             });
         }
+
         function displayVoteChart(votes) {
             const ctx = document.getElementById('voteChart').getContext('2d');
             if (voteChartInstance) voteChartInstance.destroy();
@@ -376,27 +234,7 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
-        async function exportData(action, filename, button) {
-            button.disabled = true;
-            button.textContent = 'กำลังเตรียมข้อมูล...';
-            const result = await callApi(action);
-            if (result.status === 'success' && result.data) {
-                let csvContent = result.headers.join(',') + '\n';
-                result.data.forEach(row => {
-                    csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
-                });
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a");
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-            button.disabled = false;
-            button.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
-        }
+        
     </script>
 </body>
 </html>

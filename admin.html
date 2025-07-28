@@ -47,7 +47,7 @@
                 <p id="set-time-message" class="message"></p>
                 <p id="current-vote-time"></p>
             </div>
-            
+
             <div class="admin-section">
                 <h3>จัดการบัญชีผู้ดูแล</h3>
                 <label for="newAdminUsername">Username ใหม่:</label><input type="text" id="newAdminUsername">
@@ -66,8 +66,6 @@
 
             <div class="admin-section">
                 <h3>เครื่องมือผู้ดูแล</h3>
-                <p><strong>สถานะปัจจุบัน:</strong> <span id="winner-status" style="font-weight:bold;">กำลังตรวจสอบ...</span></p>
-                <button id="clearWinnerButton" class="action-button" style="background-color: #ff9800;">ยกเลิกการประกาศผู้ชนะ</button>
                 <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวต</button>
                 <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้</button>
                 <p id="admin-action-message" class="message"></p>
@@ -81,9 +79,7 @@
                 <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
-                        <thead>
-                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th><th>Action</th></tr>
-                        </thead>
+                        <thead><tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -127,103 +123,74 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
         
-        // --- Element References ---
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
+        const loginMessage = document.getElementById('login-message');
         const welcomeMessage = document.getElementById('welcome-message');
+        const dashboardSummaryDiv = document.getElementById('dashboard-summary');
+        const gradeFilterSelect = document.getElementById('gradeFilter');
         const refreshDataButton = document.getElementById('refreshDataButton');
         const addDesignButton = document.getElementById('addDesignButton');
+        const addDesignMessage = document.getElementById('add-design-message');
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
+        const setTimeMessage = document.getElementById('set-time-message');
         const addAdminButton = document.getElementById('addAdminButton');
+        const addAdminMessage = document.getElementById('add-admin-message');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
-        const clearWinnerButton = document.getElementById('clearWinnerButton');
-        const winnerStatusSpan = document.getElementById('winner-status');
-        const gradeFilterSelect = document.getElementById('gradeFilter');
-        const dashboardSummaryDiv = document.getElementById('dashboard-summary');
-        
+        const adminActionMessage = document.getElementById('admin-action-message');
+        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
+        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
         let voteChartInstance = null;
-
-        // --- Core Functions ---
+        
         async function callApi(action, data = {}) { try { const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }) }); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return await response.json(); } catch (e) { console.error('API Error:', e); return { status: 'error', message: e.message }; } }
         
-        async function loadAllAdminData() {
-            const statusResult = await callApi('getSystemStatus');
-            if (statusResult.status === 'success') {
-                winnerStatusSpan.textContent = statusResult.winnerId ? `ประกาศผลแล้ว (ผู้ชนะคือ ${statusResult.winnerId})` : 'ยังไม่มีการประกาศผล';
-                winnerStatusSpan.style.color = statusResult.winnerId ? 'green' : 'red';
-            }
+        function showAdminPanel(adminName) {
+            loginSection.style.display = 'none';
+            adminPanel.style.display = 'block';
+            welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
+        }
 
-            const adminDataResult = await callApi('getAdminData');
-            if (adminDataResult.status === 'success') {
-                displayAdminVoteResults(adminDataResult.votes, statusResult.winnerId);
-                displayAdminUsers(adminDataResult.users);
-                displayVoteChart(adminDataResult.votes);
-            }
+        async function loadAllAdminData() {
+            loadAdminData();
             loadDashboardData();
+            loadVoteTime();
             loadAdminAccounts();
         }
-        
-        function displayAdminVoteResults(votes, currentWinnerId) {
-            const tbody = document.querySelector('#adminVoteResultsTable tbody');
-            tbody.innerHTML = '';
-            votes.forEach(row => {
-                const tr = document.createElement('tr');
-                const designId = row[0];
-                const isWinner = designId === currentWinnerId;
-                tr.style.backgroundColor = isWinner ? '#d4edda' : '';
 
-                const actionButton = isWinner
-                    ? '<span>🏆 ผู้ชนะ</span>'
-                    : `<button class="declare-winner-btn" data-design-id="${designId}">ประกาศผล</button>`;
-
-                tr.innerHTML = `<td>${designId}</td><td>${row[1]}</td><td>${row[2]}</td><td><img src="${row[3] || ''}" style="max-width:60px;"></td><td>${actionButton}</td>`;
-                tbody.appendChild(tr);
-            });
-
-            document.querySelectorAll('.declare-winner-btn').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const designId = event.target.dataset.designId;
-                    if (confirm(`คุณต้องการประกาศให้ '${designId}' เป็นผู้ชนะใช่หรือไม่?`)) {
-                        const result = await callApi('declareWinner', { designId });
-                        alert(result.message);
-                        loadAllAdminData();
-                    }
-                });
-            });
-        }
-        
-        // --- Event Listeners ---
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            if(!username || !password) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+            if(!username || !password) { loginMessage.textContent = 'กรุณากรอกข้อมูลให้ครบ'; loginMessage.className = 'message error'; return; }
+            loginMessage.textContent = 'กำลังเข้าสู่ระบบ...'; loginMessage.className = 'message loading'; loginButton.disabled = true;
             const result = await callApi('login', { username, password });
             if (result.status === 'success') {
-                loginSection.style.display = 'none';
-                adminPanel.style.display = 'block';
-                welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${result.fullName || username}!`;
+                showAdminPanel(result.fullName || username);
                 loadAllAdminData();
             } else {
-                alert('Login Failed: ' + result.message);
+                loginMessage.textContent = result.message; loginMessage.className = 'message error';
             }
+            loginButton.disabled = false;
         });
-        
+
         refreshDataButton.addEventListener('click', loadAllAdminData);
-        clearWinnerButton.addEventListener('click', async () => { if (confirm('คุณแน่ใจหรือไม่ที่จะยกเลิกการประกาศผู้ชนะ?')) { const result = await callApi('clearWinner'); alert(result.message); loadAllAdminData(); } });
         gradeFilterSelect.addEventListener('change', () => { const selectedGrade = gradeFilterSelect.value; document.querySelectorAll('#adminUsersTable tbody tr').forEach(row => { row.style.display = (selectedGrade === 'all' || row.cells[2].textContent === selectedGrade) ? '' : 'none'; }); });
-        addDesignButton.addEventListener('click', async () => { /* Logic to add design */ const result = await callApi('addDesign', { /* data */ }); if (result.status === 'success') loadAllAdminData(); });
-        setVoteTimeButton.addEventListener('click', async () => { /* Logic to set time */ const result = await callApi('updateVoteTime', { /* data */ }); alert(result.message); });
-        addAdminButton.addEventListener('click', async () => { /* Logic to add admin */ const result = await callApi('addAdminAccount', { /* data */ }); if (result.status === 'success') loadAdminAccounts(); });
-        resetVotesButton.addEventListener('click', async () => { if(confirm('ยืนยัน?')) { /* Logic to reset votes */ const result = await callApi('resetVotes'); if(result.status ==='success') loadAllAdminData(); } });
-        clearUsersButton.addEventListener('click', async () => { if(confirm('ยืนยัน?')) { /* Logic to clear users */ const result = await callApi('clearUsers'); if(result.status ==='success') loadAllAdminData(); } });
+        addDesignButton.addEventListener('click', async () => { const designId = document.getElementById('newDesignId').value.trim().toUpperCase(); const designName = document.getElementById('newDesignName').value.trim(); const imageUrl = document.getElementById('newDesignImageUrl').value.trim(); if (!designId || !designName) { addDesignMessage.textContent = 'กรุณากรอกข้อมูล'; return; } const result = await callApi('addDesign', { designId, designName, imageUrl }); addDesignMessage.textContent = result.message; if (result.status === 'success') loadAllAdminData(); });
+        setVoteTimeButton.addEventListener('click', async () => { const startTime = document.getElementById('voteStartTime').value; const endTime = document.getElementById('voteEndTime').value; if (!startTime || !endTime) return; const result = await callApi('updateVoteTime', { startTime, endTime }); setTimeMessage.textContent = result.message; if(result.status === 'success') loadVoteTime(); });
+        addAdminButton.addEventListener('click', async () => { const username = document.getElementById('newAdminUsername').value.trim(); const password = document.getElementById('newAdminPassword').value.trim(); const fullName = document.getElementById('newAdminFullName').value.trim(); if (!username || !password || !fullName) return; const result = await callApi('addAdminAccount', { username, password, fullName }); addAdminMessage.textContent = result.message; if(result.status === 'success') loadAdminAccounts(); });
+        resetVotesButton.addEventListener('click', async () => { if (confirm('ยืนยัน?')) { const result = await callApi('resetVotes'); adminActionMessage.textContent = result.message; if(result.status ==='success') loadAllAdminData(); } });
+        clearUsersButton.addEventListener('click', async () => { if (confirm('ยืนยัน?')) { const result = await callApi('clearUsers'); adminActionMessage.textContent = result.message; if(result.status ==='success') loadAllAdminData(); } });
+        exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
+        exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
         
-        // --- Other Display Functions (Copy from your latest version) ---
-        async function loadDashboardData() { /* ... */ }
-        async function loadAdminAccounts() { /* ... */ }
-        function displayAdminUsers(users) { /* ... */ }
-        function displayVoteChart(votes) { /* ... */ }
+        async function loadDashboardData() { dashboardSummaryDiv.innerHTML = '<p>กำลังโหลด...</p>'; const result = await callApi('getAdminDashboardData'); if (result.status === 'success') { let html = `<p><strong>ผู้โหวตทั้งหมด:</strong> ${result.totalVoters} คน</p><ul>`; const sortedGrades = Object.keys(result.votesByGradeAndRoom).sort(); for (const grade of sortedGrades) { const d = result.votesByGradeAndRoom[grade]; html += `<li><strong>${grade}</strong> (รวม ${d.total} คน)<ul>`; const sortedRooms = Object.keys(d.rooms).sort((a,b) => a-b); for (const room of sortedRooms) { html += `<li>ห้อง ${room}: ${d.rooms[room]} คน</li>`; } html += `</ul></li>`; } html += `</ul>`; dashboardSummaryDiv.innerHTML = html; } }
+        async function loadVoteTime() { const result = await callApi('getVoteTime'); if(result.status === 'success') { document.getElementById('current-vote-time').textContent = (result.startTime && result.endTime) ? `เวลาโหวต: ${new Date(result.startTime).toLocaleString('th-TH')} - ${new Date(result.endTime).toLocaleString('th-TH')}`:'ยังไม่ตั้งเวลา'; } }
+        async function loadAdminAccounts() { const result = await callApi('getAdminAccounts'); const tbody = document.querySelector('#adminAccountsTable tbody'); tbody.innerHTML = ''; if (result.status === 'success' && result.accounts) { result.accounts.forEach(acc => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${acc[0]}</td><td>${acc[2] || ''}</td><td><button class="delete-button" data-username="${acc[0]}">ลบ</button></td>`; tbody.appendChild(tr); }); document.querySelectorAll('.delete-button').forEach(b => { b.addEventListener('click', async (e) => { if(confirm(`ยืนยันลบบัญชี '${e.target.dataset.username}'?`)){ await callApi('deleteAdminAccount', {username: e.target.dataset.username}); loadAdminAccounts(); } }); }); } }
+        function displayAdminVoteResults(votes) { const tbody = document.querySelector('#adminVoteResultsTable tbody'); tbody.innerHTML = ''; votes.forEach(row => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td><img src="${row[3] || ''}" style="max-width:60px;"></td>`; tbody.appendChild(tr); }); }
+        function displayAdminUsers(users) { const tbody = document.querySelector('#adminUsersTable tbody'); tbody.innerHTML = ''; users.forEach(row => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td>`; tbody.appendChild(tr); }); document.getElementById('gradeFilter').value = 'all'; }
+        function displayVoteChart(votes) { const ctx = document.getElementById('voteChart').getContext('2d'); if(voteChartInstance) voteChartInstance.destroy(); voteChartInstance = new Chart(ctx, { type: 'bar', data: { labels: votes.map(v => v[0]), datasets: [{ label: 'คะแนน', data: votes.map(v => v[2]), backgroundColor: 'rgba(75, 192, 192, 0.6)' }] }, options: { responsive: true } }); }
+        async function exportData(action, filename, button) { button.disabled = true; button.textContent = 'กำลังเตรียม...'; const result = await callApi(action); if (result.status === 'success' && result.data) { let csv = result.headers.join(',') + '\n'; result.data.forEach(row => { csv += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n'; }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.href = url; link.download = filename; document.body.appendChild(link); link.click(); document.body.removeChild(link); } button.disabled = false; button.textContent = `ส่งออก ${filename}`; }
     </script>
 </body>
 </html>

@@ -21,8 +21,9 @@
         <div id="registration-form-section" class="form-section">
             <h2>กรอกข้อมูลเพื่อโหวต</h2>
             <form id="voteForm">
-                <label for="studentId">รหัสนักเรียน (5 หลัก):</label>
-                <input type="number" id="studentId" name="studentId" min="00000" max="99999" required>
+                <label for="studentId">รหัสนักเรียน:</label>
+                <input type="text" id="studentId" name="studentId" required maxlength="5" pattern="0[0-9]{4}" inputmode="numeric" placeholder="รหัส 5 หลัก ขึ้นต้นด้วย 0">
+                
                 <label for="fullName">ชื่อ-นามสกุล:</label>
                 <input type="text" id="fullName" name="fullName" required>
                 <label for="grade">ระดับชั้น:</label>
@@ -113,6 +114,15 @@
 
             const studentId = document.getElementById('studentId').value;
             const fullName = document.getElementById('fullName').value;
+
+            // --- ✨ ส่วนที่เพิ่มเข้ามาใหม่ (ตรวจสอบรหัสนักเรียน) ---
+            if (studentId.length !== 5 || !studentId.startsWith('0')) {
+                formMessage.textContent = 'กรุณากรอกรหัสนักเรียน 5 หลัก และต้องขึ้นต้นด้วยเลข 0 เท่านั้น';
+                formMessage.className = 'message error';
+                return; // หยุดการทำงานทันทีถ้าไม่ถูกต้อง
+            }
+            // ----------------------------------------------------
+
             const grade = document.getElementById('grade').value;
             const room = document.getElementById('room').value;
             const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');

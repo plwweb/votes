@@ -90,7 +90,7 @@
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
                         <thead>
-                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th><th>Actions</th></tr>
+                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -265,32 +265,16 @@
             }
         }
 
-        // --- ✨ ฟังก์ชันที่แก้ไข ---
         function displayAdminVoteResults(votes) {
             const tbody = document.querySelector('#adminVoteResultsTable tbody');
-            const thead_tr = document.querySelector('#adminVoteResultsTable thead tr');
             tbody.innerHTML = '';
-            
-            // เพิ่มหัวตาราง Actions ถ้ายังไม่มี
-            thead_tr.innerHTML = `<th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th><th>Actions</th>`;
-
             votes.forEach(row => {
                 const tr = document.createElement('tr');
-                const designId = row[0];
-                // เพิ่มปุ่ม "ลบ" และ "แก้ไข"
-                tr.innerHTML = `
-                    <td>${designId}</td>
-                    <td>${row[1]}</td>
-                    <td>${row[2]}</td>
-                    <td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td>
-                    <td>
-                        <button class="edit-button" data-id="${designId}">แก้ไข</button>
-                        <button class="delete-button" data-id="${designId}">ลบ</button>
-                    </td>`;
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td>`;
                 tbody.appendChild(tr);
             });
         }
-        
+
         function displayAdminUsers(users) {
             const tbody = document.querySelector('#adminUsersTable tbody');
             tbody.innerHTML = '';
@@ -447,39 +431,6 @@
         
         exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
         exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
-
-        // --- ✨ โค้ดที่เพิ่มเข้ามาใหม่ ---
-        document.querySelector('#adminVoteResultsTable tbody').addEventListener('click', async (event) => {
-            const target = event.target;
-
-            // --- จัดการปุ่มลบ ---
-            if (target.classList.contains('delete-button')) {
-                const designId = target.dataset.id;
-                
-                if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบแบบเสื้อ '${designId}'?`)) {
-                    target.textContent = 'กำลังลบ...';
-                    target.disabled = true;
-
-                    const result = await callApi('deleteDesign', { designId: designId });
-                    
-                    alert(result.message); // แจ้งผลลัพธ์
-                    
-                    if (result.status === 'success') {
-                        loadAllAdminData(); // รีเฟรชข้อมูลในตารางทั้งหมด
-                    } else {
-                        target.textContent = 'ลบ';
-                        target.disabled = false;
-                    }
-                }
-            }
-
-            // --- จัดการปุ่มแก้ไข (ยังเป็นแค่ตัวอย่าง) ---
-            if (target.classList.contains('edit-button')) {
-                const designId = target.dataset.id;
-                alert(`ฟังก์ชัน "แก้ไข" สำหรับ ${designId} ยังไม่ถูกสร้าง`);
-                // โค้ดสำหรับเปิดฟอร์มแก้ไขจะมาอยู่ที่นี่ในอนาคต
-            }
-        });
     </script>
 </body>
 </html>

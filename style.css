@@ -1,11 +1,10 @@
-
-
 /* --- ตัวแปรสีและ Font (ปรับเปลี่ยนได้ตามต้องการ) --- */
 :root {
     --primary-blue: #2196F3; /* Bright Blue */
     --light-blue: #E3F2FD; /* Lighter Blue for sections */
     --primary-pink: #FF4081; /* Accent Pink */
     --light-pink: #FCE4EC; /* Lighter Pink for results/sections */
+    --danger-color: #f44336; /* ✨ สีแดงสำหรับปุ่มอันตราย */
     --text-color: #333; /* General text color */
     --border-color: #ddd; /* Border color for inputs/tables */
     --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Page background gradient */
@@ -15,35 +14,34 @@
 
 /* --- Base Styles (สไตล์พื้นฐานของหน้าเว็บ) --- */
 body {
-    font-family: 'Kanit', sans-serif; /* ใช้ Font Kanit จาก Google Fonts */
+    font-family: 'Kanit', sans-serif;
     margin: 0;
     padding: 0;
-    background: var(--background-gradient); /* พื้นหลังไล่เฉดสี */
+    background: var(--background-gradient);
     color: var(--text-color);
-    display: flex; /* ใช้ Flexbox เพื่อจัดเรียง content และ footer */
-    flex-direction: column; /* จัดเรียงในแนวตั้ง */
-    justify-content: flex-start; /* จัดให้เริ่มต้นจากด้านบน */
-    align-items: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
-    min-height: 100vh; /* ความสูงขั้นต่ำเต็มหน้าจอ */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
-    box-sizing: border-box; /* ทำให้ padding และ border อยู่ในขนาดที่กำหนด */
+    box-sizing: border-box;
 }
 
 /* Container หลักของเนื้อหาทั้งหมด */
 .container {
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 15px; /* มุมโค้งมน */
-    box-shadow: 0 8px 30px var(--shadow-medium); /* เงาให้ดูมีมิติ */
-    max-width: 900px; /* ความกว้างสูงสุด */
+    border-radius: 15px;
+    box-shadow: 0 8px 30px var(--shadow-medium);
+    max-width: 900px;
     width: 100%;
     text-align: center;
     margin-top: 20px;
     box-sizing: border-box;
-    animation: fadeIn 1s ease-out; /* แอนิเมชันตอนโหลดหน้า */
+    animation: fadeIn 1s ease-out;
 }
 
-/* Keyframe สำหรับแอนิเมชัน fadeIn */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -53,14 +51,14 @@ body {
 header {
     display: flex;
     align-items: center;
-    justify-content: center; /* จัดโลโก้และชื่อเว็บอยู่ตรงกลาง */
+    justify-content: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
-    height: 60px; /* ขนาดโลโก้ */
+    height: 60px;
     margin-right: 15px;
 }
 
@@ -68,7 +66,7 @@ h1 {
     color: var(--primary-blue);
     font-size: 2.8em;
     margin: 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* เงาข้อความเล็กน้อย */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
 }
 
 h2 {
@@ -94,22 +92,22 @@ h3 {
     padding: 30px;
     border-radius: 10px;
     margin-bottom: 30px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); /* เงาด้านใน */
-    text-align: left; /* ข้อความและฟอร์มชิดซ้าย */
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+    text-align: left;
 }
 
 /* --- Form Elements (สไตล์สำหรับช่องกรอกข้อมูลและเลือก) --- */
 form {
     display: flex;
-    flex-direction: column; /* จัดเรียง input ในแนวตั้ง */
-    align-items: flex-start; /* จัดเรียง input ชิดซ้าย */
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 label {
     font-weight: 600;
     color: var(--text-color);
     margin-bottom: 8px;
-    display: block; /* ให้ label ขึ้นบรรทัดใหม่ */
+    display: block;
     width: 100%;
 }
 
@@ -118,25 +116,24 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 select {
-    width: calc(100% - 24px); /* เกือบเต็มความกว้าง โดยมี padding และ border */
+    width: 100%;
     padding: 12px;
     margin-bottom: 20px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1.05em;
     box-sizing: border-box;
-    transition: all 0.3s ease; /* แอนิเมชันตอน hover/focus */
+    transition: all 0.3s ease;
 }
 
-/* เมื่อ input ถูก focus */
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 select:focus {
     border-color: var(--primary-pink);
-    box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2); /* เงารอบ input เมื่อ focus */
-    outline: none; /* ลบเส้นกรอบ default */
+    box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
+    outline: none;
 }
 
 /* --- Buttons (สไตล์สำหรับปุ่มต่างๆ) --- */
@@ -151,12 +148,12 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     margin-top: 15px;
     font-weight: 600;
-    align-self: center; /* จัดปุ่มให้อยู่กึ่งกลางในฟอร์ม */
+    align-self: center;
 }
 
 button:hover {
-    background-color: #1976D2; /* สีน้ำเงินเข้มขึ้นเมื่อเมาส์ชี้ */
-    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
+    background-color: #1976D2;
+    transform: translateY(-2px);
     box-shadow: 0 6px 15px var(--shadow-light);
 }
 
@@ -167,15 +164,22 @@ button:disabled {
     box-shadow: none;
 }
 
-/* ปุ่มสำหรับ Admin panel (สีชมพู) */
 .admin-section button {
     background-color: var(--primary-pink);
-    margin-right: 10px; /* เว้นระยะห่างระหว่างปุ่ม Admin */
-    align-self: flex-start; /* ปุ่ม Admin ชิดซ้าย */
-    margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่างสำหรับปุ่มที่เรียงกัน */
+    margin-right: 10px;
+    align-self: flex-start;
+    margin-bottom: 10px;
 }
 .admin-section button:hover {
-    background-color: #d1478f; /* สีชมพูเข้มขึ้นเมื่อเมาส์ชี้ */
+    background-color: #d1478f;
+}
+
+/* ✨ ปุ่มอันตราย (สีแดง) */
+button.danger {
+    background-color: var(--danger-color);
+}
+button.danger:hover {
+    background-color: #c82333;
 }
 
 /* --- Message Styling (สำหรับแจ้งเตือนสถานะ) --- */
@@ -187,25 +191,24 @@ button:disabled {
     font-size: 1.1em;
     text-align: center;
 }
+.message:not(:empty) { padding: 12px 20px; } /* ✨ ทำให้ p ที่ว่างไม่มี padding */
 
 .status-message.open, .message.success {
-    background-color: #d4edda; /* สีเขียวอ่อน */
-    color: #155724; /* สีเขียวเข้ม */
+    background-color: #d4edda;
+    color: #155724;
     border: 1px solid #c3e6cb;
 }
-
 .status-message.closed, .message.error {
-    background-color: #f8d7da; /* สีแดงอ่อน */
-    color: #721c24; /* สีแดงเข้ม */
+    background-color: #f8d7da;
+    color: #721c24;
     border: 1px solid #f5c6cb;
 }
-
 .message.loading {
-    background-color: #e2e3e5; /* สีกำลังโหลด */
+    background-color: #e2e3e5;
     color: #383d41;
 }
 
-/* --- Countdown Timer (สำหรับแสดงเวลานับถอยหลัง) --- */
+/* --- Countdown Timer --- */
 #countdown-timer {
     font-size: 1.5em;
     font-weight: bold;
@@ -218,63 +221,57 @@ button:disabled {
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 #countdown-timer span {
-    color: var(--primary-pink); /* สีตัวเลข */
+    color: var(--primary-pink);
     font-size: 1.2em;
     margin: 0 5px;
 }
 
-
-/* --- Design Options (การ์ดแบบเสื้อพร้อมรูปภาพ) --- */
+/* --- Design Options --- */
 .design-options {
-    display: grid; /* ใช้ Grid Layout */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* ปรับให้แสดงหลายคอลัมน์และ Responsive */
-    gap: 20px; /* ระยะห่างระหว่างการ์ด */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
     margin-top: 20px;
     margin-bottom: 30px;
     width: 100%;
     justify-content: center;
 }
-
 .design-card {
     background-color: #ffffff;
-    border: 2px solid var(--light-pink); /* ขอบสีชมพูอ่อน */
+    border: 2px solid var(--light-pink);
     border-radius: 12px;
     padding: 15px;
     text-align: center;
     box-shadow: 0 4px 15px var(--shadow-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
-    position: relative; /* สำหรับตำแหน่งของ radio button */
-    display: flex; /* ใช้ Flexbox ภายใน card */
+    position: relative;
+    display: flex;
     flex-direction: column;
     align-items: center;
 }
-
 .design-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px var(--shadow-medium);
 }
-
 .design-card input[type="radio"] {
-    position: absolute; /* วาง radio button ไว้มุมขวาบน */
+    position: absolute;
     top: 15px;
     right: 15px;
-    transform: scale(1.5); /* ทำให้ใหญ่ขึ้นเล็กน้อย */
-    z-index: 1; /* ให้ปุ่มอยู่ด้านหน้าองค์ประกอบอื่น */
+    transform: scale(1.5);
+    z-index: 1;
     margin-bottom: 0;
-    width: auto; /* ไม่ต้องให้เต็มความกว้าง */
+    width: auto;
 }
-
 .design-card img {
     max-width: 100%;
-    height: 150px; /* กำหนดความสูงของรูปภาพให้เท่ากัน */
-    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีกับการ์ดโดยไม่ถูกตัด */
+    height: 150px;
+    object-fit: contain;
     border-radius: 8px;
     margin-bottom: 10px;
     border: 1px solid #eee;
-    background-color: #f5f5f5; /* พื้นหลังสีอ่อนสำหรับรูปภาพ */
+    background-color: #f5f5f5;
 }
-
 .design-card label {
     font-size: 1.1em;
     font-weight: 600;
@@ -284,14 +281,12 @@ button:disabled {
     text-align: center;
     padding: 5px 0;
 }
-
-/* Style for selected card (เมื่อมีการ์ดถูกเลือก) */
 .design-card.selected {
-    border-color: var(--primary-pink); /* ขอบเป็นสีชมพู */
-    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4); /* เงารอบๆ การ์ด */
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4);
 }
 
-/* --- Vote Results (ผลการโหวต) --- */
+/* --- Vote Results --- */
 .vote-results {
     margin-top: 30px;
     padding: 25px;
@@ -301,93 +296,126 @@ button:disabled {
     text-align: left;
     box-shadow: 0 4px 10px var(--shadow-light);
 }
-
 .vote-item {
     display: flex;
-    justify-content: space-between; /* จัดชื่อแบบเสื้อและคะแนนแยกกันคนละฝั่ง */
+    justify-content: space-between;
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px dashed #ffb3c8;
 }
-
 .vote-item:last-child {
-    border-bottom: none; /* แถวสุดท้ายไม่มีเส้นแบ่ง */
+    border-bottom: none;
 }
-
 .vote-item span:first-child {
     font-weight: 500;
     color: var(--text-color);
 }
-
 .vote-count {
     font-weight: bold;
     color: var(--primary-pink);
     font-size: 1.1em;
 }
 
-/* --- Admin Data Tables (ตารางแสดงข้อมูลสำหรับ Admin) --- */
+/* --- Admin Data Tables --- */
 .data-table-container {
-    max-height: 450px; /* กำหนดความสูงสูงสุดเพื่อให้ Scroll ได้ */
-    overflow-y: auto; /* เปิด Scrollbar แนวตั้ง */
+    max-height: 450px;
+    overflow-y: auto;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: inset 0 1px 5px rgba(0,0,0,0.03);
-    margin-bottom: 20px; /* เว้นระยะห่างระหว่างตาราง */
+    margin-bottom: 20px;
 }
-
 table {
     width: 100%;
-    border-collapse: collapse; /* ทำให้เส้นตารางรวมกัน */
+    border-collapse: collapse;
 }
-
 th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    word-break: break-word; /* ข้อความยาวๆ จะขึ้นบรรทัดใหม่ */
+    word-break: break-word;
 }
-
 th {
     background-color: var(--primary-blue);
     color: white;
     font-weight: 600;
-    position: sticky; /* ทำให้ Header ค้างเมื่อ Scroll ตาราง */
+    position: sticky;
     top: 0;
     z-index: 10;
 }
-tr:nth-child(even) { /* สลับสีแถวเพื่อให้ดูง่าย */
+tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 tr:hover {
-    background-color: #f0f0f0; /* เปลี่ยนสีเมื่อเมาส์ชี้ */
+    background-color: #f0f0f0;
 }
-
-/* Special styles for image in admin table */
 .admin-table-image img {
-    width: 60px; /* ขนาดรูปภาพในตาราง Admin */
+    width: 60px;
     height: auto;
     border-radius: 5px;
     border: 1px solid #eee;
 }
 
-/* Style for Delete button in Admin accounts table */
-.delete-button {
-    background-color: #f44336; /* สีแดง */
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
+/* ✨ ปุ่มแก้ไข/ลบ ในตาราง */
+td button {
+    padding: 6px 12px;
     font-size: 0.9em;
-    transition: background-color 0.3s ease;
+    margin: 0 2px;
+    align-self: auto;
+    margin-top: 0;
+}
+td button.edit-button { /* ปุ่มแก้ไขสีน้ำเงิน */
+    background-color: var(--primary-blue);
+}
+td button.edit-button:hover {
+    background-color: #1976D2;
 }
 
-.delete-button:hover {
-    background-color: #d32f2f; /* แดงเข้มขึ้น */
+/* --- ✨ Modal Styles (สไตล์สำหรับ Pop-up แก้ไข) --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); /* ทำให้พื้นหลังทึบขึ้น */
+}
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px var(--shadow-medium);
+    animation: fadeIn 0.5s ease-out;
+}
+.modal-content label {
+    text-align: left;
+}
+.modal-content input {
+    width: 100%;
+    box-sizing: border-box;
+}
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+.close-button:hover,
+.close-button:focus {
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
 }
 
-
-/* --- Footer (ส่วนท้ายของหน้าเว็บ) --- */
+/* --- Footer --- */
 .footer {
     margin-top: 40px;
     padding: 20px;
@@ -396,85 +424,42 @@ tr:hover {
     text-align: center;
     color: #555;
     font-size: 0.9em;
-    border-bottom-left-radius: 15px; /* ทำให้โค้งมนตาม container */
+    border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 900px; /* ให้ความกว้างเท่า container */
+    max-width: 900px;
     box-sizing: border-box;
 }
-.footer p {
-    margin: 0; /* ลบ margin เริ่มต้นของ p ใน footer */
-}
-
-/* สไตล์สำหรับลิงก์ข้อความใน footer */
+.footer p { margin: 0; }
 .footer a {
-    color: #007bff; /* สีลิงก์ */
-    text-decoration: none; /* ไม่มีขีดเส้นใต้ */
+    color: var(--primary-blue);
+    text-decoration: none;
     font-weight: 500;
 }
-
 .footer a:hover {
-    text-decoration: underline; /* แสดงขีดเส้นใต้เมื่อเมาส์ชี้ */
-    color: #0056b3; /* สีเข้มขึ้นเมื่อเมาส์ชี้ */
+    text-decoration: underline;
+    color: #0056b3;
 }
-
-/* สไตล์สำหรับไอคอนโซเชียลใน footer */
 .social-icon {
-    height: 1.2em; /* กำหนดความสูงของไอคอน */
-    vertical-align: middle; /* จัดให้ไอคอนอยู่กึ่งกลางกับข้อความ */
-    margin-left: 8px; /* ระยะห่างด้านซ้ายของไอคอน */
-    transition: transform 0.2s ease-in-out; /* เพิ่ม animation เมื่อ hover */
+    height: 1.2em;
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: transform 0.2s ease-in-out;
 }
-
 .social-icon:hover {
-    transform: scale(1.1); /* ทำให้ไอคอนใหญ่ขึ้นเล็กน้อยเมื่อเมาส์ชี้ */
+    transform: scale(1.1);
 }
 
-/* --- Responsive Adjustments (ปรับหน้าเว็บให้เข้ากับขนาดหน้าจอต่างๆ) --- */
-@media (max-width: 768px) { /* สำหรับหน้าจอขนาดเล็ก (เช่น มือถือ) */
-    .container {
-        padding: 15px;
-        margin-top: 10px;
-        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
-    }
-    header {
-        flex-direction: column; /* จัดเรียงโลโก้และชื่อเว็บในแนวตั้ง */
-        text-align: center;
-    }
-    .logo {
-        height: 50px;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    h1 {
-        font-size: 2.2em;
-    }
-    h2 {
-        font-size: 1.7em;
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="password"],
-    input[type="datetime-local"],
-    select,
-    button {
-        width: 100%; /* input และ button เต็มความกว้าง */
-    }
-    form, .admin-section {
-        align-items: center; /* จัดฟอร์มให้อยู่กึ่งกลาง */
-    }
-    label {
-        text-align: center; /* label อยู่กึ่งกลาง */
-    }
-    .design-options {
-        grid-template-columns: 1fr; /* แสดงการ์ดแบบเสื้อ 1 คอลัมน์ */
-    }
-    .admin-section button {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    .footer {
-        border-radius: 10px; /* ปรับมุมโค้งให้เล็กลง */
-    }
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .container { padding: 15px; margin-top: 10px; border-radius: 10px; }
+    header { flex-direction: column; text-align: center; }
+    .logo { height: 50px; margin-right: 0; margin-bottom: 10px; }
+    h1 { font-size: 2.2em; }
+    h2 { font-size: 1.7em; }
+    form, .admin-section { align-items: stretch; } /* ปรับให้ input เต็มความกว้าง */
+    label { text-align: left; }
+    .design-options { grid-template-columns: 1fr; }
+    .footer { border-radius: 10px; }
 }

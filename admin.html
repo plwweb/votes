@@ -85,8 +85,12 @@
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                <button id="exportUsersDataButton">ส่งออกข้อมูลผู้ใช้งาน (.csv)</button>
-                <button id="exportVotesDataButton">ส่งออกข้อมูลผลโหวต (.csv)</button>
+                <br><br>
+                <button id="exportUsersDataButton">ส่งออกผู้ใช้งาน (.csv)</button>
+                <button id="exportVotesDataButton">ส่งออกผลโหวต (.csv)</button>
+                <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
+                <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
+
                 <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
@@ -449,6 +453,43 @@
 
             button.disabled = false;
             button.textContent = 'ปิดโหวตทันที';
+        });
+
+        // ✨ Event Listeners สำหรับ PDF Export ที่เพิ่มเข้ามาใหม่
+        document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
+            const button = document.getElementById('exportUsersPdfButton');
+            button.disabled = true;
+            button.textContent = 'กำลังสร้าง PDF...';
+            
+            const result = await callApi('exportPdf', { dataType: 'users' });
+            
+            if (result.status === 'success') {
+                alert(result.message);
+                window.open(result.pdfUrl, '_blank');
+            } else {
+                alert(result.message);
+            }
+            
+            button.disabled = false;
+            button.textContent = 'ส่งออกผู้ใช้งาน (.pdf)';
+        });
+
+        document.getElementById('exportVotesPdfButton').addEventListener('click', async () => {
+            const button = document.getElementById('exportVotesPdfButton');
+            button.disabled = true;
+            button.textContent = 'กำลังสร้าง PDF...';
+            
+            const result = await callApi('exportPdf', { dataType: 'votes' });
+            
+            if (result.status === 'success') {
+                alert(result.message);
+                window.open(result.pdfUrl, '_blank');
+            } else {
+                alert(result.message);
+            }
+            
+            button.disabled = false;
+            button.textContent = 'ส่งออกผลโหวต (.pdf)';
         });
     </script>
 </body>

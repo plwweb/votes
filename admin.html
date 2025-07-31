@@ -68,7 +68,6 @@
                 <label for="newDesignImageUrl">URL รูปภาพแบบเสื้อ:</label>
                 <input type="text" id="newDesignImageUrl" placeholder="https://example.com/image.png">
                 <button id="addDesignButton">เพิ่มแบบเสื้อใหม่</button>
-                <p id="add-design-message" class="message"></p>
             </div>
 
             <div class="admin-section">
@@ -78,7 +77,6 @@
                 <label for="voteEndTime">เวลาสิ้นสุด:</label>
                 <input type="datetime-local" id="voteEndTime">
                 <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
-                <p id="set-time-message" class="message"></p>
                 <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
             </div>
 
@@ -91,7 +89,6 @@
                 <label for="newAdminFullName">ชื่อผู้ดูแล:</label>
                 <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
                 <button id="addAdminButton">เพิ่มบัญชีผู้ดูแล</button>
-                <p id="add-admin-message" class="message"></p>
                 <h4>บัญชีผู้ดูแลที่มีอยู่</h4>
                 <div class="data-table-container">
                     <table id="adminAccountsTable">
@@ -188,11 +185,8 @@
         const gradeFilterSelect = document.getElementById('gradeFilter');
         const refreshDataButton = document.getElementById('refreshDataButton');
         const addDesignButton = document.getElementById('addDesignButton');
-        const addDesignMessage = document.getElementById('add-design-message');
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
-        const setTimeMessage = document.getElementById('set-time-message');
         const addAdminButton = document.getElementById('addAdminButton');
-        const addAdminMessage = document.getElementById('add-admin-message');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
         const adminActionMessage = document.getElementById('admin-action-message');
@@ -285,7 +279,7 @@
                     tbody.appendChild(tr);
                 });
                 document.querySelectorAll('.delete-button').forEach(button => {
-                    button.addEventListener('click', (e) => { // ✨ แก้ไขตรงนี้
+                    button.addEventListener('click', (e) => {
                         Swal.fire({
                             title: 'แน่ใจหรือไม่?',
                             text: `คุณต้องการลบบัญชี '${e.target.dataset.username}' จริงๆ ใช่ไหม`,
@@ -392,18 +386,18 @@
             const designName = document.getElementById('newDesignName').value.trim();
             const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
             if (!designId || !designName) {
-                addDesignMessage.textContent = 'กรุณากรอก Design ID และชื่อแบบเสื้อ';
-                addDesignMessage.className = 'message error';
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
                 return;
             }
             const result = await callApi('addDesign', { designId, designName, imageUrl });
-            addDesignMessage.textContent = result.message;
-            addDesignMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if (result.status === 'success') {
+                Swal.fire('สำเร็จ!', result.message, 'success');
                 loadAllAdminData();
                 document.getElementById('newDesignId').value = '';
                 document.getElementById('newDesignName').value = '';
                 document.getElementById('newDesignImageUrl').value = '';
+            } else {
+                Swal.fire('ผิดพลาด!', result.message, 'error');
             }
         });
 
@@ -411,14 +405,16 @@
             const startTime = document.getElementById('voteStartTime').value;
             const endTime = document.getElementById('voteEndTime').value;
             if (!startTime || !endTime) {
-                setTimeMessage.textContent = 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด';
-                setTimeMessage.className = 'message error';
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
                 return;
             }
             const result = await callApi('updateVoteTime', { startTime, endTime });
-            setTimeMessage.textContent = result.message;
-            setTimeMessage.className = result.status === 'success' ? 'message success' : 'message error';
-            if(result.status === 'success') loadVoteTime();
+            if (result.status === 'success') {
+                Swal.fire('สำเร็จ!', result.message, 'success');
+                loadVoteTime();
+            } else {
+                Swal.fire('ผิดพลาด!', result.message, 'error');
+            }
         });
 
         addAdminButton.addEventListener('click', async () => {
@@ -426,22 +422,22 @@
             const password = document.getElementById('newAdminPassword').value.trim();
             const fullName = document.getElementById('newAdminFullName').value.trim();
             if (!username || !password || !fullName) {
-                addAdminMessage.textContent = 'กรุณากรอกข้อมูลให้ครบถ้วน';
-                addAdminMessage.className = 'message error';
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
                 return;
             }
             const result = await callApi('addAdminAccount', { username, password, fullName });
-            addAdminMessage.textContent = result.message;
-            addAdminMessage.className = result.status === 'success' ? 'message success' : 'message error';
-            if(result.status === 'success') {
+            if (result.status === 'success') {
+                Swal.fire('สำเร็จ!', result.message, 'success');
                 loadAdminAccounts();
                 document.getElementById('newAdminUsername').value = '';
                 document.getElementById('newAdminPassword').value = '';
                 document.getElementById('newAdminFullName').value = '';
+            } else {
+                Swal.fire('ผิดพลาด!', result.message, 'error');
             }
         });
 
-        resetVotesButton.addEventListener('click', () => { // ✨ แก้ไขตรงนี้
+        resetVotesButton.addEventListener('click', () => {
             Swal.fire({
                 title: 'ยืนยันการรีเซ็ตคะแนน?',
                 text: "การกระทำนี้ไม่สามารถย้อนกลับได้!",
@@ -460,7 +456,7 @@
             });
         });
 
-        clearUsersButton.addEventListener('click', () => { // ✨ แก้ไขตรงนี้
+        clearUsersButton.addEventListener('click', () => {
             Swal.fire({
                 title: 'ยืนยันการล้างข้อมูลผู้ใช้?',
                 text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!",
@@ -479,17 +475,26 @@
             });
         });
 
-        document.getElementById('closeVotingNowButton').addEventListener('click', async () => {
-            if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการปิดการโหวตทันที?')) return;
-            const button = document.getElementById('closeVotingNowButton');
-            button.disabled = true;
-            button.textContent = 'กำลังปิด...';
-            const result = await callApi('closeVotingNow');
-            adminActionMessage.textContent = "ปิดการโหวตสำเร็จแล้ว!";
-            adminActionMessage.className = 'message success';
-            loadVoteTime();
-            button.disabled = false;
-            button.textContent = 'ปิดโหวตทันที';
+        document.getElementById('closeVotingNowButton').addEventListener('click', () => {
+            Swal.fire({
+                title: 'ยืนยันการปิดโหวต?',
+                text: "คุณต้องการปิดรับการโหวตทั้งหมดทันทีใช่ไหม?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ปิดทันที!',
+                cancelButtonText: 'ยกเลิก'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const apiResult = await callApi('closeVotingNow');
+                    if (apiResult.status === 'success') {
+                        Swal.fire('สำเร็จ!', 'ปิดการโหวตเรียบร้อยแล้ว', 'success');
+                        loadVoteTime();
+                    } else {
+                        Swal.fire('ผิดพลาด!', apiResult.message, 'error');
+                    }
+                }
+            });
         });
 
         document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
@@ -535,7 +540,7 @@
         const saveButton = document.getElementById('saveDesignButton');
         const adminVoteResultsTbody = document.querySelector('#adminVoteResultsTable tbody');
 
-        adminVoteResultsTbody.addEventListener('click', async (event) => { // ✨ แก้ไขตรงนี้
+        adminVoteResultsTbody.addEventListener('click', async (event) => {
             const target = event.target;
             const row = target.closest('tr');
             if (!row) return;

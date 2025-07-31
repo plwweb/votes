@@ -348,26 +348,38 @@
         
         // --- Event Listeners for Buttons ---
         loginButton.addEventListener('click', async () => {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            if(!username || !password) {
-                loginMessage.textContent = 'กรุณากรอก Username และ Password';
-                loginMessage.className = 'message error';
-                return;
-            }
-            loginMessage.textContent = 'กำลังเข้าสู่ระบบ...';
-            loginMessage.className = 'message loading';
-            loginButton.disabled = true;
-            const result = await callApi('login', { username, password });
-            if (result.status === 'success') {
-                showAdminPanel(result.fullName || username);
-                loadAllAdminData();
-            } else {
-                loginMessage.textContent = result.message;
-                loginMessage.className = 'message error';
-            }
-            loginButton.disabled = false;
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+
+    if(!username || !password) {
+        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'กำลังเข้าสู่ระบบ...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const result = await callApi('login', { username, password });
+
+    if (result.status === 'success') {
+        Swal.close(); // ปิด Pop-up "กำลังโหลด"
+        showAdminPanel(result.fullName || username);
+        loadAllAdminData();
+    } else {
+        Swal.fire({
+            title: 'ผิดพลาด!',
+            text: result.message,
+            icon: 'error'
         });
+    }
+});
+
 
         refreshDataButton.addEventListener('click', loadAllAdminData);
 

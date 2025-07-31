@@ -4,7 +4,7 @@
     --light-blue: #E3F2FD; /* Lighter Blue for sections */
     --primary-pink: #FF4081; /* Accent Pink */
     --light-pink: #FCE4EC; /* Lighter Pink for results/sections */
-    --danger-color: #f44336; /* ✨ สีแดงสำหรับปุ่มอันตราย */
+    --danger-color: #f44336; /* สีแดงสำหรับปุ่มอันตราย */
     --text-color: #333; /* General text color */
     --border-color: #ddd; /* Border color for inputs/tables */
     --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%); /* Page background gradient */
@@ -174,7 +174,6 @@ button:disabled {
     background-color: #d1478f;
 }
 
-/* ✨ ปุ่มอันตราย (สีแดง) */
 button.danger {
     background-color: var(--danger-color);
 }
@@ -191,7 +190,7 @@ button.danger:hover {
     font-size: 1.1em;
     text-align: center;
 }
-.message:not(:empty) { padding: 12px 20px; } /* ✨ ทำให้ p ที่ว่างไม่มี padding */
+.message:not(:empty) { padding: 12px 20px; }
 
 .status-message.open, .message.success {
     background-color: #d4edda;
@@ -356,22 +355,25 @@ tr:hover {
     border: 1px solid #eee;
 }
 
-/* ✨ ปุ่มแก้ไข/ลบ ในตาราง */
+/* ✨ ปุ่มแก้ไข/ลบ ในตาราง (ปรับปรุงใหม่) */
 td button {
-    padding: 6px 12px;
+    padding: 8px 12px; /* กำหนดขนาดให้เท่ากันสำหรับทุกปุ่ม */
     font-size: 0.9em;
     margin: 0 2px;
     align-self: auto;
     margin-top: 0;
+    font-weight: normal; /* ปรับน้ำหนักตัวอักษรให้พอดี */
+    border-radius: 5px;
 }
-td button.edit-button { /* ปุ่มแก้ไขสีน้ำเงิน */
+/* สีสำหรับปุ่มแก้ไข */
+td button.edit-button {
     background-color: var(--primary-blue);
 }
 td button.edit-button:hover {
     background-color: #1976D2;
 }
 
-/* --- ✨ Modal Styles (สไตล์สำหรับ Pop-up แก้ไข) --- */
+/* --- Modal Styles --- */
 .modal {
     display: none;
     position: fixed;
@@ -381,7 +383,7 @@ td button.edit-button:hover {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.6); /* ทำให้พื้นหลังทึบขึ้น */
+    background-color: rgba(0,0,0,0.6);
 }
 .modal-content {
     background-color: #ffffff;
@@ -458,7 +460,7 @@ td button.edit-button:hover {
     .logo { height: 50px; margin-right: 0; margin-bottom: 10px; }
     h1 { font-size: 2.2em; }
     h2 { font-size: 1.7em; }
-    form, .admin-section { align-items: stretch; } /* ปรับให้ input เต็มความกว้าง */
+    form, .admin-section { align-items: stretch; }
     label { text-align: left; }
     .design-options { grid-template-columns: 1fr; }
     .footer { border-radius: 10px; }

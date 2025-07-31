@@ -7,8 +7,36 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      /* --- Modal Styles --- */
+      .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+      .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; }
+      .modal-content input { width: calc(100% - 20px); padding: 8px; margin-bottom: 15px; }
+      .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+      .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
+    </style>
 </head>
 <body>
+    <div id="editDesignModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>แก้ไขข้อมูลแบบเสื้อ</h2>
+            <input type="hidden" id="editDesignIdHidden">
+            
+            <label for="editDesignIdDisplay">Design ID:</label>
+            <input type="text" id="editDesignIdDisplay" disabled>
+            
+            <label for="editDesignName">ชื่อแบบเสื้อ:</label>
+            <input type="text" id="editDesignName">
+            
+            <label for="editDesignImageUrl">URL รูปภาพ:</label>
+            <input type="text" id="editDesignImageUrl">
+            
+            <button id="saveDesignButton">บันทึกการเปลี่ยนแปลง</button>
+            <p id="edit-modal-message" class="message"></p>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
@@ -94,7 +122,7 @@
                 <div class="data-table-container">
                     <table id="adminVoteResultsTable">
                         <thead>
-                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th></tr>
+                            <tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th><th>Actions</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -267,12 +295,16 @@
             }
         }
 
-        function displayAdminVoteResults(votes) {
+        function displayAdminVoteResults(votes) { // ✨ แก้ไขแล้ว
             const tbody = document.querySelector('#adminVoteResultsTable tbody');
             tbody.innerHTML = '';
             votes.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td>`;
+                tr.dataset.designId = row[0];
+                tr.dataset.designName = row[1];
+                tr.dataset.imageUrl = row[3] || '';
+
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td><td><button class="edit-button">แก้ไข</button></td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -466,6 +498,53 @@
             
             button.disabled = false;
             button.textContent = 'ส่งออกผลโหวต (.pdf)';
+        });
+
+        // --- ✨ โค้ดสำหรับจัดการ Edit Modal ที่เพิ่มเข้ามาใหม่ ✨ ---
+        const editModal = document.getElementById('editDesignModal');
+        const closeButton = document.querySelector('.close-button');
+        const saveButton = document.getElementById('saveDesignButton');
+        const adminVoteResultsTbody = document.querySelector('#adminVoteResultsTable tbody');
+
+        adminVoteResultsTbody.addEventListener('click', (event) => {
+            if (event.target.classList.contains('edit-button')) {
+                const row = event.target.closest('tr');
+                document.getElementById('editDesignIdHidden').value = row.dataset.designId;
+                document.getElementById('editDesignIdDisplay').value = row.dataset.designId;
+                document.getElementById('editDesignName').value = row.dataset.designName;
+                document.getElementById('editDesignImageUrl').value = row.dataset.imageUrl;
+                editModal.style.display = 'block';
+            }
+        });
+
+        closeButton.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+
+        saveButton.addEventListener('click', async () => {
+            const id = document.getElementById('editDesignIdHidden').value;
+            const name = document.getElementById('editDesignName').value;
+            const imageUrl = document.getElementById('editDesignImageUrl').value;
+
+            saveButton.disabled = true;
+            saveButton.textContent = 'กำลังบันทึก...';
+
+            const result = await callApi('editDesign', { designId: id, designName: name, imageUrl: imageUrl });
+            
+            const editMessage = document.getElementById('edit-modal-message');
+            editMessage.textContent = result.message;
+            editMessage.className = result.status === 'success' ? 'message success' : 'message error';
+
+            if (result.status === 'success') {
+                loadAdminData();
+                setTimeout(() => {
+                    editModal.style.display = 'none';
+                    editMessage.textContent = '';
+                }, 1500);
+            }
+            
+            saveButton.disabled = false;
+            saveButton.textContent = 'บันทึกการเปลี่ยนแปลง';
         });
     </script>
 </body>

@@ -433,7 +433,6 @@
         exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
         exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
 
-        // --- ✨ โค้ดที่เพิ่มเข้ามาใหม่ ---
         document.getElementById('closeVotingNowButton').addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการปิดการโหวตทันที?')) return;
 
@@ -446,13 +445,11 @@
             adminActionMessage.textContent = "ปิดการโหวตสำเร็จแล้ว!";
             adminActionMessage.className = 'message success';
             
-            // โหลดข้อมูลเวลาใหม่เพื่อแสดงผล
             loadVoteTime();
 
             button.disabled = false;
             button.textContent = 'ปิดโหวตทันที';
         });
-
     </script>
 </body>
 </html>

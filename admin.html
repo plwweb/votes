@@ -393,40 +393,59 @@
         });
 
         addDesignButton.addEventListener('click', async () => {
-            const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
-            const designName = document.getElementById('newDesignName').value.trim();
-            const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
-            if (!designId || !designName) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
-                return;
-            }
-            const result = await callApi('addDesign', { designId, designName, imageUrl });
-            if (result.status === 'success') {
-                Swal.fire('สำเร็จ!', result.message, 'success');
-                loadAllAdminData();
-                document.getElementById('newDesignId').value = '';
-                document.getElementById('newDesignName').value = '';
-                document.getElementById('newDesignImageUrl').value = '';
-            } else {
-                Swal.fire('ผิดพลาด!', result.message, 'error');
-            }
-        });
+    const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
+    const designName = document.getElementById('newDesignName').value.trim();
+    const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
+    if (!designId || !designName) {
+        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'กำลังเพิ่มแบบเสื้อ...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading() }
+    });
+
+    const result = await callApi('addDesign', { designId, designName, imageUrl });
+
+    if (result.status === 'success') {
+        Swal.fire('สำเร็จ!', result.message, 'success');
+        loadAllAdminData();
+        document.getElementById('newDesignId').value = '';
+        document.getElementById('newDesignName').value = '';
+        document.getElementById('newDesignImageUrl').value = '';
+    } else {
+        Swal.fire('ผิดพลาด!', result.message, 'error');
+    }
+});
+
 
         setVoteTimeButton.addEventListener('click', async () => {
-            const startTime = document.getElementById('voteStartTime').value;
-            const endTime = document.getElementById('voteEndTime').value;
-            if (!startTime || !endTime) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
-                return;
-            }
-            const result = await callApi('updateVoteTime', { startTime, endTime });
-            if (result.status === 'success') {
-                Swal.fire('สำเร็จ!', result.message, 'success');
-                loadVoteTime();
-            } else {
-                Swal.fire('ผิดพลาด!', result.message, 'error');
-            }
-        });
+    const startTime = document.getElementById('voteStartTime').value;
+    const endTime = document.getElementById('voteEndTime').value;
+    if (!startTime || !endTime) {
+        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'กำลังตั้งเวลา...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading() }
+    });
+
+    const result = await callApi('updateVoteTime', { startTime, endTime });
+
+    if (result.status === 'success') {
+        Swal.fire('สำเร็จ!', result.message, 'success');
+        loadVoteTime();
+    } else {
+        Swal.fire('ผิดพลาด!', result.message, 'error');
+    }
+});
 
         addAdminButton.addEventListener('click', async () => {
             const username = document.getElementById('newAdminUsername').value.trim();

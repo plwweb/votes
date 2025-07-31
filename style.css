@@ -357,14 +357,17 @@ tr:hover {
 
 /* ✨ ปุ่มแก้ไข/ลบ ในตาราง (ปรับปรุงใหม่) */
 td button {
-    padding: 8px 12px; /* กำหนดขนาดให้เท่ากันสำหรับทุกปุ่ม */
+    padding: 8px 12px;
     font-size: 0.9em;
     margin: 0 2px;
     align-self: auto;
     margin-top: 0;
-    font-weight: normal; /* ปรับน้ำหนักตัวอักษรให้พอดี */
+    font-weight: normal;
     border-radius: 5px;
+    min-width: 75px;      /* ✨ เพิ่มความกว้างขั้นต่ำ */
+    text-align: center;   /* ✨ จัดข้อความกึ่งกลาง */
 }
+
 /* สีสำหรับปุ่มแก้ไข */
 td button.edit-button {
     background-color: var(--primary-blue);

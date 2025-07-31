@@ -90,6 +90,7 @@
                 <button id="exportVotesDataButton">ส่งออกผลโหวต (.csv)</button>
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
                 <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
+                <p id="pdf-link-container" class="message"></p>
 
                 <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
                 <div class="data-table-container">
@@ -450,32 +451,49 @@
             button.textContent = 'ปิดโหวตทันที';
         });
 
+        // ✨ Event Listeners สำหรับ PDF Export ที่แก้ไขแล้ว
         document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
             const button = document.getElementById('exportUsersPdfButton');
+            const linkContainer = document.getElementById('pdf-link-container');
+            
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
+            linkContainer.innerHTML = '';
+
             const result = await callApi('exportPdf', { dataType: 'users' });
+
             if (result.status === 'success') {
-                alert(result.message);
-                window.open(result.pdfUrl, '_blank');
+                const linkHtml = `สร้างไฟล์สำเร็จ: <a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`;
+                linkContainer.innerHTML = linkHtml;
+                linkContainer.className = 'message success';
             } else {
-                alert(result.message);
+                linkContainer.textContent = result.message;
+                linkContainer.className = 'message error';
             }
+            
             button.disabled = false;
             button.textContent = 'ส่งออกผู้ใช้งาน (.pdf)';
         });
 
         document.getElementById('exportVotesPdfButton').addEventListener('click', async () => {
             const button = document.getElementById('exportVotesPdfButton');
+            const linkContainer = document.getElementById('pdf-link-container');
+
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
+            linkContainer.innerHTML = '';
+
             const result = await callApi('exportPdf', { dataType: 'votes' });
+            
             if (result.status === 'success') {
-                alert(result.message);
-                window.open(result.pdfUrl, '_blank');
+                const linkHtml = `สร้างไฟล์สำเร็จ: <a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`;
+                linkContainer.innerHTML = linkHtml;
+                linkContainer.className = 'message success';
             } else {
-                alert(result.message);
+                linkContainer.textContent = result.message;
+                linkContainer.className = 'message error';
             }
+            
             button.disabled = false;
             button.textContent = 'ส่งออกผลโหวต (.pdf)';
         });

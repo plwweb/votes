@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
       /* --- Modal Styles --- */
       .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
@@ -284,12 +285,27 @@
                     tbody.appendChild(tr);
                 });
                 document.querySelectorAll('.delete-button').forEach(button => {
-                    button.addEventListener('click', async (e) => {
-                        if (confirm(`ยืนยันการลบบัญชี '${e.target.dataset.username}'?`)) {
-                            const delResult = await callApi('deleteAdminAccount', { username: e.target.dataset.username });
-                            alert(delResult.message);
-                            loadAdminAccounts();
-                        }
+                    button.addEventListener('click', (e) => { // ✨ แก้ไขตรงนี้
+                        Swal.fire({
+                            title: 'แน่ใจหรือไม่?',
+                            text: `คุณต้องการลบบัญชี '${e.target.dataset.username}' จริงๆ ใช่ไหม`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'ใช่, ลบเลย!',
+                            cancelButtonText: 'ยกเลิก'
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                const delResult = await callApi('deleteAdminAccount', { username: e.target.dataset.username });
+                                if (delResult.status === 'success') {
+                                    Swal.fire('ลบแล้ว!', delResult.message, 'success');
+                                    loadAdminAccounts();
+                                } else {
+                                    Swal.fire('เกิดข้อผิดพลาด!', delResult.message, 'error');
+                                }
+                            }
+                        });
                     });
                 });
             }
@@ -425,20 +441,42 @@
             }
         });
 
-        resetVotesButton.addEventListener('click', async () => {
-            if (!confirm('ยืนยันการรีเซ็ตคะแนนโหวตทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
-            const result = await callApi('resetVotes');
-            adminActionMessage.textContent = result.message;
-            adminActionMessage.className = result.status === 'success' ? 'message success' : 'message error';
-            if(result.status === 'success') loadAllAdminData();
+        resetVotesButton.addEventListener('click', () => { // ✨ แก้ไขตรงนี้
+            Swal.fire({
+                title: 'ยืนยันการรีเซ็ตคะแนน?',
+                text: "การกระทำนี้ไม่สามารถย้อนกลับได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'ใช่, รีเซ็ตเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const apiResult = await callApi('resetVotes');
+                    adminActionMessage.textContent = apiResult.message;
+                    adminActionMessage.className = apiResult.status === 'success' ? 'message success' : 'message error';
+                    if(apiResult.status === 'success') loadAllAdminData();
+                }
+            });
         });
 
-        clearUsersButton.addEventListener('click', async () => {
-            if (!confirm('ยืนยันการล้างข้อมูลผู้ใช้งานทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!')) return;
-            const result = await callApi('clearUsers');
-            adminActionMessage.textContent = result.message;
-            adminActionMessage.className = result.status === 'success' ? 'message success' : 'message error';
-            if(result.status === 'success') loadAllAdminData();
+        clearUsersButton.addEventListener('click', () => { // ✨ แก้ไขตรงนี้
+            Swal.fire({
+                title: 'ยืนยันการล้างข้อมูลผู้ใช้?',
+                text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ล้างข้อมูล!',
+                cancelButtonText: 'ยกเลิก'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const apiResult = await callApi('clearUsers');
+                    adminActionMessage.textContent = apiResult.message;
+                    adminActionMessage.className = apiResult.status === 'success' ? 'message success' : 'message error';
+                    if(apiResult.status === 'success') loadAllAdminData();
+                }
+            });
         });
 
         document.getElementById('closeVotingNowButton').addEventListener('click', async () => {
@@ -457,13 +495,10 @@
         document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
             const button = document.getElementById('exportUsersPdfButton');
             const linkContainer = document.getElementById('pdf-link-container');
-            
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
             linkContainer.innerHTML = '';
-
             const result = await callApi('exportPdf', { dataType: 'users' });
-
             if (result.status === 'success') {
                 const linkHtml = `สร้างไฟล์สำเร็จ: <a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`;
                 linkContainer.innerHTML = linkHtml;
@@ -472,7 +507,6 @@
                 linkContainer.textContent = result.message;
                 linkContainer.className = 'message error';
             }
-            
             button.disabled = false;
             button.textContent = 'ส่งออกผู้ใช้งาน (.pdf)';
         });
@@ -480,13 +514,10 @@
         document.getElementById('exportVotesPdfButton').addEventListener('click', async () => {
             const button = document.getElementById('exportVotesPdfButton');
             const linkContainer = document.getElementById('pdf-link-container');
-
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
             linkContainer.innerHTML = '';
-
             const result = await callApi('exportPdf', { dataType: 'votes' });
-            
             if (result.status === 'success') {
                 const linkHtml = `สร้างไฟล์สำเร็จ: <a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`;
                 linkContainer.innerHTML = linkHtml;
@@ -495,25 +526,22 @@
                 linkContainer.textContent = result.message;
                 linkContainer.className = 'message error';
             }
-            
             button.disabled = false;
             button.textContent = 'ส่งออกผลโหวต (.pdf)';
         });
 
-        // --- ✨ โค้ดสำหรับจัดการ Edit Modal และ Delete ที่เพิ่มเข้ามาใหม่ ✨ ---
         const editModal = document.getElementById('editDesignModal');
         const closeButton = document.querySelector('.close-button');
         const saveButton = document.getElementById('saveDesignButton');
         const adminVoteResultsTbody = document.querySelector('#adminVoteResultsTable tbody');
 
-        adminVoteResultsTbody.addEventListener('click', async (event) => {
+        adminVoteResultsTbody.addEventListener('click', async (event) => { // ✨ แก้ไขตรงนี้
             const target = event.target;
             const row = target.closest('tr');
             if (!row) return;
 
             const designId = row.dataset.designId;
 
-            // --- จัดการปุ่มแก้ไข ---
             if (target.classList.contains('edit-button')) {
                 document.getElementById('editDesignIdHidden').value = designId;
                 document.getElementById('editDesignIdDisplay').value = designId;
@@ -522,22 +550,26 @@
                 editModal.style.display = 'block';
             }
 
-            // --- จัดการปุ่มลบ ---
             if (target.classList.contains('delete-button')) {
-                if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบแบบเสื้อ '${designId}'? การกระทำนี้ไม่สามารถย้อนกลับได้!`)) {
-                    target.disabled = true;
-                    target.textContent = 'กำลังลบ...';
-
-                    const result = await callApi('deleteDesign', { designId: designId });
-                    alert(result.message);
-
-                    if (result.status === 'success') {
-                        loadAdminData();
-                    } else {
-                        target.disabled = false;
-                        target.textContent = 'ลบ';
+                Swal.fire({
+                    title: 'ยืนยันการลบ?',
+                    text: `คุณต้องการลบแบบเสื้อ '${designId}' ใช่ไหม?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'ใช่, ลบเลย!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const apiResult = await callApi('deleteDesign', { designId: designId });
+                        if (apiResult.status === 'success') {
+                            Swal.fire('ลบแล้ว!', apiResult.message, 'success');
+                            loadAdminData();
+                        } else {
+                            Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
+                        }
                     }
-                }
+                });
             }
         });
 

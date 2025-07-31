@@ -439,37 +439,28 @@
 
         document.getElementById('closeVotingNowButton').addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการปิดการโหวตทันที?')) return;
-
             const button = document.getElementById('closeVotingNowButton');
             button.disabled = true;
             button.textContent = 'กำลังปิด...';
-
             const result = await callApi('closeVotingNow');
-            
             adminActionMessage.textContent = "ปิดการโหวตสำเร็จแล้ว!";
             adminActionMessage.className = 'message success';
-            
             loadVoteTime();
-
             button.disabled = false;
             button.textContent = 'ปิดโหวตทันที';
         });
 
-        // ✨ Event Listeners สำหรับ PDF Export ที่เพิ่มเข้ามาใหม่
         document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
             const button = document.getElementById('exportUsersPdfButton');
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
-            
             const result = await callApi('exportPdf', { dataType: 'users' });
-            
             if (result.status === 'success') {
                 alert(result.message);
                 window.open(result.pdfUrl, '_blank');
             } else {
                 alert(result.message);
             }
-            
             button.disabled = false;
             button.textContent = 'ส่งออกผู้ใช้งาน (.pdf)';
         });
@@ -478,16 +469,13 @@
             const button = document.getElementById('exportVotesPdfButton');
             button.disabled = true;
             button.textContent = 'กำลังสร้าง PDF...';
-            
             const result = await callApi('exportPdf', { dataType: 'votes' });
-            
             if (result.status === 'success') {
                 alert(result.message);
                 window.open(result.pdfUrl, '_blank');
             } else {
                 alert(result.message);
             }
-            
             button.disabled = false;
             button.textContent = 'ส่งออกผลโหวต (.pdf)';
         });

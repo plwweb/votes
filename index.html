@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
@@ -114,42 +115,77 @@
 
             const studentId = document.getElementById('studentId').value;
             const fullName = document.getElementById('fullName').value;
-
-            if (studentId.length !== 5 || !studentId.startsWith('0')) {
-                formMessage.textContent = 'กรุณากรอกรหัสนักเรียน 5 หลัก และต้องขึ้นต้นด้วยเลข 0 เท่านั้น';
-                formMessage.className = 'message error';
-                return;
-            }
-
             const grade = document.getElementById('grade').value;
             const room = document.getElementById('room').value;
             const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');
 
-            if (!voteChoiceElement) {
-                formMessage.textContent = 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต';
-                formMessage.className = 'message error';
+            // --- 1. การตรวจสอบข้อมูลฝั่ง Client ---
+            if (studentId.length !== 5 || !studentId.startsWith('0')) {
+                Swal.fire('ข้อมูลไม่ถูกต้อง!', 'กรุณากรอกรหัสนักเรียน 5 หลัก และต้องขึ้นต้นด้วยเลข 0 เท่านั้น', 'warning');
                 return;
             }
-            
-            formMessage.textContent = 'กำลังส่งข้อมูล...';
-            formMessage.className = 'message loading';
-            submitVoteButton.disabled = true;
-
-            const data = { studentId, fullName, grade, room, voteChoice: voteChoiceElement.value };
-            const result = await callApi('registerAndVote', data);
-
-            if (result.status === 'success') {
-                formMessage.textContent = result.message;
-                formMessage.className = 'message success';
-                voteForm.reset();
-                gradeSelect.dispatchEvent(new Event('change'));
-                updateSelectedDesignCard(null);
-                loadInitialData();
-            } else {
-                formMessage.textContent = result.message;
-                formMessage.className = 'message error';
+            if (!voteChoiceElement) {
+                Swal.fire('ลืมหรือเปล่า?', 'กรุณาเลือกแบบเสื้อที่ต้องการโหวต', 'warning');
+                return;
             }
-            submitVoteButton.disabled = false;
+
+            const voteChoiceValue = voteChoiceElement.value;
+            const voteChoiceName = document.querySelector(`label[for="design-${voteChoiceValue}"]`).textContent.trim();
+
+            // --- 2. แสดง Pop-up ยืนยันข้อมูลก่อนส่ง ---
+            Swal.fire({
+                title: 'ยืนยันข้อมูล',
+                html: `
+                    <p>โปรดตรวจสอบข้อมูลก่อนยืนยัน</p>
+                    <div style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <strong>รหัสนักเรียน:</strong> ${studentId}<br>
+                        <strong>ชื่อ:</strong> ${fullName}<br>
+                        <strong>คุณเลือก:</strong> ${voteChoiceName}
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ยืนยันการโหวต',
+                cancelButtonText: 'แก้ไขข้อมูล'
+            }).then(async (result) => {
+                // --- 3. ถ้าผู้ใช้กดยืนยัน ---
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'กำลังส่งข้อมูล...',
+                        text: 'กรุณารอสักครู่',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const data = { studentId, fullName, grade, room, voteChoice: voteChoiceValue };
+                    const apiResult = await callApi('registerAndVote', data);
+
+                    // --- 4. แสดงผลลัพธ์หลังโหวตเสร็จสิ้น ---
+                    if (apiResult.status === 'success') {
+                        Swal.fire({
+                            title: 'โหวตสำเร็จ!',
+                            text: apiResult.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        voteForm.reset();
+                        gradeSelect.dispatchEvent(new Event('change'));
+                        updateSelectedDesignCard(null);
+                        loadInitialData();
+                    } else {
+                        Swal.fire({
+                            title: 'ผิดพลาด!',
+                            text: apiResult.message,
+                            icon: 'error'
+                        });
+                    }
+                }
+            });
         });
 
         designOptionsDiv.addEventListener('change', (event) => {

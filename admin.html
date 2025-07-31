@@ -86,8 +86,6 @@
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
                 <br><br>
-                <button id="exportUsersDataButton">ส่งออกผู้ใช้งาน (.csv)</button>
-                <button id="exportVotesDataButton">ส่งออกผลโหวต (.csv)</button>
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
                 <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
                 <p id="pdf-link-container" class="message"></p>
@@ -169,8 +167,6 @@
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
         const adminActionMessage = document.getElementById('admin-action-message');
-        const exportUsersDataButton = document.getElementById('exportUsersDataButton');
-        const exportVotesDataButton = document.getElementById('exportVotesDataButton');
         let voteChartInstance = null;
 
         // --- Functions ---
@@ -309,28 +305,6 @@
             });
         }
         
-        async function exportData(action, filename, button) {
-            button.disabled = true;
-            button.textContent = 'กำลังเตรียมข้อมูล...';
-            const result = await callApi(action);
-            if (result.status === 'success' && result.data) {
-                let csvContent = result.headers.join(',') + '\n';
-                result.data.forEach(row => {
-                    csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
-                });
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a");
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-            button.disabled = false;
-            button.textContent = `ส่งออกข้อมูล${action.includes('Users') ? 'ผู้ใช้งาน' : 'ผลโหวต'} (.csv)`;
-        }
-
         // --- Event Listeners for Buttons ---
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
@@ -434,9 +408,6 @@
             adminActionMessage.className = result.status === 'success' ? 'message success' : 'message error';
             if(result.status === 'success') loadAllAdminData();
         });
-        
-        exportUsersDataButton.addEventListener('click', () => exportData('getExportUsersData', 'user_data.csv', exportUsersDataButton));
-        exportVotesDataButton.addEventListener('click', () => exportData('getExportVotesData', 'vote_results.csv', exportVotesDataButton));
 
         document.getElementById('closeVotingNowButton').addEventListener('click', async () => {
             if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการปิดการโหวตทันที?')) return;

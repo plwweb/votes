@@ -12,7 +12,7 @@
       /* --- Modal Styles --- */
       .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
       .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; }
-      .modal-content input { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 15px; }
+      .modal-content input, .modal-content select { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 15px; }
       .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
       .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
     </style>
@@ -35,6 +35,39 @@
             
             <button id="saveDesignButton">บันทึกการเปลี่ยนแปลง</button>
             <p id="edit-modal-message" class="message"></p>
+        </div>
+    </div>
+    
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button-user">&times;</span>
+            <h2>แก้ไขข้อมูลผู้ใช้งาน</h2>
+            <input type="hidden" id="editStudentIdHidden">
+            
+            <label for="editStudentId">รหัสนักเรียน:</label>
+            <input type="text" id="editStudentId" disabled>
+            
+            <label for="editFullName">ชื่อ-นามสกุล:</label>
+            <input type="text" id="editFullName">
+            
+            <label for="editGrade">ระดับชั้น:</label>
+            <select id="editGrade">
+                <option value="ม.1">ม.1</option>
+                <option value="ม.2">ม.2</option>
+                <option value="ม.3">ม.3</option>
+                <option value="ม.4">ม.4</option>
+                <option value="ม.5">ม.5</option>
+                <option value="ม.6">ม.6</option>
+            </select>
+            
+            <label for="editRoom">ห้อง:</label>
+            <input type="text" id="editRoom">
+            
+            <label for="editVoteChoice">แบบเสื้อที่โหวต:</label>
+            <input type="text" id="editVoteChoice">
+
+            <button id="saveUserButton">บันทึกการเปลี่ยนแปลง</button>
+            <p id="edit-user-modal-message" class="message"></p>
         </div>
     </div>
 
@@ -132,17 +165,19 @@
                 <p id="chart-message" class="message"></p>
 
                 <h4>ข้อมูลผู้ใช้งานที่โหวตแล้ว</h4>
-                <div style="margin-bottom: 15px;">
+                <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
                     <label for="gradeFilter">กรองตามระดับชั้น:</label>
-                    <select id="gradeFilter">
+                    <select id="gradeFilter" style="width: auto;">
                         <option value="all">แสดงทั้งหมด</option>
                         <option value="ม.1">ม.1</option><option value="ม.2">ม.2</option><option value="ม.3">ม.3</option>
                         <option value="ม.4">ม.4</option><option value="ม.5">ม.5</option><option value="ม.6">ม.6</option>
                     </select>
+                    <label for="userSearchInput">ค้นหา:</label>
+                    <input type="text" id="userSearchInput" placeholder="รหัสนักเรียน/ชื่อ">
                 </div>
                 <div class="data-table-container">
                     <table id="adminUsersTable">
-                         <thead><tr><th>Student ID</th><th>Full Name</th><th>Grade</th><th>Room</th><th>Timestamp</th><th>Vote Choice</th></tr></thead>
+                         <thead><tr><th>Student ID</th><th>Full Name</th><th>Grade</th><th>Room</th><th>Timestamp</th><th>Vote Choice</th><th>Actions</th></tr></thead>
                          <tbody></tbody>
                     </table>
                 </div>
@@ -174,6 +209,7 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
         let currentAdminUser = '';
+        let allUsersData = []; // เก็บข้อมูลผู้ใช้ทั้งหมด
 
         // --- อ้างอิง Elements ---
         const loginSection = document.getElementById('login-section');
@@ -182,6 +218,7 @@
         const welcomeMessage = document.getElementById('welcome-message');
         const dashboardSummaryDiv = document.getElementById('dashboard-summary');
         const gradeFilterSelect = document.getElementById('gradeFilter');
+        const userSearchInput = document.getElementById('userSearchInput'); // เพิ่มช่องค้นหา
         const refreshDataButton = document.getElementById('refreshDataButton');
         const addDesignButton = document.getElementById('addDesignButton');
         const setVoteTimeButton = document.getElementById('setVoteTimeButton');
@@ -254,7 +291,8 @@
             const result = await callApi('getAdminData');
             if (result.status === 'success') {
                 displayAdminVoteResults(result.votes);
-                displayAdminUsers(result.users);
+                allUsersData = result.users; // เก็บข้อมูลผู้ใช้ทั้งหมดไว้
+                displayAdminUsers(allUsersData);
                 displayVoteChart(result.votes);
             }
         }
@@ -323,12 +361,28 @@
         function displayAdminUsers(users) {
             const tbody = document.querySelector('#adminUsersTable tbody');
             tbody.innerHTML = '';
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">ไม่พบข้อมูลผู้ใช้งาน</td></tr>';
+                return;
+            }
             users.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td>`;
+                tr.dataset.studentId = row[0]; // ใช้ studentId เป็น id สำหรับการแก้ไข/ลบ
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td><td><button class="edit-user-button">แก้ไข</button> <button class="delete-user-button danger">ลบ</button></td>`;
                 tbody.appendChild(tr);
             });
-            document.getElementById('gradeFilter').value = 'all';
+        }
+        
+        // ฟังก์ชันสำหรับกรอง/ค้นหาข้อมูลผู้ใช้
+        function filterAndSearchUsers() {
+            const selectedGrade = gradeFilterSelect.value;
+            const searchTerm = userSearchInput.value.toLowerCase().trim();
+            const filteredUsers = allUsersData.filter(user => {
+                const gradeMatch = selectedGrade === 'all' || user[2] === selectedGrade;
+                const searchMatch = user[0].toLowerCase().includes(searchTerm) || user[1].toLowerCase().includes(searchTerm);
+                return gradeMatch && searchMatch;
+            });
+            displayAdminUsers(filteredUsers);
         }
 
         function displayVoteChart(votes) {
@@ -348,7 +402,7 @@
             });
         }
         
-        // --- Event Listeners for Buttons ---
+        // --- Event Listeners for Buttons and Inputs ---
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
@@ -397,14 +451,8 @@
             });
         });
 
-        gradeFilterSelect.addEventListener('change', () => {
-            const selectedGrade = gradeFilterSelect.value;
-            const tableRows = document.querySelectorAll('#adminUsersTable tbody tr');
-            tableRows.forEach(row => {
-                const rowGrade = row.cells[2].textContent;
-                row.style.display = (selectedGrade === 'all' || rowGrade === selectedGrade) ? '' : 'none';
-            });
-        });
+        gradeFilterSelect.addEventListener('change', filterAndSearchUsers);
+        userSearchInput.addEventListener('input', filterAndSearchUsers);
 
         addDesignButton.addEventListener('click', async () => {
             const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
@@ -601,9 +649,9 @@
             }
         });
 
-        const editModal = document.getElementById('editDesignModal');
-        const closeButton = document.querySelector('.close-button');
-        const saveButton = document.getElementById('saveDesignButton');
+        const editDesignModal = document.getElementById('editDesignModal');
+        const closeDesignButton = document.querySelector('.close-button');
+        const saveDesignButton = document.getElementById('saveDesignButton');
         const adminVoteResultsTbody = document.querySelector('#adminVoteResultsTable tbody');
 
         adminVoteResultsTbody.addEventListener('click', async (event) => {
@@ -618,7 +666,7 @@
                 document.getElementById('editDesignIdDisplay').value = designId;
                 document.getElementById('editDesignName').value = row.dataset.designName;
                 document.getElementById('editDesignImageUrl').value = row.dataset.imageUrl;
-                editModal.style.display = 'block';
+                editDesignModal.style.display = 'block';
             }
 
             if (target.classList.contains('delete-button')) {
@@ -643,18 +691,18 @@
                 });
             }
         });
-
-        closeButton.addEventListener('click', () => {
-            editModal.style.display = 'none';
+        
+        closeDesignButton.addEventListener('click', () => {
+            editDesignModal.style.display = 'none';
         });
 
-        saveButton.addEventListener('click', async () => {
+        saveDesignButton.addEventListener('click', async () => {
             const id = document.getElementById('editDesignIdHidden').value;
             const name = document.getElementById('editDesignName').value;
             const imageUrl = document.getElementById('editDesignImageUrl').value;
 
-            saveButton.disabled = true;
-            saveButton.textContent = 'กำลังบันทึก...';
+            saveDesignButton.disabled = true;
+            saveDesignButton.textContent = 'กำลังบันทึก...';
 
             const result = await callApi('editDesign', { designId: id, designName: name, imageUrl: imageUrl });
             
@@ -665,13 +713,95 @@
             if (result.status === 'success') {
                 loadAdminData();
                 setTimeout(() => {
-                    editModal.style.display = 'none';
+                    editDesignModal.style.display = 'none';
                     editMessage.textContent = '';
                 }, 1500);
             }
             
-            saveButton.disabled = false;
-            saveButton.textContent = 'บันทึกการเปลี่ยนแปลง';
+            saveDesignButton.disabled = false;
+            saveDesignButton.textContent = 'บันทึกการเปลี่ยนแปลง';
+        });
+        
+        // --- User Management Modals & Event Listeners ---
+        const editUserModal = document.getElementById('editUserModal');
+        const closeUserButton = document.querySelector('.close-button-user');
+        const saveUserButton = document.getElementById('saveUserButton');
+        const adminUsersTbody = document.querySelector('#adminUsersTable tbody');
+        
+        adminUsersTbody.addEventListener('click', async (event) => {
+            const target = event.target;
+            const row = target.closest('tr');
+            if (!row || !row.dataset.studentId) return;
+
+            const studentId = row.dataset.studentId;
+
+            if (target.classList.contains('edit-user-button')) {
+                const user = allUsersData.find(u => u[0].trim() === studentId.trim());
+                if (user) {
+                    document.getElementById('editStudentIdHidden').value = studentId;
+                    document.getElementById('editStudentId').value = studentId;
+                    document.getElementById('editFullName').value = user[1];
+                    document.getElementById('editGrade').value = user[2];
+                    document.getElementById('editRoom').value = user[3];
+                    document.getElementById('editVoteChoice').value = user[5];
+                    editUserModal.style.display = 'block';
+                }
+            }
+
+            if (target.classList.contains('delete-user-button')) {
+                Swal.fire({
+                    title: 'ยืนยันการลบ?',
+                    text: `คุณต้องการลบข้อมูลของนักเรียนรหัส '${studentId}' ใช่ไหม?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'ใช่, ลบเลย!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const apiResult = await callApi('deleteUser', { studentId: studentId });
+                        if (apiResult.status === 'success') {
+                            Swal.fire('ลบแล้ว!', apiResult.message, 'success');
+                            loadAllAdminData();
+                        } else {
+                            Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+        
+        closeUserButton.addEventListener('click', () => {
+            editUserModal.style.display = 'none';
+        });
+
+        saveUserButton.addEventListener('click', async () => {
+            const id = document.getElementById('editStudentIdHidden').value;
+            const fullName = document.getElementById('editFullName').value;
+            const grade = document.getElementById('editGrade').value;
+            const room = document.getElementById('editRoom').value;
+            const voteChoice = document.getElementById('editVoteChoice').value;
+
+            saveUserButton.disabled = true;
+            saveUserButton.textContent = 'กำลังบันทึก...';
+
+            const result = await callApi('editUser', { studentId: id, fullName: fullName, grade: grade, room: room, voteChoice: voteChoice });
+
+            const editMessage = document.getElementById('edit-user-modal-message');
+            editMessage.textContent = result.message;
+            editMessage.className = result.status === 'success' ? 'message success' : 'message error';
+
+            if (result.status === 'success') {
+                loadAllAdminData();
+                setTimeout(() => {
+                    editUserModal.style.display = 'none';
+                    editMessage.textContent = '';
+                }, 1500);
+            }
+
+            saveUserButton.disabled = false;
+            saveUserButton.textContent = 'บันทึกการเปลี่ยนแปลง';
         });
     </script>
 </body>

@@ -111,6 +111,7 @@
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
+                <a href="#" id="openLiveResultsButton" class="action-button" style="text-decoration:none; margin-left:10px;">เปิดหน้าแสดงผลสด</a>
                 <br><br>
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
                 <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
@@ -173,12 +174,12 @@
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
+        let currentAdminUser = '';
 
         // --- อ้างอิง Elements ---
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
-        const loginMessage = document.getElementById('login-message');
         const welcomeMessage = document.getElementById('welcome-message');
         const dashboardSummaryDiv = document.getElementById('dashboard-summary');
         const gradeFilterSelect = document.getElementById('gradeFilter');
@@ -188,11 +189,14 @@
         const addAdminButton = document.getElementById('addAdminButton');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
-        const adminActionMessage = document.getElementById('admin-action-message');
+        const openLiveResultsButton = document.getElementById('openLiveResultsButton');
         let voteChartInstance = null;
 
         // --- Functions ---
         async function callApi(action, data = {}) {
+            if (currentAdminUser) {
+                data.username = currentAdminUser;
+            }
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -211,6 +215,7 @@
             loginSection.style.display = 'none';
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
+            openLiveResultsButton.href = WEB_APP_URL + '?page=live_results';
         }
 
         async function loadAllAdminData() {
@@ -369,6 +374,7 @@
 
             if (result.status === 'success') {
                 Swal.close(); 
+                currentAdminUser = username;
                 showAdminPanel(result.fullName || username);
                 loadAllAdminData();
             } else {
@@ -558,7 +564,6 @@
             });
         });
         
-        // ✨ Event Listeners สำหรับ PDF Export ที่แก้ไขแล้ว
         document.getElementById('exportUsersPdfButton').addEventListener('click', async () => {
             Swal.fire({
                 title: 'กำลังสร้าง PDF...',

@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -168,6 +170,15 @@
 
                     // --- 4. แสดงผลลัพธ์หลังโหวตเสร็จสิ้น ---
                     if (apiResult.status === 'success') {
+
+                        // --- ✨ 2. ยิง Confetti เมื่อโหวตสำเร็จ! ✨ ---
+                        confetti({
+                            particleCount: 150,
+                            spread: 180,
+                            origin: { y: 0.6 }
+                        });
+                        // --- จบส่วนของ Confetti ---
+
                         Swal.fire({
                             title: 'โหวตสำเร็จ!',
                             text: apiResult.message,

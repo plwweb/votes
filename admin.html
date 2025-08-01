@@ -214,19 +214,11 @@
         }
 
         async function loadAllAdminData() {
-            Swal.fire({
-                title: 'กำลังรีเฟรชข้อมูล...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading() }
-            });
-
+            // เอา SweetAlert2 "กำลังรีเฟรชข้อมูล" ออกจากส่วนนี้
             await loadAdminData();
             await loadDashboardData();
             await loadVoteTime();
             await loadAdminAccounts();
-
-            Swal.close();
         }
 
         async function loadDashboardData() {
@@ -377,16 +369,17 @@
             const result = await callApi('login', { username, password });
 
             if (result.status === 'success') {
-                Swal.close(); // ปิด Pop-up "กำลังโหลด"
-                Swal.fire({
+                // เปลี่ยนจาก Swal.fire() เป็นการใช้ .then() ต่อจาก Pop-up "กำลังเข้าสู่ระบบ..."
+                Swal.update({
                     title: 'สำเร็จ!',
                     text: 'เข้าสู่ระบบสำเร็จ',
                     icon: 'success',
-                    timer: 1500, // แสดงผล 1.5 วินาที
-                    showConfirmButton: false
-                }).then(() => {
-                    showAdminPanel(result.fullName || username);
-                    loadAllAdminData();
+                    timer: 1500,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        showAdminPanel(result.fullName || username);
+                        loadAllAdminData(); // โหลดข้อมูลโดยไม่มี Pop-up ซ้อน
+                    }
                 });
             } else {
                 Swal.fire({
@@ -398,7 +391,18 @@
         });
 
 
-        refreshDataButton.addEventListener('click', loadAllAdminData);
+        refreshDataButton.addEventListener('click', () => {
+            Swal.fire({
+                title: 'กำลังรีเฟรชข้อมูล...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            loadAllAdminData().then(() => {
+                Swal.close();
+            });
+        });
 
         gradeFilterSelect.addEventListener('change', () => {
             const selectedGrade = gradeFilterSelect.value;

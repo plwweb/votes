@@ -58,6 +58,15 @@
 
         <div id="admin-panel" style="display: none;">
             <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
+            
+            <div class="admin-section">
+                <h3>ประกาศสถานะโหวตแบบเรียลไทม์</h3>
+                <div id="announcement-section">
+                    <p id="announcement-message" class="message"></p>
+                    <button id="show-announcement">แสดงแถบประกาศ</button>
+                    <button id="hide-announcement">ซ่อนแถบประกาศ</button>
+                </div>
+            </div>
 
             <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
@@ -193,6 +202,11 @@
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
         let voteChartInstance = null;
+        
+        // New: Announcement Elements
+        const showAnnouncementButton = document.getElementById('show-announcement');
+        const hideAnnouncementButton = document.getElementById('hide-announcement');
+        const announcementMessageDiv = document.getElementById('announcement-message');
 
         // --- Functions ---
         async function callApi(action, data = {}) {
@@ -217,6 +231,33 @@
             loginSection.style.display = 'none';
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
+            startPollingForNewVotes(); // Start polling
+        }
+        
+        // New: Polling for new votes
+        let lastVoteTimestamp = new Date().toISOString();
+        async function startPollingForNewVotes() {
+            setInterval(async () => {
+                const result = await callApi('getNewVotes', { lastTimestamp: lastVoteTimestamp });
+                if (result.status === 'success' && result.newVotes.length > 0) {
+                    result.newVotes.forEach(vote => {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'info',
+                            title: `มีนักเรียนโหวตใหม่!`,
+                            text: `รหัส ${vote.studentId} โหวตให้แบบเสื้อ ${vote.voteChoice}`,
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                        // Update the last timestamp to the newest vote's timestamp
+                        if (vote.timestamp > lastVoteTimestamp) {
+                            lastVoteTimestamp = vote.timestamp;
+                        }
+                    });
+                    loadAllAdminData(); // Refresh data to show new votes in tables/charts
+                }
+            }, 5000); // Poll every 5 seconds
         }
 
         async function loadAllAdminData() {

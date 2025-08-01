@@ -214,7 +214,6 @@
         }
 
         async function loadAllAdminData() {
-            // เอา SweetAlert2 "กำลังรีเฟรชข้อมูล" ออกจากส่วนนี้
             await loadAdminData();
             await loadDashboardData();
             await loadVoteTime();
@@ -369,18 +368,9 @@
             const result = await callApi('login', { username, password });
 
             if (result.status === 'success') {
-                // เปลี่ยนจาก Swal.fire() เป็นการใช้ .then() ต่อจาก Pop-up "กำลังเข้าสู่ระบบ..."
-                Swal.update({
-                    title: 'สำเร็จ!',
-                    text: 'เข้าสู่ระบบสำเร็จ',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    willClose: () => {
-                        showAdminPanel(result.fullName || username);
-                        loadAllAdminData(); // โหลดข้อมูลโดยไม่มี Pop-up ซ้อน
-                    }
-                });
+                Swal.close(); 
+                showAdminPanel(result.fullName || username);
+                loadAllAdminData();
             } else {
                 Swal.fire({
                     title: 'ผิดพลาด!',

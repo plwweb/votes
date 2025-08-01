@@ -111,7 +111,6 @@
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
                 <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                <a href="#" id="openLiveResultsButton" class="action-button" target="_blank" style="text-decoration:none; margin-left:10px;">เปิดหน้าแสดงผลสด</a>
                 <br><br>
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
                 <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
@@ -175,7 +174,6 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
         let currentAdminUser = '';
-        let webAppBaseUrl = ''; // เพิ่มตัวแปรสำหรับเก็บ URL หลัก
 
         // --- อ้างอิง Elements ---
         const loginSection = document.getElementById('login-section');
@@ -190,23 +188,7 @@
         const addAdminButton = document.getElementById('addAdminButton');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
-        const openLiveResultsButton = document.getElementById('openLiveResultsButton');
         let voteChartInstance = null;
-        
-        // เมื่อหน้าโหลดเสร็จ ให้ดึง URL ของ Web App ทันที
-        window.onload = async () => {
-             const urlResponse = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'getWebAppUrl' }),
-            });
-            const result = await urlResponse.json();
-            if (result.url) {
-                webAppBaseUrl = result.url;
-            } else {
-                console.error('Failed to get Web App URL from script.');
-            }
-        };
 
         // --- Functions ---
         async function callApi(action, data = {}) {
@@ -231,10 +213,6 @@
             loginSection.style.display = 'none';
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
-            // ใช้ URL ที่ได้จาก getWebAppUrl
-            if (webAppBaseUrl) {
-                openLiveResultsButton.href = webAppBaseUrl + '?page=live_results';
-            }
         }
 
         async function loadAllAdminData() {

@@ -214,10 +214,19 @@
         }
 
         async function loadAllAdminData() {
-            loadAdminData();
-            loadDashboardData();
-            loadVoteTime();
-            loadAdminAccounts();
+            Swal.fire({
+                title: 'กำลังรีเฟรชข้อมูล...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            await loadAdminData();
+            await loadDashboardData();
+            await loadVoteTime();
+            await loadAdminAccounts();
+
+            Swal.close();
         }
 
         async function loadDashboardData() {
@@ -348,37 +357,45 @@
         
         // --- Event Listeners for Buttons ---
         loginButton.addEventListener('click', async () => {
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
 
-    if(!username || !password) {
-        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
-        return;
-    }
+            if(!username || !password) {
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
+                return;
+            }
 
-    Swal.fire({
-        title: 'กำลังเข้าสู่ระบบ...',
-        text: 'กรุณารอสักครู่',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+            Swal.fire({
+                title: 'กำลังเข้าสู่ระบบ...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
-    const result = await callApi('login', { username, password });
+            const result = await callApi('login', { username, password });
 
-    if (result.status === 'success') {
-        Swal.close(); // ปิด Pop-up "กำลังโหลด"
-        showAdminPanel(result.fullName || username);
-        loadAllAdminData();
-    } else {
-        Swal.fire({
-            title: 'ผิดพลาด!',
-            text: result.message,
-            icon: 'error'
+            if (result.status === 'success') {
+                Swal.close(); // ปิด Pop-up "กำลังโหลด"
+                Swal.fire({
+                    title: 'สำเร็จ!',
+                    text: 'เข้าสู่ระบบสำเร็จ',
+                    icon: 'success',
+                    timer: 1500, // แสดงผล 1.5 วินาที
+                    showConfirmButton: false
+                }).then(() => {
+                    showAdminPanel(result.fullName || username);
+                    loadAllAdminData();
+                });
+            } else {
+                Swal.fire({
+                    title: 'ผิดพลาด!',
+                    text: result.message,
+                    icon: 'error'
+                });
+            }
         });
-    }
-});
 
 
         refreshDataButton.addEventListener('click', loadAllAdminData);
@@ -393,59 +410,59 @@
         });
 
         addDesignButton.addEventListener('click', async () => {
-    const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
-    const designName = document.getElementById('newDesignName').value.trim();
-    const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
-    if (!designId || !designName) {
-        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
-        return;
-    }
+            const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
+            const designName = document.getElementById('newDesignName').value.trim();
+            const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
+            if (!designId || !designName) {
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
+                return;
+            }
 
-    Swal.fire({
-        title: 'กำลังเพิ่มแบบเสื้อ...',
-        text: 'กรุณารอสักครู่',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading() }
-    });
+            Swal.fire({
+                title: 'กำลังเพิ่มแบบเสื้อ...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
 
-    const result = await callApi('addDesign', { designId, designName, imageUrl });
+            const result = await callApi('addDesign', { designId, designName, imageUrl });
 
-    if (result.status === 'success') {
-        Swal.fire('สำเร็จ!', result.message, 'success');
-        loadAllAdminData();
-        document.getElementById('newDesignId').value = '';
-        document.getElementById('newDesignName').value = '';
-        document.getElementById('newDesignImageUrl').value = '';
-    } else {
-        Swal.fire('ผิดพลาด!', result.message, 'error');
-    }
-});
+            if (result.status === 'success') {
+                Swal.fire('สำเร็จ!', result.message, 'success');
+                loadAllAdminData();
+                document.getElementById('newDesignId').value = '';
+                document.getElementById('newDesignName').value = '';
+                document.getElementById('newDesignImageUrl').value = '';
+            } else {
+                Swal.fire('ผิดพลาด!', result.message, 'error');
+            }
+        });
 
 
         setVoteTimeButton.addEventListener('click', async () => {
-    const startTime = document.getElementById('voteStartTime').value;
-    const endTime = document.getElementById('voteEndTime').value;
-    if (!startTime || !endTime) {
-        Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
-        return;
-    }
+            const startTime = document.getElementById('voteStartTime').value;
+            const endTime = document.getElementById('voteEndTime').value;
+            if (!startTime || !endTime) {
+                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
+                return;
+            }
 
-    Swal.fire({
-        title: 'กำลังตั้งเวลา...',
-        text: 'กรุณารอสักครู่',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading() }
-    });
+            Swal.fire({
+                title: 'กำลังตั้งเวลา...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
 
-    const result = await callApi('updateVoteTime', { startTime, endTime });
+            const result = await callApi('updateVoteTime', { startTime, endTime });
 
-    if (result.status === 'success') {
-        Swal.fire('สำเร็จ!', result.message, 'success');
-        loadVoteTime();
-    } else {
-        Swal.fire('ผิดพลาด!', result.message, 'error');
-    }
-});
+            if (result.status === 'success') {
+                Swal.fire('สำเร็จ!', result.message, 'success');
+                loadVoteTime();
+            } else {
+                Swal.fire('ผิดพลาด!', result.message, 'error');
+            }
+        });
 
         addAdminButton.addEventListener('click', async () => {
             const username = document.getElementById('newAdminUsername').value.trim();
@@ -470,18 +487,28 @@
         resetVotesButton.addEventListener('click', () => {
             Swal.fire({
                 title: 'ยืนยันการรีเซ็ตคะแนน?',
-                text: "การกระทำนี้ไม่สามารถย้อนกลับได้!",
+                text: "การกระทำนี้จะลบคะแนนโหวตทั้งหมดและไม่สามารถย้อนกลับได้!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'ใช่, รีเซ็ตเลย!',
                 cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                     Swal.fire({
+                        title: 'กำลังรีเซ็ต...',
+                        text: 'กรุณารอสักครู่',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading() }
+                    });
                     const apiResult = await callApi('resetVotes');
-                    adminActionMessage.textContent = apiResult.message;
-                    adminActionMessage.className = apiResult.status === 'success' ? 'message success' : 'message error';
-                    if(apiResult.status === 'success') loadAllAdminData();
+                    if(apiResult.status === 'success') {
+                        Swal.fire('สำเร็จ!', apiResult.message, 'success');
+                        loadAllAdminData();
+                    } else {
+                        Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
+                    }
                 }
             });
         });
@@ -493,14 +520,24 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'ใช่, ล้างข้อมูล!',
                 cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                     Swal.fire({
+                        title: 'กำลังล้างข้อมูล...',
+                        text: 'กรุณารอสักครู่',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading() }
+                    });
                     const apiResult = await callApi('clearUsers');
-                    adminActionMessage.textContent = apiResult.message;
-                    adminActionMessage.className = apiResult.status === 'success' ? 'message success' : 'message error';
-                    if(apiResult.status === 'success') loadAllAdminData();
+                    if(apiResult.status === 'success') {
+                        Swal.fire('สำเร็จ!', apiResult.message, 'success');
+                        loadAllAdminData();
+                    } else {
+                        Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
+                    }
                 }
             });
         });

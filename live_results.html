@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Results - ระบบโหวตเสื้อกีฬาสี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-blue: #2196F3;
+            --primary-pink: #FF4081;
+            --text-color: #333;
+            --background-gradient: linear-gradient(135deg, #e0f2f7 0%, #fce4ec 100%);
+        }
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            margin-top: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            color: var(--primary-blue);
+            font-size: 3.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: var(--primary-pink);
+            margin-top: 0;
+            font-size: 2em;
+            font-weight: 600;
+        }
+        #chart-container {
+            width: 100%;
+            height: 600px;
+            margin: 40px auto;
+        }
+        #total-votes {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-pink);
+            margin-top: 20px;
+        }
+        #last-updated {
+            font-size: 1em;
+            color: #777;
+            margin-top: 10px;
+        }
+        .footer-link {
+            display: block;
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ผลคะแนนโหวตแบบสด</h1>
+        <h2>เสื้อกีฬาสี</h2>
+        <div id="chart-container">
+            <canvas id="liveVoteChart"></canvas>
+        </div>
+        <p id="total-votes">จำนวนผู้โหวตทั้งหมด: <span>กำลังโหลด...</span></p>
+        <p id="last-updated">อัปเดตล่าสุด: <span>กำลังโหลด...</span></p>
+    </div>
+    <a href="index.html" class="footer-link">กลับไปหน้าโหวต</a>
+
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
+        let liveChartInstance = null;
+
+        async function callApi(action) {
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action }),
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error calling API:', error);
+                return { status: 'error', message: 'API call failed: ' + error.message };
+            }
+        }
+
+        async function loadLiveResults() {
+            const result = await callApi('getVoteResults');
+            if (result.status === 'success') {
+                const votes = result.results;
+                if (votes.length > 0) {
+                    displayLiveChart(votes);
+                    updateTotalVotes(votes);
+                }
+            }
+            document.getElementById('last-updated').querySelector('span').textContent = new Date().toLocaleTimeString('th-TH');
+        }
+
+        function displayLiveChart(votes) {
+            const ctx = document.getElementById('liveVoteChart').getContext('2d');
+            if (liveChartInstance) liveChartInstance.destroy();
+            
+            const sortedVotes = votes.sort((a, b) => b.voteCount - a.voteCount);
+
+            const labels = sortedVotes.map(v => `แบบ ${v.designId} - ${v.designName}`);
+            const data = sortedVotes.map(v => v.voteCount);
+            
+            // สร้างสีแบบสุ่มสำหรับแต่ละแท่งกราฟ
+            const backgroundColors = sortedVotes.map(() => `rgba(${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},0.7)`);
+
+            liveChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'คะแนนโหวต',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // แสดงกราฟแนวนอน
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'คะแนนโหวต',
+                                font: { size: 20 }
+                            },
+                            ticks: { font: { size: 16 } }
+                        },
+                        y: {
+                            ticks: { font: { size: 16 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTotalVotes(votes) {
+            const total = votes.reduce((sum, item) => sum + item.voteCount, 0);
+            document.getElementById('total-votes').querySelector('span').textContent = total;
+        }
+
+        // โหลดข้อมูลครั้งแรก
+        loadLiveResults();
+        // ตั้งเวลาอัปเดตข้อมูลทุก 10 วินาที
+        setInterval(loadLiveResults, 10000);
+    </script>
+</body>
+</html>

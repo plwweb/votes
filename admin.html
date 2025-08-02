@@ -76,7 +76,12 @@
                 <input type="datetime-local" id="voteStartTime">
                 <label for="voteEndTime">เวลาสิ้นสุด:</label>
                 <input type="datetime-local" id="voteEndTime">
-                <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
+                    <button id="closeVotingNowButton" class="action-button danger">ปิดโหวตทันที</button>
+                </div>
+
                 <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
             </div>
 
@@ -104,7 +109,6 @@
                 <h3>เครื่องมือผู้ดูแล</h3>
                 <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
                 <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
-                <button id="closeVotingNowButton" class="action-button danger">ปิดโหวตทันที</button>
                 <p id="admin-action-message" class="message"></p>
             </div>
 

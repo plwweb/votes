@@ -55,13 +55,6 @@
             <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
 
             <div class="admin-section">
-                <h3>จัดการข้อความประกาศ (แถบวิ่ง)</h3>
-                <label for="announcementText">ข้อความที่จะแสดง:</label>
-                <textarea id="announcementText" rows="3" placeholder="ใส่ข้อความที่ต้องการให้วิ่งที่หน้าแรก..."></textarea>
-                <button id="saveAnnouncementButton">บันทึกข้อความ</button>
-            </div>
-
-            <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
                 <label for="newDesignId">Design ID (เช่น S4):</label>
                 <input type="text" id="newDesignId" placeholder="S..." required>
@@ -196,7 +189,6 @@
         const addAdminButton = document.getElementById('addAdminButton');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
-        const saveAnnouncementButton = document.getElementById('saveAnnouncementButton');
         let voteChartInstance = null;
 
         async function callApi(action, data = {}) {
@@ -220,20 +212,12 @@
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
         }
-        
-        async function loadAnnouncementText() {
-            const result = await callApi('getAnnouncementText');
-            if (result.status === 'success') {
-                document.getElementById('announcementText').value = result.text;
-            }
-        }
 
         async function loadAllAdminData() {
             await loadAdminData();
             await loadDashboardData();
             await loadVoteTime();
             await loadAdminAccounts();
-            await loadAnnouncementText();
         }
 
         async function loadDashboardData() {
@@ -377,34 +361,11 @@
             });
         }
         
-        saveAnnouncementButton.addEventListener('click', async () => {
-            const newText = document.getElementById('announcementText').value;
-            Swal.fire({
-                title: 'กำลังบันทึกข้อความ...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-            const result = await callApi('updateAnnouncementText', { text: newText });
-            if (result.status === 'success') {
-                Swal.fire('สำเร็จ!', result.message, 'success');
-            } else {
-                Swal.fire('ผิดพลาด!', result.message, 'error');
-            }
-        });
-
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            if(!username || !password) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
-                return;
-            }
-            Swal.fire({
-                title: 'กำลังเข้าสู่ระบบ...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            if(!username || !password) { Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning'); return; }
+            Swal.fire({ title: 'กำลังเข้าสู่ระบบ...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('login', { username, password });
             if (result.status === 'success') {
                 Swal.close(); 
@@ -412,21 +373,12 @@
                 showAdminPanel(result.fullName || username);
                 loadAllAdminData();
             } else {
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: result.message,
-                    icon: 'error'
-                });
+                Swal.fire({ title: 'ผิดพลาด!', text: result.message, icon: 'error' });
             }
         });
 
         refreshDataButton.addEventListener('click', () => {
-            Swal.fire({
-                title: 'กำลังรีเฟรชข้อมูล...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            Swal.fire({ title: 'กำลังรีเฟรชข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             loadAllAdminData().then(() => Swal.close());
         });
 
@@ -437,15 +389,8 @@
             const designId = document.getElementById('newDesignId').value.trim().toUpperCase();
             const designName = document.getElementById('newDesignName').value.trim();
             const imageUrl = document.getElementById('newDesignImageUrl').value.trim();
-            if (!designId || !designName) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning');
-                return;
-            }
-            Swal.fire({
-                title: 'กำลังเพิ่มแบบเสื้อ...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            if (!designId || !designName) { Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Design ID และชื่อแบบเสื้อ', 'warning'); return; }
+            Swal.fire({ title: 'กำลังเพิ่มแบบเสื้อ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('addDesign', { designId, designName, imageUrl });
             if (result.status === 'success') {
                 Swal.fire('สำเร็จ!', result.message, 'success');
@@ -461,15 +406,8 @@
         setVoteTimeButton.addEventListener('click', async () => {
             const startTime = document.getElementById('voteStartTime').value;
             const endTime = document.getElementById('voteEndTime').value;
-            if (!startTime || !endTime) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning');
-                return;
-            }
-            Swal.fire({
-                title: 'กำลังตั้งเวลา...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            if (!startTime || !endTime) { Swal.fire('ข้อมูลไม่ครบ!', 'กรุณาเลือกเวลาเริ่มต้นและสิ้นสุด', 'warning'); return; }
+            Swal.fire({ title: 'กำลังตั้งเวลา...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('updateVoteTime', { startTime, endTime });
             if (result.status === 'success') {
                 Swal.fire('สำเร็จ!', result.message, 'success');
@@ -483,10 +421,7 @@
             const username = document.getElementById('newAdminUsername').value.trim();
             const password = document.getElementById('newAdminPassword').value.trim();
             const fullName = document.getElementById('newAdminFullName').value.trim();
-            if (!username || !password || !fullName) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
-                return;
-            }
+            if (!username || !password || !fullName) { Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'warning'); return; }
             const result = await callApi('addAdminAccount', { username, password, fullName });
             if (result.status === 'success') {
                 Swal.fire('สำเร็จ!', result.message, 'success');
@@ -500,8 +435,7 @@
         });
 
         resetVotesButton.addEventListener('click', () => {
-            Swal.fire({
-                title: 'ยืนยันการรีเซ็ตคะแนน?', text: "การกระทำนี้จะลบคะแนนโหวตทั้งหมดและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, รีเซ็ตเลย!', cancelButtonText: 'ยกเลิก'
+            Swal.fire({ title: 'ยืนยันการรีเซ็ตคะแนน?', text: "การกระทำนี้จะลบคะแนนโหวตทั้งหมดและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, รีเซ็ตเลย!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire({ title: 'กำลังรีเซ็ต...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -512,8 +446,7 @@
         });
 
         clearUsersButton.addEventListener('click', () => {
-            Swal.fire({
-                title: 'ยืนยันการล้างข้อมูลผู้ใช้?', text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ล้างข้อมูล!', cancelButtonText: 'ยกเลิก'
+            Swal.fire({ title: 'ยืนยันการล้างข้อมูลผู้ใช้?', text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ล้างข้อมูล!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire({ title: 'กำลังล้างข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -524,8 +457,7 @@
         });
 
         document.getElementById('closeVotingNowButton').addEventListener('click', () => {
-            Swal.fire({
-                title: 'ยืนยันการปิดโหวต?', text: "คุณต้องการปิดรับการโหวตทั้งหมดทันทีใช่ไหม?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ปิดทันที!', cancelButtonText: 'ยกเลิก'
+            Swal.fire({ title: 'ยืนยันการปิดโหวต?', text: "คุณต้องการปิดรับการโหวตทั้งหมดทันทีใช่ไหม?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ปิดทันที!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const apiResult = await callApi('closeVotingNow');
@@ -572,8 +504,7 @@
                 editDesignModal.style.display = 'block';
             }
             if (target.classList.contains('delete-button')) {
-                Swal.fire({
-                    title: 'ยืนยันการลบ?', text: `คุณต้องการลบแบบเสื้อ '${designId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+                Swal.fire({ title: 'ยืนยันการลบ?', text: `คุณต้องการลบแบบเสื้อ '${designId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const apiResult = await callApi('deleteDesign', { designId: designId });
@@ -615,8 +546,7 @@
             if (!row || !row.dataset.studentId) return;
             const studentId = row.dataset.studentId;
             if (target.classList.contains('delete-user-button')) {
-                Swal.fire({
-                    title: 'ยืนยันการลบ?', text: `คุณต้องการลบข้อมูลของนักเรียนรหัส '${studentId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+                Swal.fire({ title: 'ยืนยันการลบ?', text: `คุณต้องการลบข้อมูลของนักเรียนรหัส '${studentId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const apiResult = await callApi('deleteUser', { studentId: studentId });

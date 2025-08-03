@@ -75,9 +75,8 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec'; 
-
-
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
+        
         const voteForm = document.getElementById('voteForm');
         const designOptionsDiv = document.getElementById('design-options');
         const studentIdInput = document.getElementById('studentId');
@@ -103,7 +102,7 @@
             `;
             designOptionsDiv.classList.add('disabled');
         }
-        
+        
         studentIdInput.addEventListener('blur', async () => {
             const id = studentIdInput.value;
             studentIdMsg.style.display = 'block';
@@ -118,9 +117,9 @@
             if (id.length === 5 && id.startsWith('0')) {
                 studentIdMsg.textContent = 'กำลังตรวจสอบ...';
                 studentIdMsg.className = 'message loading';
-                
+                
                 const result = await callApi('getStudentDetails', { studentId: id });
-                
+                
                 if (result.status === 'success') {
                     studentIdMsg.textContent = 'พบข้อมูลนักเรียน';
                     studentIdMsg.className = 'message success';
@@ -205,7 +204,7 @@
                 validateForm();
             }
         });
-        
+        
         function validateForm() {
             const studentId = studentIdInput.value;
             const fullName = fullNameInput.value;
@@ -227,7 +226,7 @@
                 return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message };
             }
         }
-        
+        
         async function loadInitialData() {
             showSkeletonLoader();
             validateForm();
@@ -242,7 +241,7 @@
             checkVotingStatus();
             await getAnnouncementText();
         }
-        
+        
         function displayDesignOptions(designs) {
             designOptionsDiv.innerHTML = '';
             if (designs.length === 0) {
@@ -256,7 +255,7 @@
                 designOptionsDiv.appendChild(div);
             });
         }
-        
+        
         function updateSelectedDesignCard(selectedDesignId) {
             document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
             if (selectedDesignId) {
@@ -264,7 +263,7 @@
                 if (selectedCard) selectedCard.classList.add('selected');
             }
         }
-        
+        
         function displayVoteResults(results) {
             const voteResultsDiv = document.getElementById('vote-results');
             if(!voteResultsDiv) return;
@@ -278,7 +277,7 @@
                 voteResultsDiv.appendChild(div);
             });
         }
-        
+        
         function displayVoteChart(votes) {
             const voteChartCanvas = document.getElementById('voteChart');
             if(!voteChartCanvas) return;
@@ -297,7 +296,6 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
-
         async function getAnnouncementText() {
             const result = await callApi('getAnnouncementText');
             if (result.status === 'success') {
@@ -341,7 +339,7 @@
                 }
             }
         }
-
+        
         function startCountdown(targetTime) {
             clearInterval(countdownInterval);
             const updateCountdown = () => {
@@ -361,7 +359,7 @@
             updateCountdown();
             countdownInterval = setInterval(updateCountdown, 1000);
         }
-        
+        
         loadInitialData();
     </script>
 </body>

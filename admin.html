@@ -9,27 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-      /* --- Modal Styles --- */
       .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
       .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; }
       .modal-content input { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 15px; }
       .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
       .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
-      
-      /* สไตล์เพิ่มเติมเพื่อให้ <a> หน้าตาเหมือน <button> */
-      a.button-link {
-          display: inline-block;
-          padding: 14px 30px;
-          border-radius: 8px;
-          color: white !important;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 1.15em;
-          transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-          margin-top: 15px; /* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
-          height: 25px;     /* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
-          line-height: 25px;/* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
-      }
     </style>
 </head>
 <body>
@@ -123,10 +107,9 @@
 
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
-                
                 <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
                     <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                    <a href="?page=live" target="_blank" rel="noopener noreferrer" class="button-link" style="background-color: #4CAF50;">เปิดหน้าผลโหวตสด</a>
+                    <button id="openLiveResultsButton" class="action-button" style="background-color: #4CAF50;">เปิดหน้าผลโหวตสด</button>
                 </div>
 
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
@@ -194,7 +177,7 @@
         let currentAdminUser = '';
         let allUsersData = [];
 
-        // อ้างอิง Elements
+        // --- อ้างอิง Elements ---
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
@@ -210,7 +193,7 @@
         const clearUsersButton = document.getElementById('clearUsersButton');
         let voteChartInstance = null;
 
-        // Functions
+        // --- Functions ---
         async function callApi(action, data = {}) {
             if (currentAdminUser) {
                 data.username = currentAdminUser;
@@ -291,7 +274,6 @@
         }
 
         async function loadAdminAccounts() {
-            const result = await callApi('getAdminAccounts');
             const tbody = document.querySelector('#adminAccountsTable tbody');
             tbody.innerHTML = '';
             if (result.status === 'success' && result.accounts.length > 0) {
@@ -384,7 +366,13 @@
             });
         }
         
-        // Event Listeners
+        // --- Event Listeners ---
+        document.getElementById('openLiveResultsButton').addEventListener('click', () => {
+            const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            const liveUrl = baseUrl + '?page=live';
+            window.open(liveUrl, '_blank');
+        });
+
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;

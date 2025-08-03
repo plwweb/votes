@@ -5,10 +5,14 @@
     padding: 10px;
     overflow: hidden;
     white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
     border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
 .scrolling-text {
     margin: 0;
     display: inline-block;
@@ -16,6 +20,7 @@
     animation: scroll-left 25s linear infinite;
     font-weight: 500;
 }
+
 @keyframes scroll-left {
     0% { transform: translateX(0); }
     100% { transform: translateX(-100%); }
@@ -39,7 +44,7 @@
 body {
     font-family: 'Kanit', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     overflow-x: hidden;
     background: var(--background-gradient);
     color: var(--text-color);
@@ -49,6 +54,7 @@ body {
     align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
+    padding: 20px;
 }
 
 /* Container หลัก */
@@ -60,10 +66,11 @@ body {
     max-width: 900px;
     width: 100%;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0;
     box-sizing: border-box;
     animation: fadeIn 1s ease-out;
 }
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -78,18 +85,19 @@ header {
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
 }
+
 .logo {
     height: 60px;
     margin-right: 15px;
 }
-h1, h2, h3 {
-    margin: 0;
-}
+
 h1 {
     color: var(--primary-blue);
     font-size: 2.8em;
+    margin: 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
 }
+
 h2 {
     color: var(--primary-pink);
     margin-top: 30px;
@@ -97,6 +105,7 @@ h2 {
     font-size: 2em;
     font-weight: 600;
 }
+
 h3 {
     color: var(--primary-blue);
     margin-bottom: 15px;
@@ -122,6 +131,7 @@ form {
     flex-direction: column;
     align-items: flex-start;
 }
+
 label {
     font-weight: 600;
     color: var(--text-color);
@@ -129,7 +139,12 @@ label {
     display: block;
     width: 100%;
 }
-input, select {
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="datetime-local"],
+select {
     width: 100%;
     padding: 12px;
     margin-bottom: 20px;
@@ -139,7 +154,12 @@ input, select {
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
-input:focus, select:focus {
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="datetime-local"]:focus,
+select:focus {
     border-color: var(--primary-pink);
     box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
     outline: none;
@@ -159,17 +179,20 @@ button {
     font-weight: 600;
     align-self: center;
 }
+
 button:hover {
     background-color: #1976D2;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px var(--shadow-light);
 }
+
 button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
+
 .admin-section button {
     background-color: var(--primary-pink);
     margin-right: 10px;
@@ -179,6 +202,7 @@ button:disabled {
 .admin-section button:hover {
     background-color: #d1478f;
 }
+
 button.danger {
     background-color: var(--danger-color);
 }
@@ -196,6 +220,7 @@ button.danger:hover {
     text-align: center;
 }
 .message:not(:empty) { padding: 12px 20px; }
+
 .status-message.open, .message.success {
     background-color: #d4edda;
     color: #155724;
@@ -370,6 +395,7 @@ td button {
     min-width: 75px;
     text-align: center;
 }
+
 td button.edit-button {
     background-color: var(--primary-blue);
 }

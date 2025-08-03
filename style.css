@@ -5,9 +5,12 @@
     padding: 10px;
     overflow: hidden;
     white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
     border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .scrolling-text {
@@ -63,7 +66,7 @@ body {
     max-width: 900px;
     width: 100%;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0;
     box-sizing: border-box;
     animation: fadeIn 1s ease-out;
 }

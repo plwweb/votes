@@ -183,7 +183,6 @@
         let currentAdminUser = '';
         let allUsersData = [];
 
-        // --- อ้างอิง Elements ---
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
@@ -200,11 +199,8 @@
         const saveAnnouncementButton = document.getElementById('saveAnnouncementButton');
         let voteChartInstance = null;
 
-        // --- Functions ---
         async function callApi(action, data = {}) {
-            if (currentAdminUser) {
-                data.username = currentAdminUser;
-            }
+            if (currentAdminUser) { data.username = currentAdminUser; }
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -224,7 +220,7 @@
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
         }
-
+        
         async function loadAnnouncementText() {
             const result = await callApi('getAnnouncementText');
             if (result.status === 'success') {
@@ -505,70 +501,35 @@
 
         resetVotesButton.addEventListener('click', () => {
             Swal.fire({
-                title: 'ยืนยันการรีเซ็ตคะแนน?',
-                text: "การกระทำนี้จะลบคะแนนโหวตทั้งหมดและไม่สามารถย้อนกลับได้!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'ใช่, รีเซ็ตเลย!',
-                cancelButtonText: 'ยกเลิก'
+                title: 'ยืนยันการรีเซ็ตคะแนน?', text: "การกระทำนี้จะลบคะแนนโหวตทั้งหมดและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, รีเซ็ตเลย!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire({ title: 'กำลังรีเซ็ต...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                     const apiResult = await callApi('resetVotes');
-                    if(apiResult.status === 'success') {
-                        Swal.fire('สำเร็จ!', apiResult.message, 'success');
-                        loadAllAdminData();
-                    } else {
-                        Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
-                    }
+                    if(apiResult.status === 'success') { Swal.fire('สำเร็จ!', apiResult.message, 'success'); loadAllAdminData(); } else { Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error'); }
                 }
             });
         });
 
         clearUsersButton.addEventListener('click', () => {
             Swal.fire({
-                title: 'ยืนยันการล้างข้อมูลผู้ใช้?',
-                text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'ใช่, ล้างข้อมูล!',
-                cancelButtonText: 'ยกเลิก'
+                title: 'ยืนยันการล้างข้อมูลผู้ใช้?', text: "ข้อมูลผู้โหวตทั้งหมดจะถูกลบและไม่สามารถย้อนกลับได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ล้างข้อมูล!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire({ title: 'กำลังล้างข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                     const apiResult = await callApi('clearUsers');
-                    if(apiResult.status === 'success') {
-                        Swal.fire('สำเร็จ!', apiResult.message, 'success');
-                        loadAllAdminData();
-                    } else {
-                        Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
-                    }
+                    if(apiResult.status === 'success') { Swal.fire('สำเร็จ!', apiResult.message, 'success'); loadAllAdminData(); } else { Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error'); }
                 }
             });
         });
 
         document.getElementById('closeVotingNowButton').addEventListener('click', () => {
             Swal.fire({
-                title: 'ยืนยันการปิดโหวต?',
-                text: "คุณต้องการปิดรับการโหวตทั้งหมดทันทีใช่ไหม?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'ใช่, ปิดทันที!',
-                cancelButtonText: 'ยกเลิก'
+                title: 'ยืนยันการปิดโหวต?', text: "คุณต้องการปิดรับการโหวตทั้งหมดทันทีใช่ไหม?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ปิดทันที!', cancelButtonText: 'ยกเลิก'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const apiResult = await callApi('closeVotingNow');
-                    if (apiResult.status === 'success') {
-                        Swal.fire('สำเร็จ!', 'ปิดการโหวตเรียบร้อยแล้ว', 'success');
-                        loadVoteTime();
-                    } else {
-                        Swal.fire('ผิดพลาด!', apiResult.message, 'error');
-                    }
+                    if (apiResult.status === 'success') { Swal.fire('สำเร็จ!', 'ปิดการโหวตเรียบร้อยแล้ว', 'success'); loadVoteTime(); } else { Swal.fire('ผิดพลาด!', apiResult.message, 'error'); }
                 }
             });
         });
@@ -577,12 +538,7 @@
             Swal.fire({ title: 'กำลังสร้าง PDF...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('exportPdf', { dataType: 'users' });
             if (result.status === 'success') {
-                Swal.update({
-                    title: 'สร้างไฟล์สำเร็จ!',
-                    html: `<a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`,
-                    icon: 'success',
-                    showConfirmButton: true
-                });
+                Swal.update({ title: 'สร้างไฟล์สำเร็จ!', html: `<a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`, icon: 'success', showConfirmButton: true });
             } else {
                 Swal.fire('ผิดพลาด!', result.message, 'error');
             }
@@ -592,12 +548,7 @@
             Swal.fire({ title: 'กำลังสร้าง PDF...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('exportPdf', { dataType: 'votes' });
             if (result.status === 'success') {
-                Swal.update({
-                    title: 'สร้างไฟล์สำเร็จ!',
-                    html: `<a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`,
-                    icon: 'success',
-                    showConfirmButton: true
-                });
+                Swal.update({ title: 'สร้างไฟล์สำเร็จ!', html: `<a href="${result.pdfUrl}" target="_blank" rel="noopener noreferrer">คลิกที่นี่เพื่อเปิด PDF</a>`, icon: 'success', showConfirmButton: true });
             } else {
                 Swal.fire('ผิดพลาด!', result.message, 'error');
             }
@@ -622,22 +573,11 @@
             }
             if (target.classList.contains('delete-button')) {
                 Swal.fire({
-                    title: 'ยืนยันการลบ?',
-                    text: `คุณต้องการลบแบบเสื้อ '${designId}' ใช่ไหม?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'ใช่, ลบเลย!',
-                    cancelButtonText: 'ยกเลิก'
+                    title: 'ยืนยันการลบ?', text: `คุณต้องการลบแบบเสื้อ '${designId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const apiResult = await callApi('deleteDesign', { designId: designId });
-                        if (apiResult.status === 'success') {
-                            Swal.fire('ลบแล้ว!', apiResult.message, 'success');
-                            loadAdminData();
-                        } else {
-                            Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
-                        }
+                        if (apiResult.status === 'success') { Swal.fire('ลบแล้ว!', apiResult.message, 'success'); loadAdminData(); } else { Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error'); }
                     }
                 });
             }
@@ -676,23 +616,11 @@
             const studentId = row.dataset.studentId;
             if (target.classList.contains('delete-user-button')) {
                 Swal.fire({
-                    title: 'ยืนยันการลบ?',
-                    text: `คุณต้องการลบข้อมูลของนักเรียนรหัส '${studentId}' ใช่ไหม?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'ใช่, ลบเลย!',
-                    cancelButtonText: 'ยกเลิก'
+                    title: 'ยืนยันการลบ?', text: `คุณต้องการลบข้อมูลของนักเรียนรหัส '${studentId}' ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const apiResult = await callApi('deleteUser', { studentId: studentId });
-                        if (apiResult.status === 'success') {
-                            Swal.fire('ลบแล้ว!', apiResult.message, 'success');
-                            loadAllAdminData();
-                        } else {
-                            Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error');
-                        }
+                        if (apiResult.status === 'success') { Swal.fire('ลบแล้ว!', apiResult.message, 'success'); loadAllAdminData(); } else { Swal.fire('เกิดข้อผิดพลาด!', apiResult.message, 'error'); }
                     }
                 });
             }

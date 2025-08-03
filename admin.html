@@ -3,282 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - ระบบโหวต</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Admin Panel - ระบบโหวต</title>
+    <link rel="stylesheet" href="style.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-      body {
-        padding: 0;
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        background-color: #f4f7f6;
-      }
-      .sidebar {
-        width: 250px;
-        height: 100vh;
-        background-color: #2c3e50;
-        color: white;
-        padding: 20px;
-        box-sizing: border-box;
-        position: sticky;
-        top: 0;
-        flex-shrink: 0;
-      }
-      .sidebar h2 {
-        color: white;
-        text-align: center;
-        border-bottom: 1px solid #46627f;
-        padding-bottom: 15px;
-        margin-top: 0;
-      }
-      .sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 30px;
-      }
-      .sidebar ul li a {
-        display: block;
-        color: #ecf0f1;
-        text-decoration: none;
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        transition: background-color 0.3s ease;
-      }
-      .sidebar ul li a:hover, .sidebar ul li a.active {
-        background-color: #3498db;
-      }
-      .main-content {
-        flex-grow: 1;
-        padding: 30px;
-        height: 100vh;
-        overflow-y: auto;
-      }
-      .page-section {
-        display: none;
-      }
-      .page-section.active {
-        display: block;
-      }
-      .page-header {
-          font-size: 2.5em;
-          color: #2c3e50;
-          margin-bottom: 20px;
-          border-bottom: 2px solid #e0e0e0;
-          padding-bottom: 10px;
-      }
-      .stat-cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
-      }
-      .stat-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        border-left: 5px solid var(--primary-blue);
-      }
-      .stat-card h4 {
-        margin: 0 0 10px 0;
-        color: #7f8c8d;
-        font-size: 1em;
-        font-weight: 500;
-      }
-      .stat-card .value {
-        font-size: 2.2em;
-        font-weight: 700;
-        color: #2c3e50;
-      }
-      .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
-      .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
-      .modal-content input { width: 100%; box-sizing: border-box; }
-      .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; line-height: 1; }
-      .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
+        /* เพิ่มสไตล์เล็กน้อยสำหรับหน้าแอดมิน */
+        .admin-container { max-width: 1200px; margin: 20px auto; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-tabs { display: flex; border-bottom: 2px solid #dee2e6; margin-bottom: 20px; }
+        .nav-tab { padding: 10px 20px; cursor: pointer; background: #f1f1f1; border: 1px solid #ccc; border-bottom: none; border-radius: 5px 5px 0 0; margin-right: 5px; }
+        .nav-tab.active { background: #fff; border-bottom: 2px solid #fff; position: relative; top: 1px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card h3 { margin: 0 0 10px; font-size: 1.2em; color: #555; }
+        .stat-card p { font-size: 2em; font-weight: 700; margin: 0; color: #007bff; }
+        .admin-section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        td img.design-preview { max-width: 80px; height: auto; border-radius: 4px; }
+        .danger-zone { border: 2px solid #dc3545; padding: 20px; border-radius: 8px; background: #f8d7da; }
+        .danger-zone h3 { color: #721c24; }
+        .button-danger { background-color: #dc3545; color: white; }
+        .button-primary { background-color: #007bff; color: white; }
+        .button-secondary { background-color: #6c757d; color: white; }
+        button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-family: 'Kanit', sans-serif; }
     </style>
 </head>
 <body>
-    <div id="editDesignModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>แก้ไขข้อมูลแบบเสื้อ</h2>
-            <input type="hidden" id="editDesignIdHidden">
-            <label for="editDesignIdDisplay">Design ID:</label>
-            <input type="text" id="editDesignIdDisplay" disabled>
-            <label for="editDesignName">ชื่อแบบเสื้อ:</label>
-            <input type="text" id="editDesignName">
-            <label for="editDesignImageUrl">URL รูปภาพ:</label>
-            <input type="text" id="editDesignImageUrl">
-            <button id="saveDesignButton">บันทึกการเปลี่ยนแปลง</button>
-            <p id="edit-modal-message" class="message"></p>
+    <div class="admin-container">
+        <header>
+            <h1>แผงควบคุมผู้ดูแลระบบ</h1>
+            <p>จัดการระบบโหวตเสื้อกีฬาสี</p>
+             <a href="?page=index" target="_blank">ดูหน้าโหวตหลัก</a>
+        </header>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('dashboard')">แดชบอร์ด</div>
+            <div class="nav-tab" onclick="showTab('designs')">จัดการแบบเสื้อ</div>
+            <div class="nav-tab" onclick="showTab('voters')">จัดการผู้โหวต</div>
+            <div class="nav-tab" onclick="showTab('settings')">ตั้งค่า</div>
         </div>
-    </div>
-    
-    <div id="login-container" style="width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f4f7f6;">
-        <div class="container" style="max-width: 500px;">
-             <header>
-                <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
-                <h1>Admin Panel</h1>
-            </header>
-            <div id="login-section" class="admin-section">
-                <h2>เข้าสู่ระบบผู้ดูแล</h2>
-                <label for="adminUsername">Username:</label>
-                <input type="text" id="adminUsername" required>
-                <label for="adminPassword">Password:</label>
-                <input type="password" id="adminPassword" required>
-                <button id="loginButton">เข้าสู่ระบบ</button>
-                <p id="login-message" class="message"></p>
+
+        <div id="dashboard" class="tab-content active">
+            <h2>ภาพรวมระบบ</h2>
+            <div class="grid-container">
+                <div class="stat-card">
+                    <h3>โหวตทั้งหมด</h3>
+                    <p id="totalVotes">...</p>
+                </div>
+                <div class="stat-card">
+                    <h3>จำนวนแบบเสื้อ</h3>
+                    <p id="totalDesigns">...</p>
+                </div>
+            </div>
+            <div class="admin-section">
+                <h3>ผลโหวตล่าสุด</h3>
+                <canvas id="adminVoteChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <div id="designs" class="tab-content">
+            <div class="admin-section">
+                <h2>เพิ่มแบบเสื้อใหม่</h2>
+                <form id="addDesignForm">
+                    <label for="designName">ชื่อ/รหัสแบบเสื้อ:</label>
+                    <input type="text" id="designName" required>
+                    <label for="imageUrl">URL รูปภาพ:</label>
+                    <input type="url" id="imageUrl" required>
+                    <button type="submit" class="button-primary">เพิ่มแบบเสื้อ</button>
+                </form>
+            </div>
+            <div class="admin-section">
+                <h2>รายการแบบเสื้อทั้งหมด</h2>
+                <table id="designsTable">
+                    <thead><tr><th>ID</th><th>รูปภาพ</th><th>ชื่อแบบ</th><th>คะแนน</th><th>จัดการ</th></tr></thead>
+                    <tbody><tr><td colspan="5">กำลังโหลด...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="voters" class="tab-content">
+             <div class="admin-section">
+                <h2>รายชื่อผู้ที่โหวตแล้ว</h2>
+                <table id="votersTable">
+                     <thead><tr><th>Timestamp</th><th>รหัสนักเรียน</th><th>ชื่อ-สกุล</th><th>ชั้น/ห้อง</th><th>โหวตให้</th><th>จัดการ</th></tr></thead>
+                     <tbody><tr><td colspan="6">กำลังโหลด...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="settings" class="tab-content">
+            <div class="admin-section">
+                <h2>ตั้งค่าเวลาเปิด-ปิดการโหวต</h2>
+                <form id="timeSettingsForm">
+                    <label for="startTime">เวลาเปิดโหวต:</label>
+                    <input type="datetime-local" id="startTime">
+                    <label for="endTime">เวลาปิดโหวต:</label>
+                    <input type="datetime-local" id="endTime">
+                    <button type="submit" class="button-primary">บันทึกเวลา</button>
+                    <button type="button" class="button-secondary" onclick="clearTimes()">ล้างเวลา (เปิดตลอด)</button>
+                </form>
+                <p><strong>เวลาปัจจุบันของเซิร์ฟเวอร์:</strong> <span id="serverTime">...</span></p>
+                <p><strong>เวลาที่ตั้งค่าไว้:</strong> เริ่ม: <span id="currentStartTime">...</span>, สิ้นสุด: <span id="currentEndTime">...</span></p>
+
+            </div>
+            <div class="danger-zone">
+                <h3>Danger Zone</h3>
+                <p>การกระทำในส่วนนี้ไม่สามารถย้อนกลับได้ โปรดใช้ความระมัดระวัง</p>
+                <button class="button-danger" onclick="resetVotes()">ล้างผลโหวตทั้งหมด</button>
+                <button class="button-danger" onclick="resetAllData()">ล้างข้อมูลทั้งระบบ</button>
             </div>
         </div>
     </div>
 
-    <div id="dashboard-container" style="display: none; width: 100%; height: 100vh; flex-direction: row;">
-        <nav class="sidebar">
-            <h2>Admin Menu</h2>
-            <ul>
-                <li><a href="#dashboard" class="nav-link active">ภาพรวมระบบ</a></li>
-                <li><a href="#designs" class="nav-link">จัดการแบบเสื้อ</a></li>
-                <li><a href="#timing" class="nav-link">ตั้งเวลาโหวต</a></li>
-                <li><a href="#data" class="nav-link">ข้อมูลและผลโหวต</a></li>
-                <li><a href="#admins" class="nav-link">จัดการผู้ดูแล</a></li>
-                <li><a href="#tools" class="nav-link">เครื่องมือ</a></li>
-            </ul>
-            <a href="index.html" style="color: white; text-align: center; display: block; margin-top: 30px;">กลับไปหน้าโหวต</a>
-        </nav>
-
-        <main class="main-content">
-            <h1 id="welcome-message" class="page-header"></h1>
-
-            <section id="dashboard" class="page-section active">
-                <div id="dashboard-summary" class="stat-cards-container">
-                    <div class="stat-card" style="border-color: #3498db;">
-                        <h4>ผู้โหวตทั้งหมด</h4>
-                        <p class="value" id="summary-total-voters">0</p>
-                    </div>
-                    <div class="stat-card" style="border-color: #f1c40f;">
-                        <h4>แบบเสื้อยอดนิยม</h4>
-                        <p class="value" id="summary-top-design">-</p>
-                    </div>
-                     <div class="stat-card" style="border-color: #2ecc71;">
-                        <h4>ระดับชั้นที่โหวตสูงสุด</h4>
-                        <p class="value" id="summary-top-grade">-</p>
-                    </div>
-                </div>
-                <h3>สรุปผู้โหวตตามระดับชั้น</h3>
-                <div class="admin-section" style="height: 350px;">
-                     <canvas id="grade-chart"></canvas>
-                </div>
-            </section>
-
-            <section id="designs" class="page-section">
-                <div class="admin-section">
-                    <h3>จัดการแบบเสื้อ</h3>
-                    <label for="newDesignId">Design ID (เช่น S4):</label>
-                    <input type="text" id="newDesignId" placeholder="S..." required>
-                    <label for="newDesignName">ชื่อแบบเสื้อ:</label>
-                    <input type="text" id="newDesignName" placeholder="เสื้อแบบที่ 4..." required>
-                    <label for="newDesignImageUrl">URL รูปภาพแบบเสื้อ:</label>
-                    <input type="text" id="newDesignImageUrl" placeholder="https://example.com/image.png">
-                    <button id="addDesignButton">เพิ่มแบบเสื้อใหม่</button>
-                </div>
-            </section>
-
-            <section id="timing" class="page-section">
-                <div class="admin-section">
-                    <h3>ตั้งเวลาเปิด-ปิดการโหวต</h3>
-                    <label for="voteStartTime">เวลาเริ่มต้น:</label>
-                    <input type="datetime-local" id="voteStartTime">
-                    <label for="voteEndTime">เวลาสิ้นสุด:</label>
-                    <input type="datetime-local" id="voteEndTime">
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
-                        <button id="closeVotingNowButton" class="action-button danger">ปิดโหวตทันที</button>
-                    </div>
-                    <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
-                </div>
-            </section>
-
-            <section id="data" class="page-section">
-                <div class="admin-section">
-                    <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
-                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
-                        <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                        <a href="https://plwweb.github.io/votes/live_results.html" target="_blank" rel="noopener noreferrer" style="background-color: #4CAF50; color: white; padding: 14px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-family: 'Kanit', sans-serif;">เปิดหน้าผลโหวตสด</a>
-                    </div>
-                    <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
-                    <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
-                    <h4>ผลโหวตปัจจุบัน (ตาราง)</h4>
-                    <div class="data-table-container">
-                        <table id="adminVoteResultsTable">
-                            <thead><tr><th>Design ID</th><th>Design Name</th><th>Vote Count</th><th>Image</th><th>Actions</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <h4>กราฟผลโหวต</h4>
-                    <div style="width: 100%; height: 400px; margin: 20px auto;"><canvas id="voteChart"></canvas></div>
-                    <h4>ข้อมูลผู้ใช้งานที่โหวตแล้ว</h4>
-                    <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-                        <label for="gradeFilter">กรองตามระดับชั้น:</label>
-                        <select id="gradeFilter" style="width: auto;"><option value="all">แสดงทั้งหมด</option><option value="ม.1">ม.1</option><option value="ม.2">ม.2</option><option value="ม.3">ม.3</option><option value="ม.4">ม.4</option><option value="ม.5">ม.5</option><option value="ม.6">ม.6</option></select>
-                        <label for="userSearchInput">ค้นหา:</label>
-                        <input type="text" id="userSearchInput" placeholder="รหัสนักเรียน/ชื่อ">
-                    </div>
-                    <div class="data-table-container"><table id="adminUsersTable"><thead><tr><th>Student ID</th><th>Full Name</th><th>Grade</th><th>Room</th><th>Timestamp</th><th>Vote Choice</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
-                </div>
-            </section>
-            
-            <section id="admins" class="page-section">
-                 <div class="admin-section">
-                    <h3>จัดการบัญชีผู้ดูแล</h3>
-                    <label for="newAdminUsername">Username ใหม่:</label>
-                    <input type="text" id="newAdminUsername" placeholder="username" required>
-                    <label for="newAdminPassword">Password ใหม่:</label>
-                    <input type="password" id="newAdminPassword" placeholder="password" required>
-                    <label for="newAdminFullName">ชื่อผู้ดูแล:</label>
-                    <input type="text" id="newAdminFullName" placeholder="ชื่อ-นามสกุล" required>
-                    <button id="addAdminButton">เพิ่มบัญชีผู้ดูแล</button>
-                    <h4>บัญชีผู้ดูแลที่มีอยู่</h4>
-                    <div class="data-table-container"><table id="adminAccountsTable"><thead><tr><th>Username</th><th>ชื่อผู้ดูแล</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
-                 </div>
-            </section>
-
-            <section id="tools" class="page-section">
-                <div class="admin-section">
-                    <h3>เครื่องมือผู้ดูแล</h3>
-                    <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
-                    <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
-                    <p id="admin-action-message" class="message"></p>
-                </div>
-            </section>
-        </main>
-    </div>
-    
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec';
-        let currentAdminUser = '';
-        let allUsersData = [];
-
-        const loginContainer = document.getElementById('login-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const loginButton = document.getElementById('loginButton');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const gradeFilterSelect = document.getElementById('gradeFilter');
-        const userSearchInput = document.getElementById('userSearchInput');
-        const refreshDataButton = document.getElementById('refreshDataButton');
-        const addDesignButton = document.getElementById('addDesignButton');
-        const setVoteTimeButton = document.getElementById('setVoteTimeButton');
-        const addAdminButton = document.getElementById('addAdminButton');
-        const resetVotesButton = document.getElementById('resetVotesButton');
-        const clearUsersButton = document.getElementById('clearUsersButton');
-        let voteChartInstance = null;
-        let gradeChartInstance = null;
-
+        const WEB_APP_URL = '<?= ScriptApp.getService().getUrl() ?>';
+        let adminVoteChartInstance = null;
+        
+        // --- API Caller ---
         async function callApi(action, data = {}) {
-            if (currentAdminUser) { data.username = currentAdminUser; }
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -286,202 +133,227 @@
                     body: JSON.stringify({ action, ...data }),
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
+                const result = await response.json();
+                if(result.status === 'error') throw new Error(result.message);
+                return result;
             } catch (error) {
-                console.error('Error calling API:', error);
-                return { status: 'error', message: 'API call failed: ' + error.message };
+                console.error('API Error:', error);
+                Swal.fire('เกิดข้อผิดพลาด', error.message, 'error');
+                return null;
             }
         }
 
-        function showAdminPanel(adminName) {
-            loginContainer.style.display = 'none';
-            dashboardContainer.style.display = 'flex';
-            welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
+        // --- Tab Management ---
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            // Load data for the active tab
+            if (tabName === 'dashboard') loadDashboardData();
+            if (tabName === 'designs') loadDesigns();
+            if (tabName === 'voters') loadVoters();
+            if (tabName === 'settings') loadTimeSettings();
         }
 
-        async function loadAllAdminData() {
-            await loadAdminData();
-            await loadDashboardData();
-            await loadVoteTime();
-            await loadAdminAccounts();
-        }
-
+        // --- Data Loading Functions ---
         async function loadDashboardData() {
-            const result = await callApi('getAdminDashboardData');
-            if (result.status === 'success') {
-                document.getElementById('summary-total-voters').textContent = result.totalVoters;
-                document.getElementById('summary-top-design').textContent = result.topDesign || '-';
-                document.getElementById('summary-top-grade').textContent = result.topGrade || '-';
+            const data = await callApi('getAdminDashboardData');
+            if (!data) return;
 
-                const ctx = document.getElementById('grade-chart').getContext('2d');
-                const gradeLabels = Object.keys(result.votesByGrade);
-                const gradeData = Object.values(result.votesByGrade);
+            document.getElementById('totalVotes').textContent = data.totalVotes;
+            document.getElementById('totalDesigns').textContent = data.totalDesigns;
+            
+            const ctx = document.getElementById('adminVoteChart').getContext('2d');
+            const labels = data.voteResults.map(v => `${v.designId} (${v.designName})`);
+            const votes = data.voteResults.map(v => v.voteCount);
 
-                if (gradeChartInstance) gradeChartInstance.destroy();
-                gradeChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: gradeLabels,
-                        datasets: [{ data: gradeData, backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6', '#1abc9c'] }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-            }
-        }
-        
-        async function loadAdminData() {
-            const result = await callApi('getAdminData');
-            if (result.status === 'success') {
-                displayAdminVoteResults(result.votes);
-                allUsersData = result.users;
-                displayAdminUsers(allUsersData);
-                displayVoteChart(result.votes);
-            }
-        }
-
-        async function loadVoteTime() {
-            const result = await callApi('getVoteTime');
-            if (result.status === 'success') {
-                const display = document.getElementById('current-vote-time');
-                display.textContent = (result.startTime && result.endTime) ?
-                    `เวลาโหวต: ${new Date(result.startTime).toLocaleString('th-TH')} - ${new Date(result.endTime).toLocaleString('th-TH')}` :
-                    'ยังไม่มีการตั้งเวลาโหวต';
-            }
-        }
-
-        async function loadAdminAccounts() {
-            const result = await callApi('getAdminAccounts');
-            const tbody = document.querySelector('#adminAccountsTable tbody');
-            tbody.innerHTML = '';
-            if (result.status === 'success' && result.accounts.length > 0) {
-                result.accounts.forEach(account => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${account[0]}</td><td>${account[2] || ''}</td><td><button class="delete-button" data-username="${account[0]}">ลบ</button></td>`;
-                    tbody.appendChild(tr);
-                });
-                document.querySelectorAll('.delete-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        Swal.fire({
-                            title: 'แน่ใจหรือไม่?', text: `คุณต้องการลบบัญชี '${e.target.dataset.username}' จริงๆ ใช่ไหม`, icon: 'warning',
-                            showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
-                        }).then(async (result) => {
-                            if (result.isConfirmed) {
-                                const delResult = await callApi('deleteAdminAccount', { username: e.target.dataset.username });
-                                if (delResult.status === 'success') {
-                                    Swal.fire('ลบแล้ว!', delResult.message, 'success');
-                                    loadAdminAccounts();
-                                } else {
-                                    Swal.fire('เกิดข้อผิดพลาด!', delResult.message, 'error');
-                                }
-                            }
-                        });
-                    });
-                });
-            }
-        }
-
-        function displayAdminVoteResults(votes) {
-            const tbody = document.querySelector('#adminVoteResultsTable tbody');
-            tbody.innerHTML = '';
-            votes.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.dataset.designId = row[0];
-                tr.dataset.designName = row[1];
-                tr.dataset.imageUrl = row[3] || '';
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="admin-table-image"><img src="${row[3] || ''}" style="max-width:60px;"></td><td><button class="edit-button">แก้ไข</button> <button class="delete-button danger">ลบ</button></td>`;
-                tbody.appendChild(tr);
+            if(adminVoteChartInstance) adminVoteChartInstance.destroy();
+            adminVoteChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'คะแนนโหวต', data: votes, backgroundColor: 'rgba(0, 123, 255, 0.7)' }] },
+                options: { responsive: true }
             });
         }
-
-        function displayAdminUsers(users) {
-            const tbody = document.querySelector('#adminUsersTable tbody');
-            tbody.innerHTML = '';
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">ไม่พบข้อมูลผู้ใช้งาน</td></tr>';
+        
+        async function loadDesigns() {
+            const data = await callApi('getDesigns');
+            const tableBody = document.querySelector('#designsTable tbody');
+            if (!data || !data.designs) {
+                tableBody.innerHTML = '<tr><td colspan="5">ไม่สามารถโหลดข้อมูลได้</td></tr>';
                 return;
             }
-            users.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.dataset.studentId = row[0];
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td><td><button class="delete-user-button danger">ลบ</button></td>`;
-                tbody.appendChild(tr);
-            });
-        }
-        
-        function filterAndSearchUsers() {
-            const selectedGrade = gradeFilterSelect.value;
-            const searchTerm = userSearchInput.value.toLowerCase().trim();
-            const filteredUsers = allUsersData.filter(user => {
-                const gradeMatch = selectedGrade === 'all' || user[2] === selectedGrade;
-                const searchMatch = user[0].toLowerCase().includes(searchTerm) || user[1].toLowerCase().includes(searchTerm);
-                return gradeMatch && searchMatch;
-            });
-            displayAdminUsers(filteredUsers);
-        }
-
-        function displayVoteChart(votes) {
-            const ctx = document.getElementById('voteChart').getContext('2d');
-            if (voteChartInstance) voteChartInstance.destroy();
-            voteChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: votes.map(v => `${v[0]} - ${v[1]}`),
-                    datasets: [{
-                        label: 'คะแนนโหวต',
-                        data: votes.map(v => v[2]),
-                        backgroundColor: votes.map(() => `rgba(${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},0.7)`)
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.page-section');
-            function showSection(hash) {
-                sections.forEach(section => section.id === hash.substring(1) ? section.classList.add('active') : section.classList.remove('active'));
-                navLinks.forEach(link => link.getAttribute('href') === hash ? link.classList.add('active') : link.classList.remove('active'));
-            }
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetHash = link.getAttribute('href');
-                    window.location.hash = targetHash;
-                });
-            });
-            window.addEventListener('hashchange', () => showSection(window.location.hash || '#dashboard'));
-            showSection(window.location.hash || '#dashboard');
-        });
-
-        loginButton.addEventListener('click', async () => {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            if(!username || !password) return Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
             
-            Swal.fire({ title: 'กำลังเข้าสู่ระบบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            const result = await callApi('login', { username, password });
-
-            if (result.status === 'success') {
-                Swal.close(); 
-                currentAdminUser = username;
-                showAdminPanel(result.fullName || username);
-                loadAllAdminData();
+            tableBody.innerHTML = '';
+            if (data.designs.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="5">ยังไม่มีแบบเสื้อในระบบ</td></tr>';
             } else {
-                Swal.fire({ title: 'ผิดพลาด!', text: result.message, icon: 'error' });
+                data.designs.forEach(d => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${d.designId}</td>
+                        <td><img src="${d.imageUrl}" alt="${d.designName}" class="design-preview"></td>
+                        <td>${d.designName}</td>
+                        <td>${d.voteCount}</td>
+                        <td><button class="button-danger" onclick="deleteDesign('${d.designId}')">ลบ</button></td>
+                    `;
+                });
+            }
+        }
+        
+        async function loadVoters() {
+            const data = await callApi('getVoters');
+            const tableBody = document.querySelector('#votersTable tbody');
+            if (!data || !data.voters) {
+                 tableBody.innerHTML = '<tr><td colspan="6">ไม่สามารถโหลดข้อมูลได้</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = '';
+            if (data.voters.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="6">ยังไม่มีผู้โหวต</td></tr>';
+            } else {
+                 data.voters.forEach(v => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${new Date(v.timestamp).toLocaleString()}</td>
+                        <td>${v.studentId}</td>
+                        <td>${v.fullName}</td>
+                        <td>${v.grade}/${v.room}</td>
+                        <td>${v.voteChoice}</td>
+                        <td><button class="button-danger" onclick="deleteVoter('${v.studentId}')">ลบ</button></td>
+                    `;
+                });
+            }
+        }
+        
+        async function loadTimeSettings() {
+            const data = await callApi('getVoteTime');
+            if(!data) return;
+
+            document.getElementById('serverTime').textContent = new Date(data.serverNow).toLocaleString();
+            document.getElementById('currentStartTime').textContent = data.startTime ? new Date(data.startTime).toLocaleString() : 'ไม่ได้ตั้งค่า';
+            document.getElementById('currentEndTime').textContent = data.endTime ? new Date(data.endTime).toLocaleString() : 'ไม่ได้ตั้งค่า';
+            if (data.startTime) document.getElementById('startTime').value = data.startTime.slice(0, 16);
+            if (data.endTime) document.getElementById('endTime').value = data.endTime.slice(0, 16);
+        }
+
+        // --- Action Functions ---
+        document.getElementById('addDesignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const designName = document.getElementById('designName').value;
+            const imageUrl = document.getElementById('imageUrl').value;
+            
+            const result = await callApi('addDesign', { designName, imageUrl });
+            if (result && result.status === 'success') {
+                Swal.fire('สำเร็จ', 'เพิ่มแบบเสื้อเรียบร้อย', 'success');
+                document.getElementById('addDesignForm').reset();
+                loadDesigns();
+                loadDashboardData();
             }
         });
-
-        refreshDataButton.addEventListener('click', () => {
-            Swal.fire({ title: 'กำลังรีเฟรชข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            loadAllAdminData().then(() => Swal.close());
+        
+        async function deleteDesign(designId) {
+            const confirmation = await Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: `คุณต้องการลบแบบเสื้อ ID: ${designId} ใช่หรือไม่?`,
+                icon: 'warning', showCancelButton: true, confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+            });
+            if(confirmation.isConfirmed) {
+                 const result = await callApi('deleteDesign', { designId });
+                 if(result && result.status === 'success') {
+                     Swal.fire('สำเร็จ', 'ลบแบบเสื้อแล้ว', 'success');
+                     loadDesigns();
+                     loadDashboardData();
+                 }
+            }
+        }
+        
+        async function deleteVoter(studentId) {
+            const confirmation = await Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: `คุณต้องการลบข้อมูลการโหวตของรหัสนักเรียน ${studentId} ใช่หรือไม่?`,
+                icon: 'warning', showCancelButton: true, confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+            });
+             if(confirmation.isConfirmed) {
+                 const result = await callApi('deleteVoter', { studentId });
+                 if(result && result.status === 'success') {
+                     Swal.fire('สำเร็จ', 'ลบข้อมูลผู้โหวตแล้ว', 'success');
+                     loadVoters();
+                     loadDashboardData();
+                 }
+            }
+        }
+        
+        document.getElementById('timeSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            
+            if (!startTime || !endTime) {
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาเลือกทั้งเวลาเปิดและปิด', 'warning');
+                return;
+            }
+            
+            const result = await callApi('setVoteTime', { startTime, endTime });
+            if (result && result.status === 'success') {
+                Swal.fire('สำเร็จ', 'ตั้งค่าเวลาเรียบร้อย', 'success');
+                loadTimeSettings();
+            }
         });
         
-        gradeFilterSelect.addEventListener('change', filterAndSearchUsers);
-        userSearchInput.addEventListener('input', filterAndSearchUsers);
+        async function clearTimes() {
+            const result = await callApi('clearVoteTime');
+            if (result && result.status === 'success') {
+                Swal.fire('สำเร็จ', 'ล้างการตั้งค่าเวลาแล้ว (เปิดโหวตตลอด)', 'success');
+                document.getElementById('timeSettingsForm').reset();
+                loadTimeSettings();
+            }
+        }
+
+        async function resetVotes() {
+             const confirmation = await Swal.fire({
+                title: 'แน่ใจหรือว่าต้องการล้างผลโหวต?',
+                text: "การกระทำนี้จะลบรายชื่อผู้โหวตและรีเซ็ตคะแนนทั้งหมด แต่แบบเสื้อจะยังอยู่",
+                icon: 'warning', showCancelButton: true, confirmButtonText: 'ใช่, ล้างผลโหวต!', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#d33'
+            });
+             if(confirmation.isConfirmed) {
+                const result = await callApi('resetVotes');
+                if (result && result.status === 'success') {
+                    Swal.fire('สำเร็จ!', 'ล้างผลโหวตเรียบร้อยแล้ว', 'success');
+                    showTab('dashboard');
+                }
+             }
+        }
         
-        // --- ALL OTHER EVENT LISTENERS ---
+        async function resetAllData() {
+            const { value: confirmationText } = await Swal.fire({
+                title: 'คำเตือนรุนแรง!',
+                text: "คุณกำลังจะลบข้อมูลทั้งหมดในระบบ (แบบเสื้อ, ผู้โหวต, คะแนน) การกระทำนี้ไม่สามารถย้อนกลับได้! หากต้องการดำเนินการต่อ พิมพ์ 'CONFIRM' ในช่องด้านล่าง",
+                input: 'text',
+                inputPlaceholder: 'พิมพ์ CONFIRM ที่นี่',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'ล้างข้อมูลทั้งหมด',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#d33',
+                inputValidator: (value) => {
+                    if (value !== 'CONFIRM') {
+                        return 'คุณต้องพิมพ์ CONFIRM ให้ถูกต้อง!'
+                    }
+                }
+            });
+             if(confirmationText) {
+                const result = await callApi('resetAllData');
+                if (result && result.status === 'success') {
+                    Swal.fire('สำเร็จ!', 'ข้อมูลทั้งระบบถูกลบเรียบร้อยแล้ว', 'success');
+                    showTab('dashboard');
+                }
+             }
+        }
+        
+        // Initial load
+        window.onload = () => showTab('dashboard');
     </script>
 </body>
 </html>

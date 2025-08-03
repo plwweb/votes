@@ -32,19 +32,19 @@
                 <label for="studentId">รหัสนักเรียน:</label>
                 <input type="text" id="studentId" name="studentId" required maxlength="5" pattern="0[0-9]{4}" inputmode="numeric" placeholder="กรอกรหัสนักเรียน 5 หลัก แล้วกด Enter หรือคลิกที่อื่น">
                 <p id="student-id-msg" class="message" style="margin-top:-10px; margin-bottom:15px;"></p>
-                
+                
                 <label for="fullName">ชื่อ-นามสกุล:</label>
                 <input type="text" id="fullName" name="fullName" readonly style="background-color: #e9ecef;">
-                
+                
                 <label for="grade">ระดับชั้น:</label>
                 <input type="text" id="grade" name="grade" readonly style="background-color: #e9ecef;">
-                
+                
                 <label for="room">ห้อง:</label>
                 <input type="text" id="room" name="room" readonly style="background-color: #e9ecef;">
 
                 <label>เลือกแบบเสื้อ:</label>
                 <div id="design-options" class="design-options disabled">
-                    </div>
+                </div>
                 <button type="submit" id="submitVoteButton" disabled>ยืนยันการโหวต</button>
             </form>
         </div>
@@ -59,24 +59,24 @@
                 <p>กำลังโหลดผลโหวต...</p>
             </div>
         </div>
-        
     </div>
 
     <footer class="footer">
-    <p>
-        &copy;2025 Student Council of Phu Luang Witthaya School
-        <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
-        </a>
-        <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
-        </a>
-        <span style="margin: 0 10px;">|</span> <a href="admin.html" style="text-decoration: none;">Admin Login</a>
-    </p>
-</footer>
+        <p>
+            &copy;2025 Student Council of Phu Luang Witthaya School
+            <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
+            </a>
+            <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
+            </a>
+            <span style="margin: 0 10px;">|</span> <a href="admin.html" style="text-decoration: none;">Admin Login</a>
+        </p>
+    </footer>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwyzu9KVf1X3mY-1-svBPzsR8qFUc0IaG7Vh1A2RUmjo-7AN9IW8Ra_4Io_TfXCSyxRkw/exec'; 
+
 
         const voteForm = document.getElementById('voteForm');
         const designOptionsDiv = document.getElementById('design-options');

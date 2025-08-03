@@ -55,13 +55,6 @@
             <h2 id="welcome-message">ยินดีต้อนรับผู้ดูแล!</h2>
 
             <div class="admin-section">
-                <h3>จัดการข้อความประกาศ (แถบวิ่ง)</h3>
-                <label for="announcementText">ข้อความที่จะแสดง:</label>
-                <textarea id="announcementText" rows="3" placeholder="ใส่ข้อความที่ต้องการให้วิ่งที่หน้าแรก..."></textarea>
-                <button id="saveAnnouncementButton">บันทึกข้อความ</button>
-            </div>
-
-            <div class="admin-section">
                 <h3>จัดการแบบเสื้อ</h3>
                 <label for="newDesignId">Design ID (เช่น S4):</label>
                 <input type="text" id="newDesignId" placeholder="S..." required>
@@ -196,7 +189,6 @@
         const addAdminButton = document.getElementById('addAdminButton');
         const resetVotesButton = document.getElementById('resetVotesButton');
         const clearUsersButton = document.getElementById('clearUsersButton');
-        const saveAnnouncementButton = document.getElementById('saveAnnouncementButton');
         let voteChartInstance = null;
 
         async function callApi(action, data = {}) {
@@ -220,20 +212,12 @@
             adminPanel.style.display = 'block';
             welcomeMessage.textContent = `ยินดีต้อนรับคุณ ${adminName}!`;
         }
-        
-        async function loadAnnouncementText() {
-            const result = await callApi('getAnnouncementText');
-            if (result.status === 'success') {
-                document.getElementById('announcementText').value = result.text;
-            }
-        }
 
         async function loadAllAdminData() {
             await loadAdminData();
             await loadDashboardData();
             await loadVoteTime();
             await loadAdminAccounts();
-            await loadAnnouncementText();
         }
 
         async function loadDashboardData() {
@@ -297,14 +281,9 @@
                 document.querySelectorAll('.delete-button').forEach(button => {
                     button.addEventListener('click', (e) => {
                         Swal.fire({
-                            title: 'แน่ใจหรือไม่?',
-                            text: `คุณต้องการลบบัญชี '${e.target.dataset.username}' จริงๆ ใช่ไหม`,
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'ใช่, ลบเลย!',
-                            cancelButtonText: 'ยกเลิก'
+                            title: 'แน่ใจหรือไม่?', text: `คุณต้องการลบบัญชี '${e.target.dataset.username}' จริงๆ ใช่ไหม`, icon: 'warning',
+                            showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                         }).then(async (result) => {
                             if (result.isConfirmed) {
                                 const delResult = await callApi('deleteAdminAccount', { username: e.target.dataset.username });
@@ -377,34 +356,11 @@
             });
         }
         
-        saveAnnouncementButton.addEventListener('click', async () => {
-            const newText = document.getElementById('announcementText').value;
-            Swal.fire({
-                title: 'กำลังบันทึกข้อความ...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-            const result = await callApi('updateAnnouncementText', { text: newText });
-            if (result.status === 'success') {
-                Swal.fire('สำเร็จ!', result.message, 'success');
-            } else {
-                Swal.fire('ผิดพลาด!', result.message, 'error');
-            }
-        });
-
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            if(!username || !password) {
-                Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning');
-                return;
-            }
-            Swal.fire({
-                title: 'กำลังเข้าสู่ระบบ...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            if(!username || !password) { Swal.fire('ข้อมูลไม่ครบ!', 'กรุณากรอก Username และ Password', 'warning'); return; }
+            Swal.fire({ title: 'กำลังเข้าสู่ระบบ...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             const result = await callApi('login', { username, password });
             if (result.status === 'success') {
                 Swal.close(); 
@@ -412,21 +368,12 @@
                 showAdminPanel(result.fullName || username);
                 loadAllAdminData();
             } else {
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: result.message,
-                    icon: 'error'
-                });
+                Swal.fire({ title: 'ผิดพลาด!', text: result.message, icon: 'error' });
             }
         });
 
         refreshDataButton.addEventListener('click', () => {
-            Swal.fire({
-                title: 'กำลังรีเฟรชข้อมูล...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            Swal.fire({ title: 'กำลังรีเฟรชข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             loadAllAdminData().then(() => Swal.close());
         });
 

@@ -107,6 +107,7 @@
 
             <div class="admin-section">
                 <h3>เครื่องมือผู้ดูแล</h3>
+                <button id="openLiveResultsButton" class="action-button" style="background-color: #4CAF50;">เปิดหน้าผลโหวตสด</button>
                 <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
                 <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
                 <p id="admin-action-message" class="message"></p>
@@ -373,6 +374,11 @@
         }
         
         // --- Event Listeners for Buttons and Inputs ---
+        document.getElementById('openLiveResultsButton').addEventListener('click', () => {
+            const liveUrl = window.location.href.split('?')[0] + '?page=live';
+            window.open(liveUrl, '_blank');
+        });
+
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;

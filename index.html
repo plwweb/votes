@@ -240,6 +240,7 @@
                 designOptionsDiv.innerHTML = `<p class="message error">ไม่สามารถโหลดแบบเสื้อได้</p>`;
             }
             checkVotingStatus();
+            await getAnnouncementText();
         }
         
         function displayDesignOptions(designs) {
@@ -297,6 +298,16 @@
             });
         }
 
+        async function getAnnouncementText() {
+            const result = await callApi('getAnnouncementText');
+            if (result.status === 'success') {
+                const announcementBar = document.querySelector('.announcement-bar .scrolling-text');
+                if (announcementBar) {
+                    announcementBar.textContent = result.text;
+                }
+            }
+        }
+
         async function checkVotingStatus() {
             const response = await callApi('getVoteTime');
             if (response.status === 'success') {
@@ -352,7 +363,6 @@
         }
         
         loadInitialData();
-        setInterval(loadInitialData, 10000);
     </script>
 </body>
 </html>

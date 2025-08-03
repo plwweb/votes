@@ -59,7 +59,6 @@
                 <p>กำลังโหลดผลโหวต...</p>
             </div>
         </div>
-        
     </div>
 
     <footer class="footer">
@@ -365,26 +364,20 @@
         loadInitialData();
 
         window.addEventListener('load', () => {
-            const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
-            if (!hasSeenIntro) {
-                Swal.fire({
-                    title: 'วิธีการโหวตง่ายๆ ใน 3 ขั้นตอน',
-                    html: `
-                        <ol style="text-align: left; margin: 0 auto; display: inline-block;">
-                            <li><strong>กรอกรหัสนักเรียน:</strong> ใส่รหัสของคุณเพื่อตรวจสอบสิทธิ์</li>
-                            <li><strong>เลือกรถแข่ง:</strong> คลิกเลือกแบบเสื้อที่คุณต้องการโหวต</li>
-                            <li><strong>ยืนยันการโหวต:</strong> กดปุ่มยืนยันเพื่อส่งคะแนน</li>
-                        </ol>
-                        <p style="margin-top: 15px;">แค่นี้ก็เรียบร้อย! โปรดตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันนะครับ</p>
-                    `,
-                    icon: 'info',
-                    showConfirmButton: true,
-                    confirmButtonText: 'เข้าใจแล้ว',
-                    didClose: () => {
-                        sessionStorage.setItem('hasSeenIntro', 'true');
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'วิธีการโหวตง่ายๆ ใน 3 ขั้นตอน',
+                html: `
+                    <ol style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <li><strong>กรอกรหัสนักเรียน:</strong> ใส่รหัสของคุณเพื่อตรวจสอบสิทธิ์</li>
+                        <li><strong>เลือกรถแข่ง:</strong> คลิกเลือกแบบเสื้อที่คุณต้องการโหวต</li>
+                        <li><strong>ยืนยันการโหวต:</strong> กดปุ่มยืนยันเพื่อส่งคะแนน</li>
+                    </ol>
+                    <p style="margin-top: 15px;">แค่นี้ก็เรียบร้อย! โปรดตรวจสอบข้อมูลให้ถูกต้องก่อนยืนยันนะครับ</p>
+                `,
+                icon: 'info',
+                showConfirmButton: true,
+                confirmButtonText: 'เข้าใจแล้ว',
+            });
         });
     </script>
 </body>

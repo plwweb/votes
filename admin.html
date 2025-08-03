@@ -15,6 +15,21 @@
       .modal-content input { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 15px; }
       .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
       .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
+      
+      /* สไตล์เพิ่มเติมเพื่อให้ <a> หน้าตาเหมือน <button> */
+      a.button-link {
+          display: inline-block;
+          padding: 14px 30px;
+          border-radius: 8px;
+          color: white !important;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 1.15em;
+          transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+          margin-top: 15px; /* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
+          height: 25px;     /* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
+          line-height: 25px;/* เพิ่มเพื่อให้ระดับตรงกับปุ่มข้างๆ */
+      }
     </style>
 </head>
 <body>
@@ -23,16 +38,12 @@
             <span class="close-button">&times;</span>
             <h2>แก้ไขข้อมูลแบบเสื้อ</h2>
             <input type="hidden" id="editDesignIdHidden">
-            
             <label for="editDesignIdDisplay">Design ID:</label>
             <input type="text" id="editDesignIdDisplay" disabled>
-            
             <label for="editDesignName">ชื่อแบบเสื้อ:</label>
             <input type="text" id="editDesignName">
-            
             <label for="editDesignImageUrl">URL รูปภาพ:</label>
             <input type="text" id="editDesignImageUrl">
-            
             <button id="saveDesignButton">บันทึกการเปลี่ยนแปลง</button>
             <p id="edit-modal-message" class="message"></p>
         </div>
@@ -76,12 +87,10 @@
                 <input type="datetime-local" id="voteStartTime">
                 <label for="voteEndTime">เวลาสิ้นสุด:</label>
                 <input type="datetime-local" id="voteEndTime">
-                
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button id="setVoteTimeButton">ตั้งเวลาโหวต</button>
                     <button id="closeVotingNowButton" class="action-button danger">ปิดโหวตทันที</button>
                 </div>
-
                 <p id="current-vote-time" style="font-weight: bold; margin-top: 15px;"></p>
             </div>
 
@@ -107,7 +116,6 @@
 
             <div class="admin-section">
                 <h3>เครื่องมือผู้ดูแล</h3>
-                <button id="openLiveResultsButton" class="action-button" style="background-color: #4CAF50;">เปิดหน้าผลโหวตสด</button>
                 <button id="resetVotesButton" class="action-button">รีเซ็ตคะแนนโหวตทั้งหมด</button>
                 <button id="clearUsersButton" class="action-button">ล้างข้อมูลผู้ใช้งานทั้งหมด</button>
                 <p id="admin-action-message" class="message"></p>
@@ -115,8 +123,12 @@
 
             <div class="admin-section">
                 <h3>ข้อมูลผลโหวตและผู้ใช้งาน</h3>
-                <button id="refreshDataButton">รีเฟรชข้อมูล</button>
-                <br><br>
+                
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+                    <button id="refreshDataButton">รีเฟรชข้อมูล</button>
+                    <a href="?page=live" target="_blank" rel="noopener noreferrer" class="button-link" style="background-color: #4CAF50;">เปิดหน้าผลโหวตสด</a>
+                </div>
+
                 <button id="exportUsersPdfButton">ส่งออกผู้ใช้งาน (.pdf)</button>
                 <button id="exportVotesPdfButton">ส่งออกผลโหวต (.pdf)</button>
                 
@@ -161,7 +173,6 @@
                     <p>กำลังโหลดข้อมูลสรุป...</p>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -183,7 +194,7 @@
         let currentAdminUser = '';
         let allUsersData = [];
 
-        // --- อ้างอิง Elements ---
+        // อ้างอิง Elements
         const loginSection = document.getElementById('login-section');
         const adminPanel = document.getElementById('admin-panel');
         const loginButton = document.getElementById('loginButton');
@@ -199,7 +210,7 @@
         const clearUsersButton = document.getElementById('clearUsersButton');
         let voteChartInstance = null;
 
-        // --- Functions ---
+        // Functions
         async function callApi(action, data = {}) {
             if (currentAdminUser) {
                 data.username = currentAdminUser;
@@ -373,12 +384,7 @@
             });
         }
         
-        // --- Event Listeners for Buttons and Inputs ---
-        document.getElementById('openLiveResultsButton').addEventListener('click', () => {
-            const liveUrl = window.location.href.split('?')[0] + '?page=live';
-            window.open(liveUrl, '_blank');
-        });
-
+        // Event Listeners
         loginButton.addEventListener('click', async () => {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
@@ -412,7 +418,6 @@
                 });
             }
         });
-
 
         refreshDataButton.addEventListener('click', () => {
             Swal.fire({
@@ -458,7 +463,6 @@
                 Swal.fire('ผิดพลาด!', result.message, 'error');
             }
         });
-
 
         setVoteTimeButton.addEventListener('click', async () => {
             const startTime = document.getElementById('voteStartTime').value;

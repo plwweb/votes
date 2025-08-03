@@ -5,14 +5,10 @@
     padding: 10px;
     overflow: hidden;
     white-space: nowrap;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 900px;
-    box-sizing: border-box;
     border-radius: 8px;
     margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-
 .scrolling-text {
     margin: 0;
     display: inline-block;
@@ -20,7 +16,6 @@
     animation: scroll-left 25s linear infinite;
     font-weight: 500;
 }
-
 @keyframes scroll-left {
     0% { transform: translateX(0); }
     100% { transform: translateX(-100%); }
@@ -44,7 +39,7 @@
 body {
     font-family: 'Kanit', sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     overflow-x: hidden;
     background: var(--background-gradient);
     color: var(--text-color);
@@ -54,7 +49,6 @@ body {
     align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
-    padding: 20px;
 }
 
 /* Container หลัก */
@@ -66,11 +60,10 @@ body {
     max-width: 900px;
     width: 100%;
     text-align: center;
-    margin-top: 0;
+    margin-top: 20px;
     box-sizing: border-box;
     animation: fadeIn 1s ease-out;
 }
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -85,19 +78,18 @@ header {
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
 }
-
 .logo {
     height: 60px;
     margin-right: 15px;
 }
-
+h1, h2, h3 {
+    margin: 0;
+}
 h1 {
     color: var(--primary-blue);
     font-size: 2.8em;
-    margin: 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
 }
-
 h2 {
     color: var(--primary-pink);
     margin-top: 30px;
@@ -105,7 +97,6 @@ h2 {
     font-size: 2em;
     font-weight: 600;
 }
-
 h3 {
     color: var(--primary-blue);
     margin-bottom: 15px;
@@ -131,7 +122,6 @@ form {
     flex-direction: column;
     align-items: flex-start;
 }
-
 label {
     font-weight: 600;
     color: var(--text-color);
@@ -139,12 +129,7 @@ label {
     display: block;
     width: 100%;
 }
-
-input[type="text"],
-input[type="number"],
-input[type="password"],
-input[type="datetime-local"],
-select {
+input, select {
     width: 100%;
     padding: 12px;
     margin-bottom: 20px;
@@ -154,12 +139,7 @@ select {
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="password"]:focus,
-input[type="datetime-local"]:focus,
-select:focus {
+input:focus, select:focus {
     border-color: var(--primary-pink);
     box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
     outline: none;
@@ -179,20 +159,17 @@ button {
     font-weight: 600;
     align-self: center;
 }
-
 button:hover {
     background-color: #1976D2;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px var(--shadow-light);
 }
-
 button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
-
 .admin-section button {
     background-color: var(--primary-pink);
     margin-right: 10px;
@@ -202,7 +179,6 @@ button:disabled {
 .admin-section button:hover {
     background-color: #d1478f;
 }
-
 button.danger {
     background-color: var(--danger-color);
 }
@@ -220,7 +196,6 @@ button.danger:hover {
     text-align: center;
 }
 .message:not(:empty) { padding: 12px 20px; }
-
 .status-message.open, .message.success {
     background-color: #d4edda;
     color: #155724;
@@ -262,7 +237,7 @@ button.danger:hover {
     margin-top: 20px;
     margin-bottom: 30px;
     width: 100%;
-    justify-content: center;
+    position: relative;
 }
 .design-card {
     background-color: #ffffff;
@@ -274,22 +249,35 @@ button.danger:hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 .design-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px var(--shadow-medium);
 }
-.design-card input[type="radio"] {
+.design-card.selected {
+    transform: translateY(-5px) scale(1.03);
+    border-color: var(--primary-pink);
+    box-shadow: 0 8px 25px var(--shadow-medium);
+}
+.design-card.selected::after {
+    content: '✓';
     position: absolute;
-    top: 15px;
-    right: 15px;
-    transform: scale(1.5);
-    z-index: 1;
-    margin-bottom: 0;
-    width: auto;
+    top: 8px;
+    right: 12px;
+    background-color: var(--primary-pink);
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.design-card input[type="radio"] {
+    opacity: 0;
+    position: absolute;
 }
 .design-card img {
     max-width: 100%;
@@ -306,12 +294,61 @@ button.danger:hover {
     color: var(--primary-blue);
     cursor: pointer;
     margin-bottom: 0;
-    text-align: center;
-    padding: 5px 0;
 }
-.design-card.selected {
-    border-color: var(--primary-pink);
-    box-shadow: 0 0 0 4px rgba(255, 64, 129, 0.4);
+
+/* --- Overlay สำหรับตอน Disable --- */
+.design-options.disabled {
+    position: relative;
+}
+.design-options.disabled::before {
+    content: '🔒 กรุณากรอกรหัสนักเรียนให้ถูกต้องก่อน';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    font-size: 1.2em;
+    color: var(--primary-blue);
+    font-weight: 600;
+    border-radius: 10px;
+}
+.design-options.disabled .design-card {
+    filter: grayscale(80%);
+    pointer-events: none;
+}
+
+/* --- Skeleton Loader --- */
+.skeleton-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px var(--shadow-light);
+}
+.skeleton-img, .skeleton-text {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 8px;
+}
+.skeleton-img {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 10px;
+}
+.skeleton-text {
+    height: 20px;
+    width: 80%;
+    margin: 0 auto;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 /* --- Vote Results --- */
@@ -395,7 +432,6 @@ td button {
     min-width: 75px;
     text-align: center;
 }
-
 td button.edit-button {
     background-color: var(--primary-blue);
 }

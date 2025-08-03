@@ -2,9 +2,11 @@
 .announcement-bar {
     background-color: var(--primary-pink);
     color: white;
-    padding: 10px 0;
+    padding: 10px;
     overflow: hidden;
     white-space: nowrap;
+    border-radius: 8px;
+    margin-bottom: 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
@@ -17,12 +19,8 @@
 }
 
 @keyframes scroll-left {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 /* --- ตัวแปรสีและ Font --- */
@@ -44,7 +42,7 @@ body {
     font-family: 'Kanit', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอนบนมือถือ */
+    overflow-x: hidden;
     background: var(--background-gradient);
     color: var(--text-color);
     display: flex;
@@ -53,6 +51,7 @@ body {
     align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
+    padding: 20px;
 }
 
 /* Container หลัก */

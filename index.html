@@ -11,13 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="announcement-bar">
-            <p class="scrolling-text">
-                *** ยินดีต้อนรับสู่การโหวตเสื้อกีฬาสี ประจำปีการศึกษา 2568 *** ขอให้นักเรียนทุกคนตรวจสอบข้อมูลและรักษาสิทธิ์ของตนเอง ***
-            </p>
-        </div>
+    <div class="announcement-bar">
+        <p class="scrolling-text">
+            *** ยินดีต้อนรับสู่การโหวตเสื้อกีฬาสี ประจำปีการศึกษา 2568 *** ขอให้นักเรียนทุกคนตรวจสอบข้อมูลและรักษาสิทธิ์ของตนเอง ***
+        </p>
+    </div>
 
+    <div class="container">
         <header>
             <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
             <h1>โหวตแบบเสื้อกีฬาสี</h1>
@@ -148,28 +148,53 @@
 
         voteForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            Swal.fire({ title: 'กำลังส่งข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            const data = { 
-                studentId: studentIdInput.value, 
-                voteChoice: document.querySelector('input[name="voteChoice"]:checked').value 
-            };
-            const apiResult = await callApi('registerAndVote', data);
+            const studentId = studentIdInput.value;
+            const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');
+            const voteChoiceValue = voteChoiceElement.value;
+            const voteChoiceName = document.querySelector(`label[for="design-${voteChoiceValue}"]`).textContent.trim();
 
-            if (apiResult.status === 'success') {
-                confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
-                Swal.fire({ title: 'โหวตสำเร็จ!', text: apiResult.message, icon: 'success', timer: 2000, showConfirmButton: false });
-                voteForm.reset();
-                studentIdMsg.textContent = '';
-                studentIdMsg.className = 'message';
-                document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
-                validateForm();
-                designOptionsDiv.classList.add('disabled');
-            } else {
-                Swal.fire({ title: 'ผิดพลาด!', text: apiResult.message, icon: 'error' });
-                if (apiResult.message.includes('โหวตไปแล้ว')) {
-                     studentIdInput.dispatchEvent(new Event('blur'));
+            Swal.fire({
+                title: 'ยืนยันข้อมูล',
+                html: `
+                    <p>โปรดตรวจสอบข้อมูลก่อนยืนยัน</p>
+                    <div style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <strong>รหัสนักเรียน:</strong> ${studentId}<br>
+                        <strong>ชื่อ:</strong> ${fullNameInput.value}<br>
+                        <strong>ระดับชั้น:</strong> ${gradeInput.value}<br>
+                        <strong>ห้อง:</strong> ${roomInput.value}<br>
+                        <strong>คุณเลือก:</strong> ${voteChoiceName}
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ยืนยันการโหวต',
+                cancelButtonText: 'แก้ไขข้อมูล'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังส่งข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    const data = { studentId: studentId, voteChoice: voteChoiceValue };
+                    const apiResult = await callApi('registerAndVote', data);
+
+                    if (apiResult.status === 'success') {
+                        confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
+                        Swal.fire({ title: 'โหวตสำเร็จ!', text: apiResult.message, icon: 'success', timer: 2000, showConfirmButton: false });
+                        voteForm.reset();
+                        studentIdMsg.textContent = '';
+                        studentIdMsg.className = 'message';
+                        document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
+                        validateForm();
+                        designOptionsDiv.classList.add('disabled');
+                        loadInitialData();
+                    } else {
+                        Swal.fire({ title: 'ผิดพลาด!', text: apiResult.message, icon: 'error' });
+                        if (apiResult.message.includes('โหวตไปแล้ว')) {
+                             studentIdInput.dispatchEvent(new Event('blur'));
+                        }
+                    }
                 }
-            }
+            });
         });
 
         designOptionsDiv.addEventListener('change', (event) => {

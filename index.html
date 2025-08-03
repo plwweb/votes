@@ -11,6 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+    <div class="announcement-bar">
+        <p class="scrolling-text">
+            *** ยินดีต้อนรับสู่การโหวตเสื้อกีฬาสี ประจำปีการศึกษา 2568 *** ขอให้นักเรียนทุกคนตรวจสอบข้อมูลและรักษาสิทธิ์ของตนเอง ***
+        </p>
+    </div>
+
     <div class="container">
         <header>
             <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
@@ -51,7 +57,8 @@
             <p id="form-message" class="message"></p>
         </div>
 
-        <div id="results-section" style="display: none;"> <h2>ผลการโหวต</h2>
+        <div id="results-section" style="display: none;">
+            <h2>ผลการโหวต</h2>
             <div class="chart-container" style="width: 100%; height: 350px; margin: 20px auto;">
                 <canvas id="voteChart"></canvas>
             </div>
@@ -182,7 +189,7 @@
                         voteForm.reset();
                         gradeSelect.dispatchEvent(new Event('change'));
                         updateSelectedDesignCard(null);
-                        loadInitialData(); // โหลดข้อมูลใหม่เพื่อให้สถานะอัปเดต
+                        loadInitialData();
                     } else {
                         Swal.fire({
                             title: 'ผิดพลาด!',

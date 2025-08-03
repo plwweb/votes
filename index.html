@@ -11,13 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="announcement-bar">
-        <p class="scrolling-text">
-            *** ยินดีต้อนรับสู่การโหวตเสื้อกีฬาสี ประจำปีการศึกษา 2568 *** ขอให้นักเรียนทุกคนตรวจสอบข้อมูลและรักษาสิทธิ์ของตนเอง ***
-        </p>
-    </div>
-
     <div class="container">
+        <div class="announcement-bar">
+            <p class="scrolling-text">
+                *** ยินดีต้อนรับสู่การโหวตเสื้อกีฬาสี ประจำปีการศึกษา 2568 *** ขอให้นักเรียนทุกคนตรวจสอบข้อมูลและรักษาสิทธิ์ของตนเอง ***
+            </p>
+        </div>
+
         <header>
             <img src="https://img5.pic.in.th/file/secure-sv1/IMG_60290ec6a71fd92a13d0.png" alt="โลโก้โรงเรียน" class="logo">
             <h1>โหวตแบบเสื้อกีฬาสี</h1>
@@ -43,9 +43,8 @@
                 <input type="text" id="room" name="room" readonly style="background-color: #e9ecef;">
 
                 <label>เลือกแบบเสื้อ:</label>
-                <div id="design-options" class="design-options">
-                    <p>กรุณากรอกรหัสนักเรียนเพื่อแสดงแบบเสื้อ...</p>
-                </div>
+                <div id="design-options" class="design-options disabled">
+                    </div>
                 <button type="submit" id="submitVoteButton" disabled>ยืนยันการโหวต</button>
             </form>
         </div>
@@ -81,29 +80,38 @@
 
         const voteForm = document.getElementById('voteForm');
         const designOptionsDiv = document.getElementById('design-options');
-        const votingStatusDiv = document.getElementById('voting-status');
-        const countdownTimerDiv = document.getElementById('countdown-timer');
-        const registrationFormSection = document.getElementById('registration-form-section');
-        const resultsSection = document.getElementById('results-section');
-        const voteResultsDiv = document.getElementById('vote-results');
-        const chartMessageDiv = document.getElementById('chart-message');
         const studentIdInput = document.getElementById('studentId');
         const studentIdMsg = document.getElementById('student-id-msg');
         const fullNameInput = document.getElementById('fullName');
         const gradeInput = document.getElementById('grade');
         const roomInput = document.getElementById('room');
         const submitVoteButton = document.getElementById('submitVoteButton');
+        const votingStatusDiv = document.getElementById('voting-status');
+        const countdownTimerDiv = document.getElementById('countdown-timer');
+        const registrationFormSection = document.getElementById('registration-form-section');
+        const resultsSection = document.getElementById('results-section');
+        const voteResultsDiv = document.getElementById('vote-results');
+        const chartMessageDiv = document.getElementById('chart-message');
         let voteChartInstance = null;
         let countdownInterval;
+
+        function showSkeletonLoader() {
+            designOptionsDiv.innerHTML = `
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>
+            `;
+            designOptionsDiv.classList.add('disabled');
+        }
         
         studentIdInput.addEventListener('blur', async () => {
             const id = studentIdInput.value;
             studentIdMsg.style.display = 'block';
-
             const resetFields = () => {
                 fullNameInput.value = '';
                 gradeInput.value = '';
                 roomInput.value = '';
+                designOptionsDiv.classList.add('disabled');
                 validateForm();
             };
 
@@ -119,6 +127,7 @@
                     fullNameInput.value = result.fullName;
                     gradeInput.value = result.grade;
                     roomInput.value = result.room;
+                    designOptionsDiv.classList.remove('disabled');
                     validateForm();
                 } else {
                     studentIdMsg.textContent = result.message;
@@ -126,7 +135,7 @@
                     resetFields();
                 }
             } else if (id.length > 0) {
-                studentIdMsg.textContent = 'รูปแบบรหัสไม่ถูกต้อง (ต้องมี 5 หลัก และขึ้นต้นด้วย 0)';
+                studentIdMsg.textContent = 'รูปแบบรหัสไม่ถูกต้อง';
                 studentIdMsg.className = 'message error';
                 resetFields();
             } else {
@@ -139,12 +148,11 @@
 
         voteForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const studentId = studentIdInput.value;
-            const voteChoiceElement = document.querySelector('input[name="voteChoice"]:checked');
-            
             Swal.fire({ title: 'กำลังส่งข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-            const data = { studentId: studentId, voteChoice: voteChoiceElement.value };
+            const data = { 
+                studentId: studentIdInput.value, 
+                voteChoice: document.querySelector('input[name="voteChoice"]:checked').value 
+            };
             const apiResult = await callApi('registerAndVote', data);
 
             if (apiResult.status === 'success') {
@@ -153,12 +161,11 @@
                 voteForm.reset();
                 studentIdMsg.textContent = '';
                 studentIdMsg.className = 'message';
-                updateSelectedDesignCard(null);
+                document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
                 validateForm();
-                loadInitialData();
+                designOptionsDiv.classList.add('disabled');
             } else {
                 Swal.fire({ title: 'ผิดพลาด!', text: apiResult.message, icon: 'error' });
-                // ถ้า error เพราะโหวตซ้ำ ให้แสดงข้อมูลเดิม
                 if (apiResult.message.includes('โหวตไปแล้ว')) {
                      studentIdInput.dispatchEvent(new Event('blur'));
                 }
@@ -167,7 +174,9 @@
 
         designOptionsDiv.addEventListener('change', (event) => {
             if (event.target.name === 'voteChoice') {
-                updateSelectedDesignCard(event.target.value);
+                document.querySelectorAll('.design-card').forEach(card => card.classList.remove('selected'));
+                const selectedCard = event.target.closest('.design-card');
+                if (selectedCard) selectedCard.classList.add('selected');
                 validateForm();
             }
         });
@@ -176,11 +185,7 @@
             const studentId = studentIdInput.value;
             const fullName = fullNameInput.value;
             const choiceRadio = document.querySelector('input[name="voteChoice"]:checked');
-            if (studentId.length === 5 && fullName.trim() !== '' && choiceRadio) {
-                submitVoteButton.disabled = false;
-            } else {
-                submitVoteButton.disabled = true;
-            }
+            submitVoteButton.disabled = !(studentId.length === 5 && fullName.trim() !== '' && choiceRadio);
         }
 
         async function callApi(action, data = {}) {
@@ -199,6 +204,8 @@
         }
         
         async function loadInitialData() {
+            showSkeletonLoader();
+            validateForm();
             const resultsData = await callApi('getVoteResults');
             if (resultsData.status === 'success' && resultsData.results) {
                 displayDesignOptions(resultsData.results);
@@ -219,8 +226,7 @@
             designs.forEach(design => {
                 const div = document.createElement('div');
                 div.classList.add('design-card');
-                div.setAttribute('data-design-id', design.designId);
-                div.innerHTML = `<input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required><label for="design-${design.designId}"><img src="${design.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}" alt="${design.designName}">แบบเสื้อ ${design.designId} - ${design.designName}</label>`;
+                div.innerHTML = `<input type="radio" id="design-${design.designId}" name="voteChoice" value="${design.designId}" required><label for="design-${design.designId}"><img src="${design.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}" alt="${design.designName}">${design.designName}</label>`;
                 designOptionsDiv.appendChild(div);
             });
         }
@@ -234,6 +240,8 @@
         }
         
         function displayVoteResults(results) {
+            const voteResultsDiv = document.getElementById('vote-results');
+            if(!voteResultsDiv) return;
             voteResultsDiv.innerHTML = '';
             if (results.length === 0) { voteResultsDiv.innerHTML = '<p class="message">ยังไม่มีผลการโหวต</p>'; return; }
             results.sort((a, b) => b.voteCount - a.voteCount);
@@ -246,7 +254,9 @@
         }
         
         function displayVoteChart(votes) {
-            const ctx = document.getElementById('voteChart').getContext('2d');
+            const voteChartCanvas = document.getElementById('voteChart');
+            if(!voteChartCanvas) return;
+            const ctx = voteChartCanvas.getContext('2d');
             if (votes.length === 0) { if (voteChartInstance) voteChartInstance.destroy(); return; }
             const labels = votes.map(v => `แบบ ${v.designId}`);
             const data = votes.map(v => v.voteCount);

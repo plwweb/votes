@@ -274,6 +274,7 @@
         }
 
         async function loadAdminAccounts() {
+            const result = await callApi('getAdminAccounts');
             const tbody = document.querySelector('#adminAccountsTable tbody');
             tbody.innerHTML = '';
             if (result.status === 'success' && result.accounts.length > 0) {
@@ -366,7 +367,9 @@
             });
         }
         
-        // --- Event Listeners ---
+        // --- Event Listeners for Buttons and Inputs ---
+
+        // ✨ เพิ่มโค้ดสำหรับปุ่ม 'เปิดหน้าผลโหวตสด' ตรงนี้ ✨
         document.getElementById('openLiveResultsButton').addEventListener('click', () => {
             const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             const liveUrl = baseUrl + '?page=live';

@@ -83,6 +83,30 @@
             color: var(--primary-blue);
             text-decoration: none;
         }
+        /* --- Responsive Styles for Mobile --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            #total-votes {
+                font-size: 1.8em;
+            }
+            #liveVoteChart {
+                height: auto !important; /* ปรับความสูงกราฟอัตโนมัติ */
+            }
+            #chart-container {
+                height: 400px; /* ปรับความสูงสำหรับมือถือ */
+            }
+        }
     </style>
 </head>
 <body>
@@ -96,6 +120,7 @@
         <p id="last-updated">อัปเดตล่าสุด: <span>-</span></p>
         <p id="status-message">การเชื่อมต่อล้มเหลว กำลังลองใหม่...</p>
     </div>
+    
     <footer class="footer">
         <p>
             &copy;2025 Student Council of Phu Luang Witthaya School
@@ -105,7 +130,7 @@
             <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
             </a>
-            <span style="margin: 0 10px;">|</span> <a href="admin.html" style="text-decoration: none;">Admin Login</a>
+            <span style="margin: 0 10px;">|</span> <a href="index.html" style="text-decoration: none;">กลับไปหน้าโหวต</a>
         </p>
     </footer>
 

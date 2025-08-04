@@ -29,20 +29,20 @@
         <div id="registration-form-section" class="form-section">
             <h2>กรอกข้อมูลเพื่อโหวต</h2>
             <form id="voteForm">
-                <label for="studentId">รหัสนักเรียน:</label>
+                <label for="studentId">รหัสนักเรียน :</label>
                 <input type="text" id="studentId" name="studentId" required maxlength="5" pattern="0[0-9]{4}" inputmode="numeric" placeholder="กรอกรหัสนักเรียน 5 หลัก">
                 <p id="student-id-msg" class="message" style="margin-top:-10px; margin-bottom:15px;"></p>
                 
-                <label for="fullName">ชื่อ-นามสกุล:</label>
+                <label for="fullName">ชื่อ - นามสกุล :</label>
                 <input type="text" id="fullName" name="fullName" readonly style="background-color: #e9ecef;">
                 
-                <label for="grade">ระดับชั้น:</label>
+                <label for="grade">ระดับชั้น :</label>
                 <input type="text" id="grade" name="grade" readonly style="background-color: #e9ecef;">
                 
-                <label for="room">ห้อง:</label>
+                <label for="room">ห้อง :</label>
                 <input type="text" id="room" name="room" readonly style="background-color: #e9ecef;">
 
-                <label>เลือกแบบเสื้อ:</label>
+                <label>เลือกแบบเสื้อ :</label>
                 <div id="design-options" class="design-options disabled">
                 </div>
                 <button type="submit" id="submitVoteButton" disabled>ยืนยันการโหวต</button>
@@ -157,11 +157,11 @@
                 html: `
                     <p>โปรดตรวจสอบข้อมูลก่อนยืนยัน</p>
                     <div style="text-align: left; margin: 0 auto; display: inline-block;">
-                        <strong>รหัสนักเรียน:</strong> ${studentId}<br>
-                        <strong>ชื่อ:</strong> ${fullNameInput.value}<br>
-                        <strong>ระดับชั้น:</strong> ${gradeInput.value}<br>
-                        <strong>ห้อง:</strong> ${roomInput.value}<br>
-                        <strong>คุณเลือก:</strong> ${voteChoiceName}
+                        <strong>รหัสนักเรียน :</strong> ${studentId}<br>
+                        <strong>ชื่อ :</strong> ${fullNameInput.value}<br>
+                        <strong>ระดับชั้น :</strong> ${gradeInput.value}<br>
+                        <strong>ห้อง :</strong> ${roomInput.value}<br>
+                        <strong>คุณเลือก :</strong> ${voteChoiceName}
                     </div>
                 `,
                 icon: 'question',

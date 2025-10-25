@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
+    <script>
+        // ตรวจสอบ "ตั๋ว"
+        if (sessionStorage.getItem('allowAppAccess') !== 'true') {
+            // ถ้าไม่มีตั๋ว (เช่น กด F5 หรือเข้าตรงๆ)
+            // ให้เด้งกลับไปหน้า index.html ทันที
+            window.location.replace('index.html');
+        }
+        
+        // ลบ "ตั๋ว" ทิ้งทันที
+        // เพื่อที่ว่าเมื่อมีการรีเฟรช (F5) ครั้งต่อไป
+        // 'allowAppAccess' จะกลายเป็น null และ script ด้านบนจะทำงาน
+        sessionStorage.removeItem('allowAppAccess');
+    </script>
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

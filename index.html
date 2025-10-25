@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ราชินีในรัชกาลที่ ๙</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="intro">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="emblem">
+        <img src="https://img2.pic.in.th/pic/IMG_3771.webp" alt="Queen Emblem">
+      </div>
+      <h1>น้อมส่งเสด็จสู่สวรรคาลัย</h1>
+      <h2>สมเด็จพระนางเจ้าสิริกิติ์<br>พระบรมราชินีนาถ พระบรมราชชนนีพันปีหลวง</h2>
+      <p>ด้วยสำนึกในพระมหากรุณาธิคุณอันหาที่สุดมิได้</p>
+      <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
+    </div>
+  </div>
+
+  <script>
+    function enterSite() {
+      // 1. ตั้งค่า "ตั๋ว" ว่าอนุญาตให้เข้าหน้าแอปได้
+      sessionStorage.setItem('allowAppAccess', 'true');
+
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        // 2. ไปยังหน้า app.html
+        window.location.href = "vote.html"; 
+      }, 1000);
+    }
+  </script>
+</body>
+
+</html>

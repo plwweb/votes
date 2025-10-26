@@ -30,112 +30,94 @@
       height: 100vh;
       position: relative;
       
-      /* Background Image with subtle texture */
-      background: url('https://img.freepik.com/free-photo/dark-grey-fabric-texture_53876-130456.jpg?w=1380&t=st=1701349000~exp=1701349600~hmac=1b5f7e7f6e0c6a5a7d9b9a6d0c2c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3') center center / cover no-repeat fixed;
+      /* [ปรับปรุง] พื้นหลังแบบไล่ระดับสีที่สงบและมืดสนิท
+        - ใช้ radial-gradient เพื่อให้ตรงกลางสว่างกว่าขอบเล็กน้อย (มีมิติ)
+        - เปลี่ยนจาก Texture ผ้าไหม เป็นสีเทาเข้มมาก (#1a1a1a) ไปหาสีดำสนิท (#000000)
+      */
+      background: radial-gradient(circle, #1a1a1a, #0a0a0a);
       
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
       overflow: hidden;
-      
-      /* Optional: Add a subtle overlay if the background image is too bright */
-      /* &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4); 
-        z-index: 0;
-      } */
     }
 
     .content {
       position: relative;
       z-index: 2;
-      padding: 40px; /* เพิ่ม padding ด้านในกรอบ */
-      max-width: 700px; /* เพิ่มความกว้างสูงสุด */
-      margin: 0 auto;
-      background-color: rgba(0, 0, 0, 0.3); /* พื้นหลังโปร่งแสงเล็กน้อย */
-      backdrop-filter: blur(5px); /* เพิ่มเอฟเฟกต์เบลอพื้นหลัง */
-      border-radius: 10px;
+      padding: 3rem;
+      max-width: 680px;
+      margin: 20px;
       
-      /* --- Border Image for Thai Pattern --- */
-      border: 30px solid transparent; /* กำหนดขนาดของ border ที่จะใช้กับ border-image */
-      border-image: url('https://i.imgur.com/kU2k1v7.png') 30 stretch; /* URL ของลายกรอบทอง */
-      /* You might need to adjust '30' based on the border image resolution */
-
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 215, 0, 0.2); /* เงาเข้มและขอบแสงทอง */
+      /* [ปรับปรุง] กรอบแบบเรียบหรู
+        - ลบ border-image ลายไทยออก
+        - ใช้กรอบ 2 ชั้น (box-shadow) ที่ดูสุขุม
+      */
+      border: 1px solid #444444; /* กรอบเส้นบางๆ สีเทาเข้ม */
+      box-shadow: 0 0 0 4px #8A7350; /* สร้างกรอบสีทองหม่นด้านนอก */
+      border-radius: 4px; /* มุมมนเล็กน้อย */
+      background-color: rgba(0, 0, 0, 0.2); /* พื้นหลังโปร่งแสงเล็กน้อย */
     }
 
     /* --- Emblem --- */
     .emblem img {
-      width: 140px; /* เพิ่มขนาดตราสัญลักษณ์ */
+      width: 130px;
       height: auto;
       margin-bottom: 2.5rem;
-      filter: drop-shadow(0 0 25px rgba(255, 223, 150, 0.6)) /* เงาสีทองเข้มขึ้น */
-              drop-shadow(0 0 50px rgba(255, 223, 150, 0.2));
+      /* เงาสีทองอ่อนๆ ให้ตราสัญลักษณ์ดูลอยเด่น */
+      filter: drop-shadow(0 0 15px rgba(218, 165, 32, 0.3));
     }
 
     /* --- Typography --- */
     h1 {
-      font-size: 3.2rem; /* เพิ่มขนาด h1 */
-      font-weight: 700; /* เพิ่มน้ำหนักตัวอักษร */
-      color: #FFD700; /* สีทอง */
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.4); /* เงาเรืองแสงสีทอง */
+      font-size: 3rem;
+      font-weight: 600;
+      color: #FFD700; /* สีทอง (ยังคงไว้เพื่อสมเกียรติ) */
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
       margin-bottom: 1.8rem;
     }
 
     h2 {
-      font-size: 1.9rem; /* เพิ่มขนาด h2 */
+      font-size: 1.8rem;
       font-weight: 400;
-      color: #e0e0e0;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      color: #f0f0f0;
       margin-bottom: 1.8rem;
     }
 
     p {
-      font-size: 1.25rem; /* เพิ่มขนาด p */
+      font-size: 1.2rem;
       font-weight: 300;
       color: #cccccc;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
       margin-bottom: 3.5rem;
     }
 
     /* --- Button --- */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.2rem; /* เพิ่มขนาดตัวอักษรปุ่ม */
-      font-weight: 600; /* น้ำหนักตัวอักษรปุ่ม */
-      padding: 15px 50px; /* เพิ่มขนาดปุ่ม */
+      font-size: 1.1rem;
+      font-weight: 400;
+      padding: 12px 45px;
       
-      background: linear-gradient(145deg, #FFD700, #DAA520); /* ไล่ระดับสีทอง */
-      color: #333333; /* สีตัวอักษรเข้ม */
-      border: none;
+      /* [ปรับปรุง] เปลี่ยนเป็น Ghost Button (ปุ่มโปร่งใส)
+        - ดูสงบและเหมาะสมกว่าปุ่มสีทองสว่าง
+      */
+      background-color: transparent;
+      color: #ffffff;
+      border: 2px solid #ffffff; /* ขอบสีขาว */
       border-radius: 50px;
       
       cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 
-                  inset 0 2px 5px rgba(255, 255, 255, 0.3); /* เงาและแสงภายใน */
+      transition: all 0.3s ease;
     }
 
     .enter:hover {
-      background: linear-gradient(145deg, #DAA520, #FFD700); /* สลับ gradient เมื่อ hover */
+      background-color: #ffffff;
       color: #000000;
-      transform: translateY(-3px) scale(1.02); /* ยกขึ้นเล็กน้อย */
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 
-                  inset 0 1px 3px rgba(255, 255, 255, 0.2);
+      border-color: #ffffff;
+      transform: scale(1.03);
     }
     
-    .enter:active {
-        transform: translateY(0);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3),
-                    inset 0 1px 2px rgba(255, 255, 255, 0.2);
-    }
-
     /* --- Fade Out Animation --- */
     body.fade-out {
       opacity: 0;
@@ -145,29 +127,13 @@
     /* --- Responsive adjustments --- */
     @media (max-width: 768px) {
       .content {
-        padding: 25px;
+        padding: 2.5rem;
         max-width: 90%;
-        border: 20px solid transparent; /* ปรับขนาดกรอบสำหรับมือถือ */
-        border-image: url('https://i.imgur.com/kU2k1v7.png') 20 stretch;
       }
       h1 { font-size: 2.5rem; }
       h2 { font-size: 1.5rem; }
       p { font-size: 1rem; }
       .emblem img { width: 100px; margin-bottom: 2rem; }
-      .enter { padding: 12px 35px; font-size: 1.1rem; }
-    }
-
-    @media (max-width: 480px) {
-      .content {
-        padding: 20px;
-        border: 15px solid transparent; 
-        border-image: url('https://i.imgur.com/kU2k1v7.png') 15 stretch;
-      }
-      h1 { font-size: 2rem; }
-      h2 { font-size: 1.2rem; }
-      p { font-size: 0.9rem; }
-      .emblem img { width: 80px; margin-bottom: 1.5rem; }
-      .enter { padding: 10px 30px; font-size: 1rem; }
     }
 
   </style>
@@ -181,7 +147,7 @@
       </div>
       <h1>น้อมส่งเสด็จสู่สวรรคาลัย</h1>
       <h2>สมเด็จพระนางเจ้าสิริกิติ์<br>พระบรมราชินีนาถ พระบรมราชชนนีพันปีหลวง</h2>
-      <p>น้อมสำนึกในพระมหากรุณาธิคุณอันหาที่สุดมิได้</p>
+      <p>น้อมสำนักในพระมหากรุณาธิคุณอันหาที่สุดมิได้</p>
       
       <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
     </div>

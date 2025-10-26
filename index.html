@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ราชินีในรัชกาลที่ ๙</title>
+  <title>น้อมส่งเสด็จสู่สวรรคาลัย</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* --- Base Reset --- */
+    /* --- Base Reset & Global Styles --- */
     * {
       margin: 0;
       padding: 0;
@@ -21,105 +21,153 @@
       height: 100%;
       font-family: 'Sarabun', sans-serif;
       color: #ffffff;
-      line-height: 1.7;
+      line-height: 1.6;
     }
 
     /* --- Intro Container & Background --- */
     .intro {
       width: 100%;
-      height: 100vh; /* 100% ของความสูงหน้าจอ */
+      height: 100vh;
       position: relative;
       
-      /* พื้นหลังไล่ระดับสีโทนเทาดำเข้ม */
-      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      /* Background Image with subtle texture */
+      background: url('https://img.freepik.com/free-photo/dark-grey-fabric-texture_53876-130456.jpg?w=1380&t=st=1701349000~exp=1701349600~hmac=1b5f7e7f6e0c6a5a7d9b9a6d0c2c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3') center center / cover no-repeat fixed;
       
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
-      overflow: hidden; /* ซ่อนส่วนที่เกิน */
-    }
-
-    /* .overlay ไม่จำเป็นแล้วถ้าใช้ background-gradient 
-      แต่หากคุณมีภาพพื้นหลังใน .intro .overlay จะช่วยทำให้ตัวอักษรชัดขึ้น
-    */
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* ทำให้มืดลง 50% */
-      z-index: 1;
+      overflow: hidden;
+      
+      /* Optional: Add a subtle overlay if the background image is too bright */
+      /* &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4); 
+        z-index: 0;
+      } */
     }
 
     .content {
       position: relative;
-      z-index: 2; /* ให้อยู่เหนือ .overlay */
-      padding: 20px;
-      max-width: 650px;
+      z-index: 2;
+      padding: 40px; /* เพิ่ม padding ด้านในกรอบ */
+      max-width: 700px; /* เพิ่มความกว้างสูงสุด */
       margin: 0 auto;
+      background-color: rgba(0, 0, 0, 0.3); /* พื้นหลังโปร่งแสงเล็กน้อย */
+      backdrop-filter: blur(5px); /* เพิ่มเอฟเฟกต์เบลอพื้นหลัง */
+      border-radius: 10px;
+      
+      /* --- Border Image for Thai Pattern --- */
+      border: 30px solid transparent; /* กำหนดขนาดของ border ที่จะใช้กับ border-image */
+      border-image: url('https://i.imgur.com/kU2k1v7.png') 30 stretch; /* URL ของลายกรอบทอง */
+      /* You might need to adjust '30' based on the border image resolution */
+
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 215, 0, 0.2); /* เงาเข้มและขอบแสงทอง */
     }
 
     /* --- Emblem --- */
     .emblem img {
-      width: 120px;
+      width: 140px; /* เพิ่มขนาดตราสัญลักษณ์ */
       height: auto;
-      margin-bottom: 2rem;
-      
-      /* เพิ่มเงาสีทองอ่อนๆ รอบตรา */
-      filter: drop-shadow(0 0 15px rgba(255, 223, 150, 0.2));
+      margin-bottom: 2.5rem;
+      filter: drop-shadow(0 0 25px rgba(255, 223, 150, 0.6)) /* เงาสีทองเข้มขึ้น */
+              drop-shadow(0 0 50px rgba(255, 223, 150, 0.2));
     }
 
     /* --- Typography --- */
     h1 {
-      font-size: 2.8rem;
-      font-weight: 600;
+      font-size: 3.2rem; /* เพิ่มขนาด h1 */
+      font-weight: 700; /* เพิ่มน้ำหนักตัวอักษร */
       color: #FFD700; /* สีทอง */
-      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.4); /* เงาเรืองแสงสีทอง */
+      margin-bottom: 1.8rem;
     }
 
     h2 {
-      font-size: 1.75rem;
+      font-size: 1.9rem; /* เพิ่มขนาด h2 */
       font-weight: 400;
-      color: #f0f0f0;
-      margin-bottom: 1.5rem;
+      color: #e0e0e0;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      margin-bottom: 1.8rem;
     }
 
     p {
-      font-size: 1.1rem;
+      font-size: 1.25rem; /* เพิ่มขนาด p */
       font-weight: 300;
       color: #cccccc;
-      margin-bottom: 3rem;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      margin-bottom: 3.5rem;
     }
 
     /* --- Button --- */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 400;
-      padding: 12px 40px;
+      font-size: 1.2rem; /* เพิ่มขนาดตัวอักษรปุ่ม */
+      font-weight: 600; /* น้ำหนักตัวอักษรปุ่ม */
+      padding: 15px 50px; /* เพิ่มขนาดปุ่ม */
       
-      background-color: transparent;
-      color: #ffffff;
-      border: 2px solid #ffffff;
-      border-radius: 50px; /* ทำให้ปุ่มโค้งมน */
+      background: linear-gradient(145deg, #FFD700, #DAA520); /* ไล่ระดับสีทอง */
+      color: #333333; /* สีตัวอักษรเข้ม */
+      border: none;
+      border-radius: 50px;
       
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 
+                  inset 0 2px 5px rgba(255, 255, 255, 0.3); /* เงาและแสงภายใน */
     }
 
     .enter:hover {
-      background-color: #ffffff;
+      background: linear-gradient(145deg, #DAA520, #FFD700); /* สลับ gradient เมื่อ hover */
       color: #000000;
-      transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+      transform: translateY(-3px) scale(1.02); /* ยกขึ้นเล็กน้อย */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 
+                  inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    }
+    
+    .enter:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.2);
     }
 
     /* --- Fade Out Animation --- */
     body.fade-out {
       opacity: 0;
       transition: opacity 1s ease-out;
+    }
+
+    /* --- Responsive adjustments --- */
+    @media (max-width: 768px) {
+      .content {
+        padding: 25px;
+        max-width: 90%;
+        border: 20px solid transparent; /* ปรับขนาดกรอบสำหรับมือถือ */
+        border-image: url('https://i.imgur.com/kU2k1v7.png') 20 stretch;
+      }
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 1.5rem; }
+      p { font-size: 1rem; }
+      .emblem img { width: 100px; margin-bottom: 2rem; }
+      .enter { padding: 12px 35px; font-size: 1.1rem; }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 20px;
+        border: 15px solid transparent; 
+        border-image: url('https://i.imgur.com/kU2k1v7.png') 15 stretch;
+      }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.2rem; }
+      p { font-size: 0.9rem; }
+      .emblem img { width: 80px; margin-bottom: 1.5rem; }
+      .enter { padding: 10px 30px; font-size: 1rem; }
     }
 
   </style>
@@ -141,12 +189,10 @@
 
   <script>
     function enterSite() {
-      // 1. ตั้งค่า "ตั๋ว" ว่าอนุญาตให้เข้าหน้าแอปได้
       sessionStorage.setItem('allowAppAccess', 'true');
 
       document.body.classList.add('fade-out');
       setTimeout(() => {
-        // 2. ไปยังหน้า vote.html
         window.location.href = "vote.html"; 
       }, 1000);
     }

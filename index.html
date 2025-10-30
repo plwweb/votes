@@ -1,126 +1,108 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เข้าสู่เว็บไซต์</title>
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
-    /* --- Base Reset & Global Styles --- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       height: 100%;
       font-family: 'Sarabun', sans-serif;
     }
-
-    /* --- Intro Container & Background --- */
     .intro {
       width: 100%;
       height: 100vh;
       position: relative;
-      
-      /* [ปรับปรุง] นำพื้นหลังสีเข้มที่สงบกลับมาใช้ */
       background: radial-gradient(circle, #2a2a2a, #0a0a0a);
-      
-      /* [ปรับปรุง] ใช้ Flexbox เพื่อจัด .content ให้อยู่กึ่งกลาง */
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 20px; /* กันขอบเล็กน้อยสำหรับจอมือถือ */
+      padding: 20px;
     }
-
-    /* [ปรับปรุง] สร้าง .content ขึ้นมาใหม่ */
     .content {
       width: 100%;
-      max-width: 500px; /* กำหนดความกว้างสูงสุดของเนื้อหา */
+      max-width: 500px;
     }
-
-    /* --- New Image Style --- */
     .main-image {
-      margin-bottom: 2.5rem; /* ระยะห่างระหว่างภาพกับปุ่ม */
+      margin-bottom: 3rem; /* เพิ่มระยะห่างปุ่ม */
     }
-
     .main-image img {
-      /* [สำคัญ] นี่คือส่วนที่ทำให้ภาพ "ไม่เต็มจอ" */
-      width: 100%; /* ให้ภาพกว้างเต็ม .content */
-      max-width: 450px; /* แต่ไม่เกิน 450px */
+      width: 100%;
+      max-width: 450px;
       height: auto;
-      
-      /* ตกแต่งเล็กน้อย */
-      border-radius: 8px; /* ทำให้มุมภาพมนเล็กน้อย */
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* เพิ่มเงาให้ภาพดูลอย */
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* --- Button Styling --- */
+    /* === [โค้ดปุ่มแบบที่ 2: ปุ่มไล่ระดับสี] === */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 400;
-      padding: 12px 45px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 14px 50px;
       
-      /* ใช้ปุ่มแบบโปร่งใส (Ghost Button) */
-      background-color: transparent;
+      /* ไล่ระดับสีเทาเข้ม */
+      background: linear-gradient(145deg, #444444, #222222);
       color: #ffffff;
-      border: 2px solid #ffffff;
+      border: 1px solid #555555; /* ขอบบางๆ */
       border-radius: 50px;
       
       cursor: pointer;
+      
+      /* เงาตกกระทบให้ปุ่มดูลอย */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      
       transition: all 0.3s ease;
     }
 
     .enter:hover {
-      background-color: #ffffff;
-      color: #000000;
-      transform: scale(1.03);
+      /* ไล่ระดับสีให้สว่างขึ้น */
+      background: linear-gradient(145deg, #555555, #333333);
+      border-color: #777777;
+      color: #ffffff;
+      
+      /* เอฟเฟกต์ "ปุ่มยกตัว" */
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
     
-    /* --- Fade Out Animation --- */
+    .enter:active {
+      /* เอฟเฟกต์ตอนกด */
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    /* === [จบโค้ดปุ่ม] === */
+
     body.fade-out {
       opacity: 0;
       transition: opacity 1s ease-out;
     }
-
   </style>
 </head>
 
 <body>
-
   <div class="intro">
-    
     <div class="content">
-      
       <div class="main-image">
         <img src="https://img2.pic.in.th/pic/uuidE788165A-8277-4938-9B0F-34303C46F89Ecode001library1type1mode1loctruecaptrue.png" alt="Visual Element">
       </div>
-      
       <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
-      
     </div>
-
   </div>
 
   <script>
     function enterSite() {
-      // 1. ตั้งค่า "ตั๋ว" ว่าอนุญาตให้เข้าหน้าแอปได้
       sessionStorage.setItem('allowAppAccess', 'true');
-
       document.body.classList.add('fade-out');
       setTimeout(() => {
-        // 2. ไปยังหน้า vote.html
         window.location.href = "vote.html"; 
       }, 1000);
     }
   </script>
 </body>
-
 </html>

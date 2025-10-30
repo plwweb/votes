@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>น้อมส่งเสด็จสู่สวรรคาลัย</title>
+  <title>เข้าสู่เว็บไซต์</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
     /* --- Base Reset & Global Styles --- */
@@ -24,98 +24,54 @@
       line-height: 1.6;
     }
 
-    /* --- Intro Container & Background --- */
+    /* --- Intro Container & New Background --- */
     .intro {
       width: 100%;
-      height: 100vh;
+      height: 100vh; /* ให้สูงเต็มหน้าจอ */
       position: relative;
       
-      /* [ปรับปรุง] พื้นหลังแบบไล่ระดับสีที่สงบและมืดสนิท
-        - ใช้ radial-gradient เพื่อให้ตรงกลางสว่างกว่าขอบเล็กน้อย (มีมิติ)
-        - เปลี่ยนจาก Texture ผ้าไหม เป็นสีเทาเข้มมาก (#1a1a1a) ไปหาสีดำสนิท (#000000)
-      */
-      background: radial-gradient(circle, #1a1a1a, #0a0a0a);
+      /* [ปรับปรุง] ใช้ภาพใหม่ที่คุณให้มาเป็นพื้นหลัง */
+      background-image: url('https://img2.pic.in.th/pic/uuidE788165A-8277-4938-9B0F-34303C46F89Ecode001library1type1mode1loctruecaptrue.png');
       
+      /* ตั้งค่าให้ภาพพื้นหลังเต็มจอและคมชัด */
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      
+      /* [ปรับปรุง] ใช้ Flexbox เพื่อจัดปุ่มให้อยู่กึ่งกลางเป๊ะ */
       display: flex;
-      justify-content: center;
-      align-items: center;
+      justify-content: center; /* กึ่งกลางแนวนอน */
+      align-items: center;    /* กึ่งกลางแนวตั้ง */
       text-align: center;
-      overflow: hidden;
     }
 
-    .content {
-      position: relative;
-      z-index: 2;
-      padding: 3rem;
-      max-width: 680px;
-      margin: 20px;
-      
-      /* [ปรับปรุง] กรอบแบบเรียบหรู
-        - ลบ border-image ลายไทยออก
-        - ใช้กรอบ 2 ชั้น (box-shadow) ที่ดูสุขุม
-      */
-      border: 1px solid #444444; /* กรอบเส้นบางๆ สีเทาเข้ม */
-      box-shadow: 0 0 0 4px #8A7350; /* สร้างกรอบสีทองหม่นด้านนอก */
-      border-radius: 4px; /* มุมมนเล็กน้อย */
-      background-color: rgba(0, 0, 0, 0.2); /* พื้นหลังโปร่งแสงเล็กน้อย */
-    }
+    /* [ลบ] .content, .emblem, h1, h2, p ถูกลบออกทั้งหมด */
 
-    /* --- Emblem --- */
-    .emblem img {
-      width: 130px;
-      height: auto;
-      margin-bottom: 2.5rem;
-      /* เงาสีทองอ่อนๆ ให้ตราสัญลักษณ์ดูลอยเด่น */
-      filter: drop-shadow(0 0 15px rgba(218, 165, 32, 0.3));
-    }
-
-    /* --- Typography --- */
-    h1 {
-      font-size: 3rem;
-      font-weight: 600;
-      color: #FFD700; /* สีทอง (ยังคงไว้เพื่อสมเกียรติ) */
-      text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-      margin-bottom: 1.8rem;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      font-weight: 400;
-      color: #f0f0f0;
-      margin-bottom: 1.8rem;
-    }
-
-    p {
-      font-size: 1.2rem;
-      font-weight: 300;
-      color: #cccccc;
-      margin-bottom: 3.5rem;
-    }
-
-    /* --- Button --- */
+    /* --- Button Styling --- */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 400;
-      padding: 12px 45px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 14px 50px;
       
-      /* [ปรับปรุง] เปลี่ยนเป็น Ghost Button (ปุ่มโปร่งใส)
-        - ดูสงบและเหมาะสมกว่าปุ่มสีทองสว่าง
-      */
-      background-color: transparent;
+      background-color: rgba(255, 255, 255, 0.1); /* พื้นหลังโปร่งแสงเล็กน้อย */
       color: #ffffff;
-      border: 2px solid #ffffff; /* ขอบสีขาว */
+      border: 2px solid #ffffff;
       border-radius: 50px;
       
       cursor: pointer;
       transition: all 0.3s ease;
+      
+      /* เพิ่มเงาจางๆ ให้ปุ่มเด่นขึ้นจากพื้นหลัง */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px); /* เอฟเฟกต์กระจกฝ้า */
     }
 
     .enter:hover {
       background-color: #ffffff;
       color: #000000;
-      border-color: #ffffff;
-      transform: scale(1.03);
+      transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     
     /* --- Fade Out Animation --- */
@@ -124,41 +80,23 @@
       transition: opacity 1s ease-out;
     }
 
-    /* --- Responsive adjustments --- */
-    @media (max-width: 768px) {
-      .content {
-        padding: 2.5rem;
-        max-width: 90%;
-      }
-      h1 { font-size: 2.5rem; }
-      h2 { font-size: 1.5rem; }
-      p { font-size: 1rem; }
-      .emblem img { width: 100px; margin-bottom: 2rem; }
-    }
-
   </style>
 </head>
 
 <body>
+
   <div class="intro">
-    <div class="content">
-      <div class="emblem">
-        <img src="https://img2.pic.in.th/pic/IMG_3771.webp" alt="Queen Emblem">
-      </div>
-      <h1>น้อมส่งเสด็จสู่สวรรคาลัย</h1>
-      <h2>สมเด็จพระนางเจ้าสิริกิติ์<br>พระบรมราชินีนาถ พระบรมราชชนนีพันปีหลวง</h2>
-      <p>น้อมสำนักในพระมหากรุณาธิคุณอันหาที่สุดมิได้</p>
-      
-      <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
-    </div>
+    <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
   </div>
 
   <script>
     function enterSite() {
+      // 1. ตั้งค่า "ตั๋ว" ว่าอนุญาตให้เข้าหน้าแอปได้
       sessionStorage.setItem('allowAppAccess', 'true');
 
       document.body.classList.add('fade-out');
       setTimeout(() => {
+        // 2. ไปยังหน้า vote.html
         window.location.href = "vote.html"; 
       }, 1000);
     }

@@ -20,58 +20,68 @@
     html, body {
       height: 100%;
       font-family: 'Sarabun', sans-serif;
-      color: #ffffff;
-      line-height: 1.6;
     }
 
-    /* --- Intro Container & New Background --- */
+    /* --- Intro Container & Background --- */
     .intro {
       width: 100%;
-      height: 100vh; /* ให้สูงเต็มหน้าจอ */
+      height: 100vh;
       position: relative;
       
-      /* [ปรับปรุง] ใช้ภาพใหม่ที่คุณให้มาเป็นพื้นหลัง */
-      background-image: url('https://img2.pic.in.th/pic/uuidE788165A-8277-4938-9B0F-34303C46F89Ecode001library1type1mode1loctruecaptrue.png');
+      /* [ปรับปรุง] นำพื้นหลังสีเข้มที่สงบกลับมาใช้ */
+      background: radial-gradient(circle, #2a2a2a, #0a0a0a);
       
-      /* ตั้งค่าให้ภาพพื้นหลังเต็มจอและคมชัด */
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      
-      /* [ปรับปรุง] ใช้ Flexbox เพื่อจัดปุ่มให้อยู่กึ่งกลางเป๊ะ */
+      /* [ปรับปรุง] ใช้ Flexbox เพื่อจัด .content ให้อยู่กึ่งกลาง */
       display: flex;
-      justify-content: center; /* กึ่งกลางแนวนอน */
-      align-items: center;    /* กึ่งกลางแนวตั้ง */
+      justify-content: center;
+      align-items: center;
       text-align: center;
+      padding: 20px; /* กันขอบเล็กน้อยสำหรับจอมือถือ */
     }
 
-    /* [ลบ] .content, .emblem, h1, h2, p ถูกลบออกทั้งหมด */
+    /* [ปรับปรุง] สร้าง .content ขึ้นมาใหม่ */
+    .content {
+      width: 100%;
+      max-width: 500px; /* กำหนดความกว้างสูงสุดของเนื้อหา */
+    }
+
+    /* --- New Image Style --- */
+    .main-image {
+      margin-bottom: 2.5rem; /* ระยะห่างระหว่างภาพกับปุ่ม */
+    }
+
+    .main-image img {
+      /* [สำคัญ] นี่คือส่วนที่ทำให้ภาพ "ไม่เต็มจอ" */
+      width: 100%; /* ให้ภาพกว้างเต็ม .content */
+      max-width: 450px; /* แต่ไม่เกิน 450px */
+      height: auto;
+      
+      /* ตกแต่งเล็กน้อย */
+      border-radius: 8px; /* ทำให้มุมภาพมนเล็กน้อย */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* เพิ่มเงาให้ภาพดูลอย */
+    }
 
     /* --- Button Styling --- */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 600;
-      padding: 14px 50px;
+      font-size: 1.1rem;
+      font-weight: 400;
+      padding: 12px 45px;
       
-      background-color: rgba(255, 255, 255, 0.1); /* พื้นหลังโปร่งแสงเล็กน้อย */
+      /* ใช้ปุ่มแบบโปร่งใส (Ghost Button) */
+      background-color: transparent;
       color: #ffffff;
       border: 2px solid #ffffff;
       border-radius: 50px;
       
       cursor: pointer;
       transition: all 0.3s ease;
-      
-      /* เพิ่มเงาจางๆ ให้ปุ่มเด่นขึ้นจากพื้นหลัง */
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(5px); /* เอฟเฟกต์กระจกฝ้า */
     }
 
     .enter:hover {
       background-color: #ffffff;
       color: #000000;
-      transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      transform: scale(1.03);
     }
     
     /* --- Fade Out Animation --- */
@@ -86,7 +96,17 @@
 <body>
 
   <div class="intro">
-    <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
+    
+    <div class="content">
+      
+      <div class="main-image">
+        <img src="https://img2.pic.in.th/pic/uuidE788165A-8277-4938-9B0F-34303C46F89Ecode001library1type1mode1loctruecaptrue.png" alt="Visual Element">
+      </div>
+      
+      <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
+      
+    </div>
+
   </div>
 
   <script>

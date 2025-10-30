@@ -39,40 +39,42 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-  /* === [โค้ดปุ่มแบบที่ 1: ปุ่มเรืองแสง] === */
+    /* === [โค้ดปุ่มแบบที่ 2: ปุ่มไล่ระดับสี] === */
     .enter {
       font-family: 'Sarabun', sans-serif;
       font-size: 1.2rem;
-      font-weight: 600; /* เพิ่มความหนาตัวอักษร */
+      font-weight: 600;
       padding: 14px 50px;
       
-      background: transparent;
+      /* ไล่ระดับสีเทาเข้ม */
+      background: linear-gradient(145deg, #444444, #222222);
       color: #ffffff;
-      border: 2px solid #ffffff;
+      border: 1px solid #555555; /* ขอบบางๆ */
       border-radius: 50px;
       
       cursor: pointer;
       
-      /* เพิ่มเงาเรืองแสง */
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
-      
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* ตัวอักษรเรืองแสงเล็กน้อย */
+      /* เงาตกกระทบให้ปุ่มดูลอย */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       
       transition: all 0.3s ease;
     }
 
     .enter:hover {
-      background: rgba(255, 255, 255, 0.1); /* สว่างขึ้นเล็กน้อย */
+      /* ไล่ระดับสีให้สว่างขึ้น */
+      background: linear-gradient(145deg, #555555, #333333);
+      border-color: #777777;
       color: #ffffff;
       
-      /* เพิ่มความสว่างของเงา */
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8),
-                  inset 0 0 15px rgba(255, 255, 255, 0.2);
-                  
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* ตัวอักษรสว่างขึ้น */
-      
-      transform: scale(1.05); /* ขยายปุ่ม */
+      /* เอฟเฟกต์ "ปุ่มยกตัว" */
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+    
+    .enter:active {
+      /* เอฟเฟกต์ตอนกด */
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     /* === [จบโค้ดปุ่ม] === */
 

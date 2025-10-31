@@ -11,26 +11,22 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      /* [แก้ไข] เอา height: 100% ออกจาก body เพื่อให้เลื่อนได้ปกติ */
       font-family: 'Sarabun', sans-serif;
       color: #ffffff;
     }
     .intro {
       width: 100%;
       position: relative;
-      /* [แก้ไข 1] เปลี่ยนจาก height เป็น min-height */
       min-height: 100vh; 
       
-      /* พื้นหลังโทนสีน้ำเงิน-ม่วงเข้ม */
       background: radial-gradient(circle, #1A1D2B, #0F121C); 
       display: flex;
       justify-content: center;
-      align-items: center;
+      /* [แก้ไข 1] ลบ align-items: center; ที่เป็นต้นเหตุของปัญหาออก */
+      /* align-items: center; */ 
+      
       text-align: center;
       padding: 20px;
-      
-      /* [แก้ไข 2] ลบ overflow: hidden; ออกไป */
-      /* overflow: hidden; <-- บรรทัดนี้ถูกลบ/ปิดไป */
     }
     .content {
       width: 100%;
@@ -40,8 +36,13 @@
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
       
-      /* [เพิ่ม] เพิ่ม margin เล็กน้อยเผื่อแนวนอนที่จอแคบจริงๆ */
-      margin: 2rem 0;
+      /* [แก้ไข 2] 
+         เปลี่ยนจาก margin: 2rem 0; 
+         เป็น margin-top: auto; และ margin-bottom: auto;
+         นี่คือ "วิธีแก้" ที่ทำให้มันจัดกลาง และเลื่อนได้ 
+      */
+      margin-top: auto;
+      margin-bottom: auto;
     }
 
     /* Title ของงาน */
@@ -63,7 +64,7 @@
       margin-bottom: 3.5rem;
     }
 
-    /* === [โค้ดปุ่มแบบที่ 2: Modern Gradient] === */
+    /* === โค้ดปุ่มแบบที่ 2: Modern Gradient === */
     .enter {
       font-family: 'Sarabun', sans-serif;
       font-size: 1.25rem;
@@ -76,9 +77,7 @@
       border-radius: 50px;
       
       cursor: pointer;
-      
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      
       transition: all 0.3s ease;
     }
 
@@ -103,11 +102,12 @@
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-      /* [แก้ไข] ปรับ padding/margin สำหรับจอที่เลื่อนได้ */
       .content {
         max-width: 90%;
         padding: 25px;
-        margin: 1rem 0; /* ลด margin สำหรับจอแนวตั้ง */
+        /* [แก้ไข 3] ลบ margin: 1rem 0; ที่เคยกดทับไว้ 
+           เพื่อให้ margin: auto; จากด้านบนทำงานได้ 
+        */
       }
       .event-title { font-size: 2.2rem; margin-bottom: 2rem; }
       .main-image img { max-width: 90%; margin-bottom: 2.5rem; }
@@ -126,7 +126,7 @@
 <body>
   <div class="intro">
     <div class="content">
-      
+ 
       <div class="main-image">
         <img src="https://img2.pic.in.th/pic/-copy34cf3f2faef3337b.jpeg" alt="46TH PLW GAMES Visual">
       </div>

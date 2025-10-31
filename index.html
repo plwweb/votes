@@ -3,53 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>สมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถ พระบรมราชชนนีพันปีหลวง เสด็จสวรรคต</title>
+  <title>46TH PLW GAMES</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       height: 100%;
       font-family: 'Sarabun', sans-serif;
+      color: #ffffff;
     }
     .intro {
       width: 100%;
       height: 100vh;
       position: relative;
-      background: radial-gradient(circle, #2a2a2a, #0a0a0a);
+      /* พื้นหลังโทนสีน้ำเงิน-ม่วงเข้ม */
+      background: radial-gradient(circle, #1A1D2B, #0F121C); 
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
       padding: 20px;
+      overflow: hidden;
     }
     .content {
       width: 100%;
-      max-width: 500px;
-    }
-    .main-image {
-      margin-bottom: 3rem; /* เพิ่มระยะห่างปุ่ม */
-    }
-    .main-image img {
-      width: 100%;
-      max-width: 450px;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     }
 
-    /* === [โค้ดปุ่มแบบที่ 2: ปุ่มไล่ระดับสี] === */
+    /* Title ของงาน */
+    .event-title {
+      font-size: 2.8rem;
+      font-weight: 700;
+      /* [ปรับปรุงสี] เปลี่ยนจากสีฟ้าเรืองแสง เป็นสีขาวนวล */
+      color: #f0f0f0; 
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5); /* เงาปกติ */
+      margin-bottom: 2.5rem;
+    }
+
+    /* สไตล์ของรูปภาพหลัก */
+    .main-image img {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 3.5rem;
+    }
+
+    /* === [โค้ดปุ่มแบบที่ 2: Modern Gradient] - ปรับโทนสี === */
     .enter {
       font-family: 'Sarabun', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 600;
-      padding: 14px 50px;
+      padding: 16px 60px;
       
-      /* ไล่ระดับสีเทาเข้ม */
-      background: linear-gradient(145deg, #444444, #222222);
+      /* [ปรับปรุง] ไล่ระดับสีน้ำเงิน-ม่วงเข้มให้เข้ากับธีม */
+      background: linear-gradient(145deg, #3d4a8d, #2a2d4d);
       color: #ffffff;
-      border: 1px solid #555555; /* ขอบบางๆ */
+      border: 1px solid #5a68b0; /* ขอบสีน้ำเงินที่สว่างกว่า */
       border-radius: 50px;
       
       cursor: pointer;
@@ -62,8 +80,8 @@
 
     .enter:hover {
       /* ไล่ระดับสีให้สว่างขึ้น */
-      background: linear-gradient(145deg, #555555, #333333);
-      border-color: #777777;
+      background: linear-gradient(145deg, #4e5cb5, #3d4a8d);
+      border-color: #7c8aff;
       color: #ffffff;
       
       /* เอฟเฟกต์ "ปุ่มยกตัว" */
@@ -82,16 +100,39 @@
       opacity: 0;
       transition: opacity 1s ease-out;
     }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .content {
+        max-width: 90%;
+        padding: 25px;
+      }
+      .event-title { font-size: 2.2rem; margin-bottom: 2rem; }
+      .main-image img { max-width: 90%; margin-bottom: 2.5rem; }
+      .enter { font-size: 1.1rem; padding: 14px 45px; }
+    }
+    @media (max-width: 480px) {
+      .content { padding: 20px; }
+      .event-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
+      .main-image img { margin-bottom: 2rem; }
+      .enter { font-size: 1rem; padding: 12px 35px; }
+    }
+
   </style>
 </head>
 
 <body>
   <div class="intro">
     <div class="content">
+      
+      <h1 class="event-title">46TH PLW GAMES</h1>
+      
       <div class="main-image">
-        <img src="https://img2.pic.in.th/pic/uuidE788165A-8277-4938-9B0F-34303C46F89Ecode001library1type1mode1loctruecaptrue.png" alt="Visual Element">
+        <img src="https://img2.pic.in.th/pic/-copy34cf3f2faef3337b.jpeg" alt="46TH PLW GAMES Visual">
       </div>
+      
       <button class="enter" onclick="enterSite()">เข้าสู่เว็บไซต์</button>
+      
     </div>
   </div>
 

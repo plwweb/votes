@@ -15,11 +15,9 @@
       color: #ffffff;
     }
 
-    /* === [แก้ไขจุดที่ 1] === */
-    /* .intro ตอนนี้ทำหน้าที่แค่เป็น "กรอบ" และ "พื้นหลัง" */
     .intro {
       width: 100%;
-      position: relative; /* ยังคงต้องมี "relative" เพื่อให้ footer ยึดเกาะ */
+      position: relative; 
       min-height: 100vh; 
 
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
@@ -28,24 +26,22 @@
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
-      background-attachment: fixed; 
-
-      /* [ลบ] display: flex และ justify-content ออกจาก .intro */
+      
+      /* === [ แก้ไขจุดที่ 1 ] === */
+      /* เปลี่ยนจาก fixed เป็น scroll เพื่อแก้บักซูมบนมือถือ */
+      background-attachment: scroll; 
     }
 
-    /* === [เพิ่ม] === */
-    /* สร้าง "ตัวห่อ" ใหม่ ทำหน้าที่จัดกลางแทน */
     .page-wrapper {
         display: flex;
         justify-content: center;
-        align-items: center; /* ใช้วิธีนี้จัดกลางแนวตั้งแทน margin: auto */
-        min-height: 100vh; /* ทำให้ตัวจัดกลางสูงเต็มจอ */
+        align-items: center; 
+        min-height: 100vh; 
         text-align: center;
         padding: 20px;
-        padding-bottom: 80px; /* กันพื้นที่สำหรับ footer ด้านล่าง */
+        padding-bottom: 80px; /* เพิ่ม padding เผื่อกรณีเนื้อหายาวในอนาคต */
     }
 
-    /* === [แก้ไขจุดที่ 2] === */
     .content {
       width: 100%;
       max-width: 600px; 
@@ -53,10 +49,8 @@
       background-color: rgba(0, 0, 0, 0.3);
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-      /* [ลบ] margin-top/bottom: auto ออก เพราะ .page-wrapper จัดการแล้ว */
     }
 
-    /* (โค้ดส่วนที่เหลือ .event-title, .main-image, .enter... เหมือนเดิม) */
     .event-title {
       font-size: 2.8rem;
       font-weight: 700;
@@ -102,47 +96,18 @@
       transition: opacity 1s ease-out;
     }
 
-    /* Footer (เหมือนเดิม) */
-    footer {
-      position: absolute; 
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      color: #cccccc;
-      padding: 12px 20px;
-      font-size: 0.85rem;
-      z-index: 100;
-      
-      display: flex; 
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap; 
-      gap: 20px; 
-    }
-    .social-links {
-      display: flex;
-      align-items: center;
-      gap: 15px; 
-    }
-    .social-icon {
-      width: 24px; 
-      height: 24px;
-      transition: opacity 0.3s ease;
-    }
-    .social-icon:hover {
-      opacity: 0.8;
-    }
+    /* หมายเหตุ: โค้ด footer ได้ถูกลบออกไปแล้วตามคำขอก่อนหน้า */
 
-    /* Media Queries (เหมือนเดิม) */
     @media (orientation: landscape) {
-        /* [แก้ไข] เปลี่ยนเป้าหมายเป็น .intro เหมือนเดิม */
         .intro {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                         url('https://img2.pic.in.th/pic/IMG_3756512bf39f2a88cd7d.jpeg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            background-attachment: fixed;
+            
+            /* === [ แก้ไขจุดที่ 2 ] === */
+            background-attachment: scroll; /* แก้ตรงนี้ด้วย */
         }
     }
     @media (max-width: 768px) {
@@ -156,15 +121,6 @@
       .event-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
       .main-image img { margin-bottom: 2rem; }
       .enter { font-size: 1rem; padding: 12px 35px; }
-      footer { flex-direction: column; gap: 8px; padding: 10px; font-size: 0.8rem; }
-      .social-links { gap: 20px; }
-      .social-icon { width: 22px; height: 22px; }
-    }
-    @media (min-width: 769px) {
-        .main-image img {
-            max-width: 500px; 
-            width: 100%;
-        }
     }
 
   </style>
@@ -191,13 +147,12 @@
         <button class="enter" onclick="enterSite()">เข้าสู่หน้าหลัก</button>
         
       </div>
-    </div> <footer>
-      <span>&copy;2025 Student Council of Phu Luang Witthaya School</span>
-      
-      </div>
-    </footer>
+    </div> 
 
-  </div> <script>
+    </div> 
+
+
+  <script>
     function enterSite() {
       sessionStorage.setItem('allowAppAccess', 'true');
       document.body.classList.add('fade-out');

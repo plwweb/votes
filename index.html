@@ -19,23 +19,19 @@
       position: relative;
       min-height: 100vh; 
 
-      /* === [ นี่คือส่วนที่แก้ไข ] === */
-      /* 1. ใส่ภาพแนวตั้งเป็นพื้นหลังเริ่มต้น */
-      /* 2. เพิ่ม linear-gradient สีดำโปร่งแสง (0.6) ทับเพื่อทำให้ภาพมืดลง */
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                   url('https://img5.pic.in.th/file/secure-sv1/IMG_3756d83635c360e99c14.jpeg');
       
-      /* 3. ตั้งค่าให้ภาพเต็มจอและดูสวยงาม */
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
-      background-attachment: fixed; /* ทำให้พื้นหลังนิ่งเมื่อเลื่อนจอ */
-      /* === [ จบส่วนที่แก้ไข ] === */
+      background-attachment: fixed; 
 
       display: flex;
       justify-content: center;
       text-align: center;
       padding: 20px;
+      padding-bottom: 80px; 
     }
     .content {
       width: 100%;
@@ -96,8 +92,43 @@
       transition: opacity 1s ease-out;
     }
 
-    /* === [ นี่คือส่วนที่เพิ่มเข้ามา ] === */
-    /* สลับเป็นภาพแนวนอน เมื่อหน้าจอเป็นแนวนอน */
+    /* === [ นี่คือส่วน Footer ที่แก้ไข ] === */
+    footer {
+      position: fixed; 
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      /* [ลบ] background-color: rgba(0, 0, 0, 0.4); */
+      color: #cccccc;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      z-index: 100;
+      
+      display: flex; 
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap; 
+      gap: 20px; 
+    }
+    
+    .social-links {
+      display: flex;
+      align-items: center;
+      gap: 15px; 
+    }
+
+    .social-icon {
+      width: 24px; 
+      height: 24px;
+      transition: opacity 0.3s ease;
+    }
+
+    .social-icon:hover {
+      opacity: 0.8;
+    }
+    /* === [ จบส่วน Footer ] === */
+
+
     @media (orientation: landscape) {
         .intro {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
@@ -108,10 +139,7 @@
             background-attachment: fixed;
         }
     }
-    /* === [ จบส่วนที่เพิ่มเข้ามา ] === */
 
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .content {
         max-width: 90%;
@@ -121,11 +149,26 @@
       .main-image img { margin-bottom: 2.5rem; }
       .enter { font-size: 1.1rem; padding: 14px 45px; }
     }
+    
     @media (max-width: 480px) {
       .content { padding: 20px; }
       .event-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
       .main-image img { margin-bottom: 2rem; }
       .enter { font-size: 1rem; padding: 12px 35px; }
+
+      footer {
+        flex-direction: column; 
+        gap: 8px; 
+        padding: 10px;
+        font-size: 0.8rem;
+      }
+      .social-links {
+        gap: 20px;
+      }
+      .social-icon {
+        width: 22px;
+        height: 22px;
+      }
     }
 
     @media (min-width: 769px) {
@@ -157,6 +200,19 @@
       
     </div>
   </div>
+
+  <footer>
+    <span>&copy;2025 Student Council of Phu Luang Witthaya School</span>
+    <div class="social-links">
+        <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
+        </a>
+        <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
+        </a>
+    </div>
+  </footer>
+
 
   <script>
     function enterSite() {

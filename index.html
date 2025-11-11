@@ -15,9 +15,11 @@
       color: #ffffff;
     }
 
+    /* === [แก้ไขจุดที่ 1] === */
+    /* .intro ตอนนี้ทำหน้าที่แค่เป็น "กรอบ" และ "พื้นหลัง" */
     .intro {
       width: 100%;
-      position: relative; 
+      position: relative; /* ยังคงต้องมี "relative" เพื่อให้ footer ยึดเกาะ */
       min-height: 100vh; 
 
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
@@ -27,18 +29,23 @@
       background-position: center center;
       background-repeat: no-repeat;
       background-attachment: fixed; 
+
+      /* [ลบ] display: flex และ justify-content ออกจาก .intro */
     }
 
+    /* === [เพิ่ม] === */
+    /* สร้าง "ตัวห่อ" ใหม่ ทำหน้าที่จัดกลางแทน */
     .page-wrapper {
         display: flex;
         justify-content: center;
-        align-items: center; 
-        min-height: 100vh; 
+        align-items: center; /* ใช้วิธีนี้จัดกลางแนวตั้งแทน margin: auto */
+        min-height: 100vh; /* ทำให้ตัวจัดกลางสูงเต็มจอ */
         text-align: center;
         padding: 20px;
-        padding-bottom: 80px; 
+        padding-bottom: 80px; /* กันพื้นที่สำหรับ footer ด้านล่าง */
     }
 
+    /* === [แก้ไขจุดที่ 2] === */
     .content {
       width: 100%;
       max-width: 600px; 
@@ -46,8 +53,10 @@
       background-color: rgba(0, 0, 0, 0.3);
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      /* [ลบ] margin-top/bottom: auto ออก เพราะ .page-wrapper จัดการแล้ว */
     }
 
+    /* (โค้ดส่วนที่เหลือ .event-title, .main-image, .enter... เหมือนเดิม) */
     .event-title {
       font-size: 2.8rem;
       font-weight: 700;
@@ -93,6 +102,7 @@
       transition: opacity 1s ease-out;
     }
 
+    /* Footer (เหมือนเดิม) */
     footer {
       position: absolute; 
       bottom: 0;
@@ -123,7 +133,9 @@
       opacity: 0.8;
     }
 
+    /* Media Queries (เหมือนเดิม) */
     @media (orientation: landscape) {
+        /* [แก้ไข] เปลี่ยนเป้าหมายเป็น .intro เหมือนเดิม */
         .intro {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                         url('https://img2.pic.in.th/pic/IMG_3756512bf39f2a88cd7d.jpeg');
@@ -148,8 +160,12 @@
       .social-links { gap: 20px; }
       .social-icon { width: 22px; height: 22px; }
     }
-
-    /* โค้ดเก่า @media (min-width: 769px) ถูกลบออกจากตรงนี้แล้ว */
+    @media (min-width: 769px) {
+        .main-image img {
+            max-width: 500px; 
+            width: 100%;
+        }
+    }
 
   </style>
 </head>
@@ -175,19 +191,13 @@
         <button class="enter" onclick="enterSite()">เข้าสู่หน้าหลัก</button>
         
       </div>
-    </div> 
-
-    <footer>
+    </div> <footer>
       <span>&copy;2025 Student Council of Phu Luang Witthaya School</span>
-    
-        
+      
       </div>
     </footer>
 
-  </div> 
-
-
-  <script>
+  </div> <script>
     function enterSite() {
       sessionStorage.setItem('allowAppAccess', 'true');
       document.body.classList.add('fade-out');

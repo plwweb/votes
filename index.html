@@ -16,7 +16,7 @@
     }
     .intro {
       width: 100%;
-      position: relative;
+      position: relative; /* 1. ทำให้ .intro เป็น "กรอบ" ให้ footer อ้างอิง */
       min-height: 100vh; 
 
       background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
@@ -31,7 +31,7 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
-      padding-bottom: 80px; 
+      padding-bottom: 80px; /* ต้องมี padding นี้ไว้ กัน footer ทับปุ่ม */
     }
     .content {
       width: 100%;
@@ -44,61 +44,25 @@
       margin-bottom: auto;
     }
 
-    .event-title {
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: #f0f0f0; 
-      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-      margin-bottom: 2.5rem;
-    }
+    /* (โค้ด CSS ส่วนอื่น... ไม่มีการเปลี่ยนแปลง) */
+    .event-title { font-size: 2.8rem; ... }
+    .main-image img { ... }
+    .enter { ... }
+    .enter:hover { ... }
+    .enter:active { ... }
+    body.fade-out { ... }
 
-    .main-image img {
-      width: 100%; 
-      height: auto;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      margin-bottom: 3.5rem;
-    }
 
-    .enter {
-      font-family: 'Sarabun', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 600;
-      padding: 16px 60px;
-      background: linear-gradient(145deg, #3d4a8d, #2a2d4d);
-      color: #ffffff;
-      border: 1px solid #5a68b0;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
-    }
-
-    .enter:hover {
-      background: linear-gradient(145deg, #4e5cb5, #3d4a8d);
-      border-color: #7c8aff;
-      color: #ffffff;
-      transform: scale(1.03) translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-    
-    .enter:active {
-      transform: scale(0.98);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    body.fade-out {
-      opacity: 0;
-      transition: opacity 1s ease-out;
-    }
-
-    /* === [ นี่คือส่วน Footer ที่แก้ไข ] === */
+    /* === [ นี่คือจุดแก้ไขที่ 1: CSS ] === */
     footer {
-      position: fixed; 
+      /* เปลี่ยนจาก position: fixed (ติดหน้าจอ) 
+        เป็น position: absolute (ติด "กรอบ" ของ .intro)
+      */
+      position: absolute; 
       bottom: 0;
       left: 0;
       width: 100%;
-      /* [ลบ] background-color: rgba(0, 0, 0, 0.4); */
+      /* [ลบ] background-color: rgba(0, 0, 0, 0.4); (ตามโค้ดล่าสุดของคุณ) */
       color: #cccccc;
       padding: 12px 20px;
       font-size: 0.85rem;
@@ -140,43 +104,10 @@
         }
     }
 
-    @media (max-width: 768px) {
-      .content {
-        max-width: 90%;
-        padding: 25px;
-      }
-      .event-title { font-size: 2.2rem; margin-bottom: 2rem; }
-      .main-image img { margin-bottom: 2.5rem; }
-      .enter { font-size: 1.1rem; padding: 14px 45px; }
-    }
-    
-    @media (max-width: 480px) {
-      .content { padding: 20px; }
-      .event-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
-      .main-image img { margin-bottom: 2rem; }
-      .enter { font-size: 1rem; padding: 12px 35px; }
-
-      footer {
-        flex-direction: column; 
-        gap: 8px; 
-        padding: 10px;
-        font-size: 0.8rem;
-      }
-      .social-links {
-        gap: 20px;
-      }
-      .social-icon {
-        width: 22px;
-        height: 22px;
-      }
-    }
-
-    @media (min-width: 769px) {
-        .main-image img {
-            max-width: 500px; 
-            width: 100%;
-        }
-    }
+    /* (โค้ด CSS Media Query อื่นๆ... ไม่มีการเปลี่ยนแปลง) */
+    @media (max-width: 768px) { ... }
+    @media (max-width: 480px) { ... }
+    @media (min-width: 769px) { ... }
 
   </style>
 </head>
@@ -199,22 +130,19 @@
       <button class="enter" onclick="enterSite()">เข้าสู่หน้าหลัก</button>
       
     </div>
-  </div>
 
-  <footer>
-    <span>&copy;2025 Student Council of Phu Luang Witthaya School</span>
-    <div class="social-links">
-        <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
-        </a>
-        <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
-        </a>
-    </div>
-  </footer>
-
-
-  <script>
+    <footer>
+      <span>&copy;2025 Student Council of Phu Luang Witthaya School</span>
+      <div class="social-links">
+          <a href="https://www.facebook.com/plwsc.official" target="_blank" rel="noopener noreferrer">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/100px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
+          </a>
+          <a href="https://www.instagram.com/plwsc.official?igsh=OWowOWlnNHV4ZXJ2" target="_blank" rel="noopener noreferrer">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.png" alt="Instagram" class="social-icon">
+          </a>
+      </div>
+    </footer>
+    </div> <script>
     function enterSite() {
       sessionStorage.setItem('allowAppAccess', 'true');
       document.body.classList.add('fade-out');

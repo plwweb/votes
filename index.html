@@ -18,7 +18,20 @@
       width: 100%;
       position: relative;
       min-height: 100vh; 
-      background: radial-gradient(circle, #1A1D2B, #0F121C); 
+
+      /* === [ นี่คือส่วนที่แก้ไข ] === */
+      /* 1. ใส่ภาพแนวตั้งเป็นพื้นหลังเริ่มต้น */
+      /* 2. เพิ่ม linear-gradient สีดำโปร่งแสง (0.6) ทับเพื่อทำให้ภาพมืดลง */
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                  url('https://img5.pic.in.th/file/secure-sv1/IMG_3756d83635c360e99c14.jpeg');
+      
+      /* 3. ตั้งค่าให้ภาพเต็มจอและดูสวยงาม */
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed; /* ทำให้พื้นหลังนิ่งเมื่อเลื่อนจอ */
+      /* === [ จบส่วนที่แก้ไข ] === */
+
       display: flex;
       justify-content: center;
       text-align: center;
@@ -26,7 +39,7 @@
     }
     .content {
       width: 100%;
-      max-width: 600px; /* ยังคงจำกัดความกว้างสูงสุดของกล่องเนื้อหา */
+      max-width: 600px; 
       padding: 30px;
       background-color: rgba(0, 0, 0, 0.3);
       border-radius: 12px;
@@ -43,17 +56,14 @@
       margin-bottom: 2.5rem;
     }
 
-    /* สไตล์ของรูปภาพหลัก */
     .main-image img {
-      width: 100%; /* [แก้ไข 1] ให้ภาพกว้าง 100% ของกล่อง .content เสมอ */
-      /* max-width: 500px;  [แก้ไข 2] ลบ max-width ออกจากตรงนี้ */
+      width: 100%; 
       height: auto;
       border-radius: 10px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       margin-bottom: 3.5rem;
     }
 
-    /* === โค้ดปุ่มแบบที่ 2: Modern Gradient === */
     .enter {
       font-family: 'Sarabun', sans-serif;
       font-size: 1.25rem;
@@ -86,6 +96,21 @@
       transition: opacity 1s ease-out;
     }
 
+    /* === [ นี่คือส่วนที่เพิ่มเข้ามา ] === */
+    /* สลับเป็นภาพแนวนอน เมื่อหน้าจอเป็นแนวนอน */
+    @media (orientation: landscape) {
+        .intro {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://img2.pic.in.th/pic/IMG_3756512bf39f2a88cd7d.jpeg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    }
+    /* === [ จบส่วนที่เพิ่มเข้ามา ] === */
+
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .content {
@@ -93,8 +118,7 @@
         padding: 25px;
       }
       .event-title { font-size: 2.2rem; margin-bottom: 2rem; }
-      /* [แก้ไข 3] ลบ max-width ของรูปภาพใน media query ด้วย */
-      .main-image img { /* max-width: 90%; */ margin-bottom: 2.5rem; }
+      .main-image img { margin-bottom: 2.5rem; }
       .enter { font-size: 1.1rem; padding: 14px 45px; }
     }
     @media (max-width: 480px) {
@@ -104,10 +128,9 @@
       .enter { font-size: 1rem; padding: 12px 35px; }
     }
 
-    /* [เพิ่ม] ตั้งค่า max-width สำหรับรูปภาพสำหรับจอขนาดใหญ่ (tablet/desktop) */
     @media (min-width: 769px) {
         .main-image img {
-            max-width: 500px; /* กำหนด max-width อีกครั้งสำหรับจอที่กว้างขึ้น */
+            max-width: 500px; 
             width: 100%;
         }
     }

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ระบบกิจกรรมคณะสี</title>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="https://img5.pic.in.th/file/secure-sv1/IMG_602976b5b060daac652b.png" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --text-color: #333;
+            --bg-color: #f3f4f6;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header img {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 24px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #eee;
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ติดต่อผู้ดูแล */
+        .contact-support {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px dashed #ddd;
+            padding-top: 20px;
+        }
+
+        .contact-support .btn-support {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .contact-support .btn-support:hover {
+            text-decoration: underline;
+            color: #4f46e5;
+        }
+
+        /* วงกลมโหลดข้อมูล (Loading) */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="header">
+            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_602976b5b060daac652b.png" alt="Logo">
+            <h2 id="formTitle">เข้าสู่ระบบ</h2>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" id="btn-student" onclick="switchRole('student')">
+                <i class="fas fa-user-graduate"></i> นักเรียน
+            </div>
+            <div class="tab" id="btn-leader" onclick="switchRole('leader')">
+                <i class="fas fa-user-shield"></i> ผู้ดูแล
+            </div>
+        </div>
+
+        <form id="student-form">
+            <div class="form-group">
+                <label>รหัสนักเรียน</label>
+                <input type="text" id="studentId" class="form-control" placeholder="เช่น 12345" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" id="studentPassword" class="form-control" placeholder="ระบุรหัสผ่าน" required>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบนักเรียน</button>
+        </form>
+
+        <form id="leader-form" class="hidden">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="leaderUsername" class="form-control" placeholder="Admin / Leader Username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="leaderPassword" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn" style="background-color: #4f46e5;"><i class="fas fa-cog"></i> เข้าสู่ระบบจัดการ</button>
+        </form>
+
+        <div class="contact-support">
+            เข้าใช้งานไม่ได้ หรือลืมรหัสผ่าน? <br>
+            <a class="btn-support" onclick="showSupport()"><i class="fas fa-headset"></i> ติดต่อผู้ดูแลระบบ</a>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================================
+        // ⚙️ SYSTEM CONFIGURATION
+        // ============================================================================
+        const API_URL = 'hub_system/api.php';
+
+        // เช็คการล็อกอินค้าง
+        document.addEventListener('DOMContentLoaded', () => {
+            const leaderTeamId = sessionStorage.getItem('leaderTeamId');
+            if (leaderTeamId) {
+                if (leaderTeamId === 'admin') window.location.href = 'vote_system/admin.html';
+                else window.location.href = 'hub_system/leader.html';
+            } else if (sessionStorage.getItem('studentId')) {
+                window.location.href = 'hub_system/dashboard.html';
+            }
+        });
+
+        // ============================================================================
+        // 🎨 UI CONTROL FUNCTIONS
+        // ============================================================================
+        function switchRole(role) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            if (role === 'student') {
+                document.getElementById('btn-student').classList.add('active');
+                document.getElementById('student-form').style.display = 'block';
+                document.getElementById('leader-form').style.display = 'none';
+                document.getElementById('formTitle').innerText = 'เข้าสู่ระบบ (นักเรียน)';
+            } else {
+                document.getElementById('btn-leader').classList.add('active');
+                document.getElementById('leader-form').style.display = 'block';
+                document.getElementById('student-form').style.display = 'none';
+                document.getElementById('formTitle').innerText = 'เข้าสู่ระบบ (ผู้ดูแล)';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // 🌟 ฟังก์ชันแสดงหน้าต่างติดต่อ (รวมลิงก์ไว้ในนี้ทั้งหมด)
+        function showSupport() {
+            Swal.fire({
+                title: 'ติดต่อแจ้งปัญหา',
+                html: `
+                    <div style="text-align:left; font-family: 'Kanit', sans-serif; font-size: 1em; line-height: 1.6; color: #444;">
+                        หากนักเรียนลืมรหัสผ่าน หรือพบปัญหาในการเข้าสู่ระบบ กรุณาติดต่อ <b>สภานักเรียน</b> เพื่อขอรีเซ็ตรหัสผ่านผ่านช่องทางต่อไปนี้:<br><br>
+                        <i class="fab fa-facebook" style="color:#1877f2; font-size:1.2em; width: 25px;"></i> <b>Facebook:</b> <a href="https://www.facebook.com/plwsc.official" target="_blank" style="color: #1877f2; text-decoration: none;">สภานักเรียนโรงเรียนภูหลวงวิทยา</a><br>
+                        <i class="fab fa-instagram" style="color:#e1306c; font-size:1.2em; width: 25px; margin-top: 8px;"></i> <b>Instagram:</b> <a href="https://www.instagram.com/plwpr_official" target="_blank" style="color: #e1306c; text-decoration: none;">@plwpr_official</a><br>
+                        <i class="fas fa-map-marker-alt" style="color:#dc2626; font-size:1.2em; width: 25px; margin-top: 8px;"></i> <b>ติดต่อด้วยตนเอง:</b> ห้องสภานักเรียน (เวลาพักเที่ยง)<br>
+                        <br><span style="color:#dc2626; font-size:0.9em; font-weight: 500;">*กรุณาเตรียมรหัสประจำตัวนักเรียนให้พร้อม เพื่อความรวดเร็วในการตรวจสอบข้อมูล</span>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonColor: '#6366f1',
+                confirmButtonText: 'รับทราบ'
+            });
+        }
+
+        // ดักจับการพ่นข้อความ Error ของ PHP ป้องกัน JSON พัง
+        async function fetchAPI(data) {
+            const rawRes = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const textRes = await rawRes.text();
+            try {
+                // กรองเอาเฉพาะโครงสร้าง JSON เผื่อฝั่งเซิร์ฟเวอร์พ่น Error ขยะออกมา
+                const cleanJsonStr = textRes.substring(textRes.indexOf('{'), textRes.lastIndexOf('}') + 1);
+                return JSON.parse(cleanJsonStr);
+            } catch (err) {
+                console.error("Server Error Response:", textRes);
+                throw new Error("ระบบฐานข้อมูลมีปัญหา (ข้อมูลไม่ตรงรูปแบบ JSON)");
+            }
+        }
+
+        // ============================================================================
+        // 👨‍🎓 STUDENT LOGIN SYSTEM
+        // ============================================================================
+        document.getElementById('student-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sid = document.getElementById('studentId').value.trim();
+            const pwd = document.getElementById('studentPassword').value.trim();
+
+            showLoading();
+            try {
+                const res = await fetchAPI({ action: 'getStudentDetails', studentId: sid, password: pwd });
+                hideLoading();
+
+                if (res.status === 'success') {
+                    // เก็บข้อมูลนักเรียนไว้ใน Session Storage ตรงกลาง
+                    sessionStorage.setItem('studentId', sid);
+                    sessionStorage.setItem('fullName', res.fullName);
+                    sessionStorage.setItem('grade', res.grade);
+                    sessionStorage.setItem('room', res.room);
+
+                    // 🎯 ล็อกอินนักเรียนเสร็จ ให้วิ่งเข้าโฟลเดอร์ hub_system หน้า Dashboard
+                    window.location.href = 'hub_system/dashboard.html';
+                } else {
+                    Swal.fire('เข้าสู่ระบบไม่สำเร็จ', res.message, 'error');
+                }
+            } catch (err) {
+                hideLoading();
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง', 'error');
+                console.error(err);
+            }
+        });
+
+        // ============================================================================
+        // 👑 LEADER & ADMIN LOGIN SYSTEM (ไม่มีระบบ Role สตาฟฟ์แล้ว)
+        // ============================================================================
+        document.getElementById('leader-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usr = document.getElementById('leaderUsername').value.trim();
+            const pwd = document.getElementById('leaderPassword').value.trim();
+
+            showLoading();
+            try {
+                const res = await fetchAPI({ action: 'login', username: usr, password: pwd });
+                hideLoading();
+
+                if (res.status === 'success') {
+
+                    if (res.role === 'admin') {
+                        // 1. กรณีเป็น Admin ระบบโหวต
+                        sessionStorage.setItem('leaderTeamId', 'admin');
+                        sessionStorage.setItem('leaderTeamName', res.fullName);
+                        sessionStorage.setItem('leaderColorCode', '#1e293b'); 
+                        
+                        Swal.fire({ icon: 'success', title: 'ยินดีต้อนรับ Admin', timer: 1000, showConfirmButton: false }).then(() => {
+                            window.location.href = 'vote_system/admin.html';
+                        });
+
+                    } else {
+                        // 2. กรณีเป็น ประธานสี (leader) หรือ Super Leader
+                        sessionStorage.setItem('leaderTeamId', res.team.team_id);
+                        sessionStorage.setItem('leaderTeamName', res.team.team_name);
+                        sessionStorage.setItem('leaderColorCode', res.team.color_code);
+
+                        Swal.fire({ icon: 'success', title: 'ยินดีต้อนรับประธานสี', timer: 1000, showConfirmButton: false }).then(() => {
+                            window.location.href = 'hub_system/leader.html';
+                        });
+                    }
+
+                } else {
+                    Swal.fire('เข้าสู่ระบบไม่สำเร็จ', res.message, 'error');
+                }
+            } catch (err) {
+                hideLoading();
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง', 'error');
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+
+</html>
